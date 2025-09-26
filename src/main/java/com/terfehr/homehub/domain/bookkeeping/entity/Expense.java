@@ -2,25 +2,34 @@ package com.terfehr.homehub.domain.bookkeeping.entity;
 
 import com.terfehr.homehub.domain.bookkeeping.value.Money;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-/**
- * Expense entity representing an expense record in the bookkeeping system.
- * Each Expense belongs to a specific Account and has attributes such as amount, date and description.
- */
-@Data
 @Entity
-public class Expense {
+@NoArgsConstructor
+@Getter
+public class Expense extends Transaction{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private Money amount;
-    String description;
-    LocalDateTime date;
+    private String recipient;
+
+    public Expense(Money amount, String description, LocalDateTime date, String recipient) {
+        super(amount, description, date);
+        this.recipient = recipient;
+        if (!validate()) {
+            throw new IllegalArgumentException("Invalid Expense object");
+        }
+    }
+
+    /**
+     * Sets the recipient of the expense. It's who the money was paid to.
+     * @param recipient The recipient to whom the expense was paid.
+     */
+    public void setRecipient(String recipient) {
+        this.recipient = recipient;
+        if (!validate()) {
+            throw new IllegalArgumentException("Invalid Expense object");
+        }
+    }
 }

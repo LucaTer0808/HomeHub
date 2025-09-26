@@ -1,6 +1,7 @@
 package com.terfehr.homehub.domain.bookkeeping.value;
 
 import jakarta.persistence.Embeddable;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Value;
 
@@ -11,6 +12,7 @@ import lombok.Value;
  */
 @Value
 @Embeddable
+@Getter
 @NoArgsConstructor(force = true)
 
 public class Money {
@@ -20,11 +22,34 @@ public class Money {
     int scale;
 
     /**
+     * Constructor to create a Money object.
+     * @param currencyCode ISO 4217 currency code (e.g., "USD", "EUR").
+     * @param amountInSmallestUnit Amount in the smallest currency unit (e.g., cents for USD).
+     * @param scale Number of decimal places (e.g., 2 for USD).
+     */
+    public Money(String currencyCode, long amountInSmallestUnit, int scale) {
+        this.currencyCode = currencyCode;
+        this.amountInSmallestUnit = amountInSmallestUnit;
+        this.scale = scale;
+        if (!validate()) {
+            throw new IllegalArgumentException("Invalid Money object");
+        }
+    }
+
+    /**
      * Returns the string representation of the Money object in the format "CURRENCY AMOUNT".
      * @return Formatted string representation of the monetary amount.
      */
     public String format() {
         return String.format("%s %.2f", currencyCode, amountInSmallestUnit / Math.pow(10, scale));
+    }
+
+    /**
+     * Validates the Money object to ensure it has a valid currency code and non-negative scale.
+     * @return True if the Money object is valid, false otherwise.
+     */
+    public boolean validate() {
+        return currencyCode != null && !currencyCode.isEmpty() && scale >= 0;
     }
 
 }
