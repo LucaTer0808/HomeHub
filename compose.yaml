@@ -1,4 +1,4 @@
-# Currently used for local development and testing purposes. Contains MongoDB and PostgreSQL services databases.
+# Currently used for local development and testing purposes. Contains PostgreSQL services databases.
 services:
   app:
     build:
@@ -7,13 +7,17 @@ services:
 
     container_name: HomeHub
     ports:
-    - "8080:8080"
+    - "8081:8080"
     depends_on:
       - postgres
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/dev_db_psql
-      SPRING_DATASOURCE_USERNAME: dev
-      SPRING_DATASOURCE_PASSWORD: secret
+      SPRING_DATASOURCE_URL_DEV: ${SPRING_DATASOURCE_URL_DEV}
+      SPRING_DATASOURCE_USERNAME_DEV: ${SPRING_DATASOURCE_USERNAME_DEV}
+      SPRING_DATASOURCE_PASSWORD_DEV: ${SPRING_DATASOURCE_PASSWORD_DEV}
+
+      SPRING_DATASOURCE_URL_PROD: ${SPRING_DATASOURCE_URL_PROD}
+      SPRING_DATASOURCE_USERNAME_PROD: ${SPRING_DATASOURCE_USERNAME_PROD}
+      SPRING_DATASOURCE_PASSWORD_PROD: ${SPRING_DATASOURCE_PASSWORD_PROD}
 
   postgres:
     image: 'postgres:latest'

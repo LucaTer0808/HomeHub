@@ -34,4 +34,3 @@ build/
 
 ### .evn files ###
 .env
-.env.dev
