@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor
 @Getter
-public class Income extends Transaction{
+public class Income extends Transaction {
 
     private String source;
 
