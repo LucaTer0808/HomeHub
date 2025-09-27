@@ -1,6 +1,5 @@
 package com.terfehr.homehub.domain.bookkeeping.value;
 
-import jakarta.persistence.Convert;
 import jakarta.persistence.Embeddable;
 import lombok.NoArgsConstructor;
 import lombok.Value;
@@ -22,10 +21,15 @@ public class Money {
     Currency currency;
 
     /**
-     * Constructor to create a Money object.
-     * @param currencyCode ISO 4217 currency code (e.g., "USD", "EUR").
-     * @param amountInSmallestUnit Amount in the smallest currency unit (e.g., cents for USD).
-     * @param scale Number of decimal places (e.g., 2 for USD).
+     * Constructs a new {@code Money} instance with the specified currency and amount.
+     * The amount is represented in the smallest unit of the currency (e.g., cents for USD).
+     * Throws {@code IllegalArgumentException} if the specified currency is invalid.
+     *
+     * @param currency The currency of the money object. Must not be null.
+     * @param amountInSmallestUnit The monetary amount in the smallest currency unit.
+     *                              For example, cents for USD or yen for JPY.
+     *                              Can be positive, negative, or zero.
+     * @throws IllegalArgumentException If the currency is null or invalid.
      */
     public Money(Currency currency, long amountInSmallestUnit) {
         if (!validate(currency)) {

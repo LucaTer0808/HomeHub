@@ -5,18 +5,20 @@ import com.terfehr.homehub.domain.household.Household;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.boot.context.config.ConfigDataEnvironmentUpdateListener;
 
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Represents a financial account in the bookkeeping system. An Account can hold multiple Transaction and
- * Income records, allowing users to track their financial activities across different accounts such as checking,
- * savings, or credit cards. <strong>Aggregate</strong> to {@link Transaction} and {@link Income}.
+ * Represents a financial account that belongs to a household and manages a set
+ * of transactions. Each account has a name, a balance, and a collection of
+ * transactions that affect the balance. Accounts can belong to a specific
+ * household and support operations for adding, removing, and managing
+ * transactions. The account works as the aggregate root for its transactions.
  *
- * TODO: Implement Household
+ * This class provides validation mechanisms to ensure the consistency of the
+ * account data when modifying its properties or performing operations such as
+ * adding or removing transactions.
  */
 @Entity
 @NoArgsConstructor

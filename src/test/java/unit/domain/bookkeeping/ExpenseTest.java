@@ -42,4 +42,3 @@ public class ExpenseTest {
         assertThrows(IllegalArgumentException.class, () -> expense.setRecipient(""));
     }
 }
-

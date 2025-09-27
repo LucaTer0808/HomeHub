@@ -51,4 +51,3 @@ public class MoneyTest {
         assertDoesNotThrow(() -> new Money(Currency.getInstance("USD"), 0));
     }
 }
-
