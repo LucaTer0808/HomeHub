@@ -1,11 +1,12 @@
 package com.terfehr.homehub.domain.bookkeeping.value;
 
+import jakarta.persistence.Convert;
 import jakarta.persistence.Embeddable;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Value;
 
 import java.math.BigDecimal;
+import java.util.Currency;
 
 /**
  * Immutable value object representing a monetary amount in a specific currency.
@@ -35,6 +36,18 @@ public class Money {
     }
 
     /**
+     * Returns a formatted string representation of the monetary amount including the currency symbol
+     * and the amount adjusted to the correct decimal places based on the currency's scale.
+     *
+     * @return A string containing the currency symbol followed by the adjusted monetary amount.
+     */
+    public String withSymbol() {
+        BigDecimal value = BigDecimal.valueOf(amountInSmallestUnit)
+                .movePointLeft(currency.getDefaultFractionDigits());
+        return String.format("%s %s", currency.getSymbol(), value);
+    }
+
+    /**
      * Formats the monetary amount into a human-readable string representation.
      * The output includes the ISO 4217 currency code and the amount formatted
      * according to the currency's scale (number of decimal places).
@@ -42,9 +55,9 @@ public class Money {
      * @return A string representation of the monetary amount in the format
      *         "Currency Code + Amount", where the amount is adjusted based on the currency scale.
      */
-    public String format() {
+    public String withCurrencyCode() {
         BigDecimal value = BigDecimal.valueOf(amountInSmallestUnit)
-                .movePointLeft(currency.getScale());
+                .movePointLeft(currency.getDefaultFractionDigits());
         return String.format("%s %s", currency.getCurrencyCode(), value);
     }
 
@@ -55,6 +68,8 @@ public class Money {
     public boolean validate() {
         return currency != null && validateAmountInSmallestUnit(amountInSmallestUnit);
     }
+
+
 
     /**
      * Validates whether the provided amount in the smallest currency unit is non-negative.
