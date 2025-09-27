@@ -1,6 +1,7 @@
 package com.terfehr.homehub.domain.bookkeeping.entity;
 
 import com.terfehr.homehub.domain.bookkeeping.value.Money;
+import com.terfehr.homehub.domain.household.Household;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,6 +25,7 @@ public class Account {
     private String name;
     private Money balance;
     private HashSet<Transaction> transactions;
+    @ManyToOne(fetch = FetchType.LAZY)
     private Household household;
 
     /**
@@ -153,7 +155,7 @@ public class Account {
             long newBalance = balance.getAmountInSmallestUnit() + transaction.getAmount().getAmountInSmallestUnit();
             balance = new Money(balance.getCurrency(), newBalance);
         }
-        if (transaction instanceof Expense) {
+        else if (transaction instanceof Expense) {
             long newBalance = balance.getAmountInSmallestUnit() - transaction.getAmount().getAmountInSmallestUnit();
             balance = new Money(balance.getCurrency(), newBalance);
         }
@@ -174,7 +176,7 @@ public class Account {
             long newBalance = balance.getAmountInSmallestUnit() - transaction.getAmount().getAmountInSmallestUnit();
             balance = new Money(balance.getCurrency(), newBalance);
         }
-        if (transaction instanceof Expense) {
+        else if (transaction instanceof Expense) {
             long newBalance = balance.getAmountInSmallestUnit() + transaction.getAmount().getAmountInSmallestUnit();
             balance = new Money(balance.getCurrency(), newBalance);
         }
@@ -222,7 +224,6 @@ public class Account {
      */
     private boolean validateTransaction(Transaction transaction) {
         if (transaction == null) return false;
-        assert transaction.getAmount().getCurrency() != null; // should never be null, still here to suppress warnings
         return transaction.getAmount().getCurrency().equals(balance.getCurrency());
     }
 }

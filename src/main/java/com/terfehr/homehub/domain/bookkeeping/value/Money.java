@@ -12,7 +12,6 @@ import lombok.Value;
  */
 @Value
 @Embeddable
-@Getter
 @NoArgsConstructor(force = true)
 public class Money {
 
