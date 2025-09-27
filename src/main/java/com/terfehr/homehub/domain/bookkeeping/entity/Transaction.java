@@ -8,8 +8,10 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 /**
- * Transaction entity representing an expense record in the bookkeeping system.
- * Each Transaction belongs to a specific Account and has attributes such as amount, date and description.
+ * Represents a financial transaction in a bookkeeping system.
+ * This class serves as an abstract base class for specific types of transactions,
+ * such as expenses or income. It includes attributes for the monetary amount,
+ * description, date, and the associated account. Validation logic ensures the integrity of the data.
  */
 @Entity
 @NoArgsConstructor
@@ -25,6 +27,16 @@ public abstract class Transaction {
     @ManyToOne(fetch = FetchType.LAZY)
     private Account account;
 
+    /**
+     * Creates a new Transaction object with the specified amount, description, date, and account.
+     * Ensures that all provided parameters are valid before initializing the Transaction object.
+     *
+     * @param amount The monetary amount for the transaction, represented in the smallest currency unit (e.g., cents for USD).
+     * @param description A brief description or note detailing the transaction.
+     * @param date The date and time of the transaction.
+     * @param account The account associated with the transaction.
+     * @throws IllegalArgumentException if any of the provided parameters are invalid.
+     */
     public Transaction(long amount, String description, LocalDateTime date, Account account) {
         if (!this.validateTransaction(amount, description, date, account)) {
             throw new IllegalArgumentException("Invalid Transaction object");
@@ -40,7 +52,7 @@ public abstract class Transaction {
      * The amount must be greater than zero and will be associated with the account's currency.
      *
      * @param amount The monetary amount to be set, represented in the smallest currency unit (e.g., cents for USD).
-     *               Throws IllegalArgumentException if the amount is not valid.
+     * @throws IllegalArgumentException if the amount is not valid.
      */
     public void setAmount(long amount) {
         if (!validateAmount(amount)) {
@@ -51,7 +63,10 @@ public abstract class Transaction {
 
     /**
      * Sets the description for the Transaction.
-     * @param description A brief description of the expense.
+     * The description must not be null or empty.
+     *
+     * @param description The description of the Transaction.
+     * @throws IllegalArgumentException if the description is not valid.
      */
     public void setDescription(String description) {
         if (!validateDescription(description)) {
@@ -62,7 +77,10 @@ public abstract class Transaction {
 
     /**
      * Sets the date for the Transaction.
-     * @param date The date and time when the expense occurred.
+     * The date must be valid and not null.
+     *
+     * @param date The date and time of the Transaction to be set.
+     * @throws IllegalArgumentException if the given date is invalid.
      */
     public void setDate(LocalDateTime date) {
         if (!validateDate(date)) {
@@ -72,10 +90,13 @@ public abstract class Transaction {
     }
 
     /**
-     * Validates the state of the Transaction object. It checks if all required fields,
-     * including amount, date and description, meet the defined validation criteria.
+     * Validates the properties of a transaction to ensure they meet the required criteria.
      *
-     * @return true if the Transaction object is valid, false otherwise.
+     * @param amount The monetary amount for the transaction, represented in the smallest currency unit (e.g., cents for USD).
+     * @param description A brief description or note detailing the transaction.
+     * @param date The date and time of the transaction.
+     * @param account The account associated with the transaction.
+     * @return true if all provided parameters are valid, false otherwise.
      */
     private boolean validateTransaction(long amount, String description, LocalDateTime date, Account account) {
         return validateDate(date) && validateDescription(description) && validateAmount(amount) && validateAccount(account);

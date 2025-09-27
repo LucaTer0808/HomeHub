@@ -4,7 +4,6 @@ import com.terfehr.homehub.domain.bookkeeping.entity.Account;
 import com.terfehr.homehub.domain.bookkeeping.entity.Expense;
 import com.terfehr.homehub.domain.bookkeeping.value.Money;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.time.LocalDateTime;
 import java.util.Currency;
@@ -27,8 +26,8 @@ public class ExpenseTest {
         assertDoesNotThrow(() -> new Expense(100, "Desc", LocalDateTime.now(), "Recipient", account));
     }
 
-    @Test
     // Only to check if exceptions are thrown for invalid inputs
+    @Test
     public void testSetters() {
         Account account = mock(Account.class);
         Money balance = new Money(Currency.getInstance("USD"), 10000);

@@ -26,8 +26,8 @@ public class IncomeTest {
         assertDoesNotThrow(() -> new Income(100, "Desc", LocalDateTime.now(), "Source", account));
     }
 
-    @Test
     // Only to check if exceptions are thrown for invalid inputs
+    @Test
     public void testSetters() {
         Account account = mock(Account.class);
         Money balance = new Money(Currency.getInstance("USD"), 10000);

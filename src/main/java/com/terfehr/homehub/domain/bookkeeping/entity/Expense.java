@@ -21,13 +21,16 @@ public class Expense extends Transaction {
     private String recipient;
 
     /**
-     * Constructs an Expense object.
+     * Constructs an Expense object representing a transaction in the bookkeeping system.
+     * Includes details about the amount, description, date, recipient, and associated account.
+     * Validates the recipient to ensure data integrity.
      *
-     * @param amount The monetary amount of the expense, represented as a Money object.
-     * @param description A brief description of the expense transaction.
-     * @param date The date and time when the expense occurred.
+     * @param amount The monetary value of the expense in the smallest currency unit (e.g., cents for USD).
+     * @param description A brief description of the expense.
+     * @param date The date and time the expense occurred.
      * @param recipient The recipient to whom the expense was paid.
-     * @throws IllegalArgumentException if the Expense object is invalid based on validation rules.
+     * @param account The account associated with the expense transaction.
+     * @throws IllegalArgumentException if the recipient is invalid.
      */
     public Expense(long amount, String description, LocalDateTime date, String recipient, Account account) {
         super(amount, description, date, account);
@@ -38,8 +41,11 @@ public class Expense extends Transaction {
     }
 
     /**
-     * Sets the recipient of the expense. It's who the money was paid to.
-     * @param recipient The recipient to whom the expense was paid.
+     * Sets the recipient of the expense. The recipient represents
+     * the entity or individual to whom the payment was made.
+     *
+     * @param recipient The recipient to set. Must be a non-null and non-empty string.
+     * @throws IllegalArgumentException if the recipient is null or empty.
      */
     public void setRecipient(String recipient) {
         if (!validateRecipient(recipient)) {
