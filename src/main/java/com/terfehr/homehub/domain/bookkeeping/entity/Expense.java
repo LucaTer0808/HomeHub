@@ -54,7 +54,7 @@ public class Expense extends Transaction {
      * @param recipient The recipient string to be validated.
      * @return true if the recipient passes validation criteria, false otherwise.
      */
-    public boolean validate(String recipient) {
+    private boolean validate(String recipient) {
         return validateRecipient(recipient);
     }
 

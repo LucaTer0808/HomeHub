@@ -120,7 +120,7 @@ public class Account {
      * @param household The household associated with the account. Must not be null.
      * @return True if all the parameters are valid, false otherwise.
      */
-    public boolean validate(String name, Money balance, Household household) {
+    private boolean validate(String name, Money balance, Household household) {
         return validateName(name) && validateBalance(balance) && validateHousehold(household);
     }
 

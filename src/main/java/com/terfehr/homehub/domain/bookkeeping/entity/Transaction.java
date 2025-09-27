@@ -77,7 +77,7 @@ public abstract class Transaction {
      *
      * @return true if the Transaction object is valid, false otherwise.
      */
-    public boolean validateTransaction(long amount, String description, LocalDateTime date, Account account) {
+    private boolean validateTransaction(long amount, String description, LocalDateTime date, Account account) {
         return validateDate(date) && validateDescription(description) && validateAmount(amount) && validateAccount(account);
     }
 

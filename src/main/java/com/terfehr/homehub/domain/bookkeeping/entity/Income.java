@@ -40,7 +40,7 @@ public class Income extends Transaction {
      *
      * @return true if the Income object is valid, false otherwise.
      */
-    public boolean validate(String source) {
+    private boolean validate(String source) {
         return validateSource(source);
     }
 
