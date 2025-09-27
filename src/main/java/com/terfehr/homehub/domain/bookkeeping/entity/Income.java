@@ -27,13 +27,30 @@ public class Income extends Transaction {
      * @param source The source from which the income was received.
      */
     public void setSource(String source) {
-        this.source = source;
-        if (!validate()) {
-            throw new IllegalArgumentException("Invalid Income object");
+        if (!validateSource(source)) {
+            throw new IllegalArgumentException("Invalid source");
         }
+        this.source = source;
     }
 
+    /**
+     * Validates the state of the Income object. This method ensures that both the validation
+     * criteria defined in the superclass Transaction and the specific validation for the
+     * Income entity (i.e., the validity of the source) are satisfied.
+     *
+     * @return true if the Income object is valid, false otherwise.
+     */
     public boolean validate() {
-        return super.validate() && source != null && !source.isEmpty();
+        return super.validate() && validateSource(source);
+    }
+
+    /**
+     * Validates the provided source string to ensure it is neither null nor empty.
+     *
+     * @param source The source string to be validated.
+     * @return true if the source is not null and not empty, false otherwise.
+     */
+    private boolean validateSource(String source) {
+        return source != null && !source.isEmpty();
     }
 }

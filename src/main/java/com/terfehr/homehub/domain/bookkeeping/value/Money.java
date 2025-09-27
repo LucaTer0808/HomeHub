@@ -25,8 +25,8 @@ public class Money {
      * @param amountInSmallestUnit Amount in the smallest currency unit (e.g., cents for USD).
      * @param scale Number of decimal places (e.g., 2 for USD).
      */
-    public Money(String currencyCode, long amountInSmallestUnit, int scale) {
-        this.currency = new Currency(currencyCode, scale);
+    public Money(Currency currency, long amountInSmallestUnit) {
+        this.currency = currency;
         this.amountInSmallestUnit = amountInSmallestUnit;
         if (!validate()) {
             throw new IllegalArgumentException("Invalid Money object");

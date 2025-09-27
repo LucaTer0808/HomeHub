@@ -37,10 +37,10 @@ public abstract class Transaction {
      * @param amount The monetary amount of the expense.
      */
     public void setAmount(Money amount) {
-        this.amount = amount;
-        if (!validate()) {
-            throw new IllegalArgumentException("Invalid Transaction object");
+        if (!validateAmount(amount)) {
+            throw new IllegalArgumentException("Invalid amount");
         }
+        this.amount = amount;
     }
 
     /**
@@ -48,10 +48,10 @@ public abstract class Transaction {
      * @param description A brief description of the expense.
      */
     public void setDescription(String description) {
-        this.description = description;
-        if (!validate()) {
-            throw new IllegalArgumentException("Invalid Transaction object");
+        if (!validateDescription(description)) {
+            throw new IllegalArgumentException("Invalid description");
         }
+        this.description = description;
     }
 
     /**
@@ -59,17 +59,49 @@ public abstract class Transaction {
      * @param date The date and time when the expense occurred.
      */
     public void setDate(LocalDateTime date) {
-        this.date = date;
-        if (!validate()) {
-            throw new IllegalArgumentException("Invalid Transaction object");
+        if (!validateDate(date)) {
+            throw new IllegalArgumentException("Invalid date");
         }
+        this.date = date;
     }
 
     /**
-     * Validates the Transaction object to ensure all required fields are set and valid.
-     * @return True if the Transaction object is valid, false otherwise.
+     * Validates the state of the Transaction object. It checks if all required fields,
+     * including amount, date and description, meet the defined validation criteria.
+     *
+     * @return true if the Transaction object is valid, false otherwise.
      */
     public boolean validate() {
-        return amount != null && amount.validate() && date != null && description != null && !description.isEmpty();
+        return validateAmount(amount) && validateDate(date) && validateDescription(description);
+    }
+
+    /**
+     * Validates if the provided monetary amount is not null.
+     *
+     * @param amount The monetary amount to be validated.
+     * @return true if the amount is not null, false otherwise.
+     */
+    private boolean validateAmount(Money amount) {
+        return amount != null;
+    }
+
+    /**
+     * Validates the given date to ensure it is not null.
+     *
+     * @param date The date to be validated.
+     * @return true if the date is not null, false otherwise.
+     */
+    private boolean validateDate(LocalDateTime date) {
+        return date != null;
+    }
+
+    /**
+     * Validates the given description to ensure it is not null or empty.
+     *
+     * @param description The description to be validated.
+     * @return true if the description is not null and not empty, false otherwise.
+     */
+    private boolean validateDescription(String description) {
+        return description != null && !description.isEmpty();
     }
 }

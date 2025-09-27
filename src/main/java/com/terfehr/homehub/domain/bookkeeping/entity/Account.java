@@ -41,7 +41,7 @@ public class Account {
         this.balance = initialBalance;
         this.transactions = new HashSet<>();
         this.household = household;
-        if (!validate) {
+        if (!validate()) {
             throw new IllegalArgumentException("Invalid Account object");
         }
     }
@@ -151,11 +151,11 @@ public class Account {
     private void updateBalance(Transaction transaction) {
         if (transaction instanceof Income) {
             long newBalance = balance.getAmountInSmallestUnit() + transaction.getAmount().getAmountInSmallestUnit();
-            balance = new Money(balance.getCurrencyCode(), newBalance, balance.getScale());
+            balance = new Money(balance.getCurrency(), newBalance);
         }
         if (transaction instanceof Expense) {
             long newBalance = balance.getAmountInSmallestUnit() - transaction.getAmount().getAmountInSmallestUnit();
-            balance = new Money(balance.getCurrencyCode(), newBalance, balance.getScale());
+            balance = new Money(balance.getCurrency(), newBalance);
         }
     }
 
@@ -172,11 +172,11 @@ public class Account {
     private void revertBalance(Transaction transaction) {
         if (transaction instanceof Income) {
             long newBalance = balance.getAmountInSmallestUnit() - transaction.getAmount().getAmountInSmallestUnit();
-            balance = new Money(balance.getCurrencyCode(), newBalance, balance.getScale());
+            balance = new Money(balance.getCurrency(), newBalance);
         }
         if (transaction instanceof Expense) {
             long newBalance = balance.getAmountInSmallestUnit() + transaction.getAmount().getAmountInSmallestUnit();
-            balance = new Money(balance.getCurrencyCode(), newBalance, balance.getScale());
+            balance = new Money(balance.getCurrency(), newBalance);
         }
     }
 
