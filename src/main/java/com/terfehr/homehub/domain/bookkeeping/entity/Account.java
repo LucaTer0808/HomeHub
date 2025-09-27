@@ -208,7 +208,7 @@ public class Account {
      */
     private boolean validateTransaction(Transaction transaction) {
         return transaction != null &&
-                transaction.getAccount() == this;
+                transaction.getAccount().equals(this);
     }
 }
 

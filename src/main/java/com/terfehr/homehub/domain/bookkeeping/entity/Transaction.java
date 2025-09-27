@@ -124,10 +124,10 @@ public abstract class Transaction {
     }
 
     /**
-     * Validates the given monetary amount to ensure it is greater than zero.
+     * Validates the given monetary amount to ensure it meets the required criteria.
      *
-     * @param amount The monetary amount to be validated, represented as a Money object.
-     * @return true if the monetary amount is valid (greater than zero), false otherwise.
+     * @param amount The monetary amount to be validated, represented in the smallest currency unit (e.g., cents for USD).
+     * @return true if the amount is greater than zero, false otherwise.
      */
     private boolean validateAmount(long amount) {
         return amount > 0;
