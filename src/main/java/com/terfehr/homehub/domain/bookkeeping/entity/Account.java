@@ -1,6 +1,5 @@
 package com.terfehr.homehub.domain.bookkeeping.entity;
 
-import com.terfehr.homehub.domain.bookkeeping.acl.UserId;
 import com.terfehr.homehub.domain.bookkeeping.value.Money;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -22,11 +21,6 @@ public class Account {
     private Long id;
     private String name;
     private Money balance;
-    @ElementCollection
-    @CollectionTable(
-            name = "account_users",
-            joinColumns = @JoinColumn(name = "account_id")
-    )
-    private List<UserId> users;
-
 }
+
+
