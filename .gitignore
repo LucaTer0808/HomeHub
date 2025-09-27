@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### .evn files ###
+.env
+.env.dev
