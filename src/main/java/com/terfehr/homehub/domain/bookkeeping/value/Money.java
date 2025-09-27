@@ -14,12 +14,10 @@ import lombok.Value;
 @Embeddable
 @Getter
 @NoArgsConstructor(force = true)
-
 public class Money {
 
-    String currencyCode;
     long amountInSmallestUnit;
-    int scale;
+    Currency currency;
 
     /**
      * Constructor to create a Money object.
@@ -28,9 +26,8 @@ public class Money {
      * @param scale Number of decimal places (e.g., 2 for USD).
      */
     public Money(String currencyCode, long amountInSmallestUnit, int scale) {
-        this.currencyCode = currencyCode;
+        this.currency = new Currency(currencyCode, scale);
         this.amountInSmallestUnit = amountInSmallestUnit;
-        this.scale = scale;
         if (!validate()) {
             throw new IllegalArgumentException("Invalid Money object");
         }
@@ -41,7 +38,7 @@ public class Money {
      * @return Formatted string representation of the monetary amount.
      */
     public String format() {
-        return String.format("%s %.2f", currencyCode, amountInSmallestUnit / Math.pow(10, scale));
+        return String.format("%s %.2f", currency.getCurrencyCode(), amountInSmallestUnit / Math.pow(10, currency.getScale()));
     }
 
     /**
@@ -49,7 +46,17 @@ public class Money {
      * @return True if the Money object is valid, false otherwise.
      */
     public boolean validate() {
-        return currencyCode != null && !currencyCode.isEmpty() && scale >= 0;
+        return currency != null && validateAmountInSmallestUnit(amountInSmallestUnit);
+    }
+
+    /**
+     * Validates whether the provided amount in the smallest currency unit is non-negative.
+     *
+     * @param amountInSmallestUnit The amount in the smallest currency unit (e.g., cents for USD) to validate.
+     * @return True if the amount is non-negative; false otherwise.
+     */
+    private boolean validateAmountInSmallestUnit(long amountInSmallestUnit) {
+        return amountInSmallestUnit >= 0;
     }
 
 }

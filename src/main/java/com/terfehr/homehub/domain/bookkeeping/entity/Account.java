@@ -27,23 +27,23 @@ public class Account {
     private Household household;
 
     /**
-     * Constructs a new instance of Account with the specified name, initial balance,
-     * and associated household. Ensures the provided parameters are valid.
+     * Constructs a new Account object with the specified name, initial balance, and household.
+     * The account will have an empty set of transactions upon creation.
      *
-     * @param name The name of the account, typically representing what the account
-     *             is used for (e.g., "Checking Account").
-     * @param initialBalance The initial monetary balance of the account.
-     * @param household The household associated with the account, representing ownership.
-     * @throws IllegalArgumentException If any of the provided parameters are invalid.
+     * @param name          The name of the account, which typically identifies its purpose
+     *                       (e.g., "Checking Account", "Savings Account"). Must not be null or empty.
+     * @param initialBalance The initial monetary balance for the account. Must not be null.
+     * @param household      The household associated with this account, representing the group or entity
+     *                       that owns the account. Must not be null.
      */
     public Account(String name, Money initialBalance, Household household) {
-        if (!validate(name, initialBalance, household)) {
-            throw new IllegalArgumentException("Invalid Account object");
-        }
         this.name = name;
         this.balance = initialBalance;
         this.transactions = new HashSet<>();
         this.household = household;
+        if (!validate) {
+            throw new IllegalArgumentException("Invalid Account object");
+        }
     }
 
     /**
@@ -136,7 +136,7 @@ public class Account {
      *
      * @return True if the Account object is valid based on the specified criteria, false otherwise.
      */
-    public boolean validate(String name, Money balance, Household household) {
+    public boolean validate() {
         return validateName(name) && validateBalance(balance) && validateHousehold(household);
     }
 
@@ -191,13 +191,13 @@ public class Account {
     }
 
     /**
-     * Validates the specified balance to ensure it is not null and complies with its own validation rules.
+     * Validates the specified balance to ensure it is not null.
      *
      * @param balance The monetary balance to validate. Must not be null and must pass its own validation checks.
      * @return True if the balance is valid, false otherwise.
      */
     private boolean validateBalance(Money balance) {
-        return balance != null && balance.validate();
+        return balance != null;
     }
 
     /**
@@ -209,7 +209,7 @@ public class Account {
      * @return True if the household is valid, false otherwise.
      */
     private boolean validateHousehold(Household household) {
-        return household != null && household.validate();
+        return household != null;
     }
 
     /**
@@ -221,7 +221,9 @@ public class Account {
      * @return True if the transaction is valid, false otherwise.
      */
     private boolean validateTransaction(Transaction transaction) {
-        return transaction != null && transaction.validate();
+        if (transaction == null) return false;
+        assert transaction.getAmount().getCurrency() != null; // should never be null, still here to suppress warnings
+        return transaction.getAmount().getCurrency().equals(balance.getCurrency());
     }
 }
 
