@@ -46,6 +46,7 @@ public class AccountTest {
     @Test
     public void testAddTransaction() {
         Household household = mock(Household.class);
+        Household household2 = mock(Household.class);
         Currency currency = Currency.getInstance("USD");
 
         Money money = new Money(currency, 10000); // $100.00
@@ -55,6 +56,7 @@ public class AccountTest {
 
         Transaction transaction = new Income(1000, "Test Transaction", LocalDateTime.now(), "Source", account);
         Transaction transaction2 = new Expense(1000, "Test Transaction", LocalDateTime.now(), "Recipient", account);
+        Transaction transaction3 = new Expense(1000, "Test Transaction", LocalDateTime.now(), "Recipient", new Account("Other Account", money, household2));
 
         assertThrows(IllegalArgumentException.class, () -> account.addTransaction(null));
 
@@ -65,6 +67,8 @@ public class AccountTest {
 
         assertDoesNotThrow(() -> account.addTransaction(transaction2));
         assertEquals(account.getBalance(), money);
+
+        assertThrows(IllegalArgumentException.class, () -> account.addTransaction(transaction3)); // different account
 
     }
 
