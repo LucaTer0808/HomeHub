@@ -5,6 +5,7 @@ import com.terfehr.homehub.domain.household.Household;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.boot.context.config.ConfigDataEnvironmentUpdateListener;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -25,6 +26,7 @@ public class Account {
     private Long id;
     private String name;
     private Money balance;
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Transaction> transactions;
     @ManyToOne(fetch = FetchType.LAZY)
     private Household household;

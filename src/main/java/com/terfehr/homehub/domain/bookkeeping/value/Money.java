@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Value;
 
+import java.math.BigDecimal;
+
 /**
  * Immutable value object representing a monetary amount in a specific currency.
  * It encapsulates the currency code, the amount in the smallest unit (e.g., cents for USD),
@@ -33,11 +35,17 @@ public class Money {
     }
 
     /**
-     * Returns the string representation of the Money object in the format "CURRENCY AMOUNT".
-     * @return Formatted string representation of the monetary amount.
+     * Formats the monetary amount into a human-readable string representation.
+     * The output includes the ISO 4217 currency code and the amount formatted
+     * according to the currency's scale (number of decimal places).
+     *
+     * @return A string representation of the monetary amount in the format
+     *         "Currency Code + Amount", where the amount is adjusted based on the currency scale.
      */
     public String format() {
-        return String.format("%s %.2f", currency.getCurrencyCode(), amountInSmallestUnit / Math.pow(10, currency.getScale()));
+        BigDecimal value = BigDecimal.valueOf(amountInSmallestUnit)
+                .movePointLeft(currency.getScale());
+        return String.format("%s %s", currency.getCurrencyCode(), value);
     }
 
     /**

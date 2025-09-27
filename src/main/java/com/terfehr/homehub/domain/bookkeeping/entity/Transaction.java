@@ -22,11 +22,14 @@ public abstract class Transaction {
     private Money amount;
     private String description;
     private LocalDateTime date;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Account account;
 
-    public Transaction(Money amount, String description, LocalDateTime date) {
+    public Transaction(Money amount, String description, LocalDateTime date, Account account) {
         this.amount = amount;
         this.description = description;
         this.date = date;
+        this.account = account;
         if (!validate()) {
             throw new IllegalArgumentException("Invalid Transaction object");
         }
@@ -66,13 +69,26 @@ public abstract class Transaction {
     }
 
     /**
+     * Sets the account associated with the Transaction.
+     *
+     * @param account The account to be assigned to this Transaction. Must be a valid, non-null account.
+     * @throws IllegalArgumentException if the provided account is invalid or null.
+     */
+    public void setAccount(Account account) {
+        if (!validateAccount(account)) {
+            throw new IllegalArgumentException("Invalid account");
+        }
+        this.account = account;
+    }
+
+    /**
      * Validates the state of the Transaction object. It checks if all required fields,
      * including amount, date and description, meet the defined validation criteria.
      *
      * @return true if the Transaction object is valid, false otherwise.
      */
     public boolean validate() {
-        return validateAmount(amount) && validateDate(date) && validateDescription(description);
+        return validateAmount(amount) && validateDate(date) && validateDescription(description) && validateAccount(account);
     }
 
     /**
@@ -103,5 +119,15 @@ public abstract class Transaction {
      */
     private boolean validateDescription(String description) {
         return description != null && !description.isEmpty();
+    }
+
+    /**
+     * Validates the given account to ensure it is not null.
+     *
+     * @param account The account to be validated.
+     * @return true if the account is not null, false otherwise.
+     */
+    private boolean validateAccount(Account account) {
+        return account != null;
     }
 }

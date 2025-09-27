@@ -14,8 +14,8 @@ public class Income extends Transaction {
 
     private String source;
 
-    public Income(Money amount, String description, LocalDateTime date, String source) {
-        super(amount, description, date);
+    public Income(Money amount, String description, LocalDateTime date, String source, Account account) {
+        super(amount, description, date, account);
         this.source = source;
         if (!validate()) {
             throw new IllegalArgumentException("Invalid Income object");
