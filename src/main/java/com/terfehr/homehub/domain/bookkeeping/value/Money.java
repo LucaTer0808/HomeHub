@@ -28,11 +28,11 @@ public class Money {
      * @param scale Number of decimal places (e.g., 2 for USD).
      */
     public Money(Currency currency, long amountInSmallestUnit) {
-        this.currency = currency;
-        this.amountInSmallestUnit = amountInSmallestUnit;
-        if (!validate()) {
+        if (!validate(currency)) {
             throw new IllegalArgumentException("Invalid Money object");
         }
+        this.currency = currency;
+        this.amountInSmallestUnit = amountInSmallestUnit;
     }
 
     /**
@@ -62,23 +62,12 @@ public class Money {
     }
 
     /**
-     * Validates the Money object to ensure it has a valid currency code and non-negative scale.
-     * @return True if the Money object is valid, false otherwise.
-     */
-    public boolean validate() {
-        return currency != null && validateAmountInSmallestUnit(amountInSmallestUnit);
-    }
-
-
-
-    /**
-     * Validates whether the provided amount in the smallest currency unit is non-negative.
+     * Validates the given currency to ensure it is not null.
      *
-     * @param amountInSmallestUnit The amount in the smallest currency unit (e.g., cents for USD) to validate.
-     * @return True if the amount is non-negative; false otherwise.
+     * @param currency the currency to be validated
+     * @return {@code true} if the currency is not null, otherwise {@code false}
      */
-    private boolean validateAmountInSmallestUnit(long amountInSmallestUnit) {
-        return amountInSmallestUnit >= 0;
+    public boolean validate(Currency currency) {
+        return currency != null;
     }
-
 }

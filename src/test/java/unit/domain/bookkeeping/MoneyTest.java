@@ -48,8 +48,7 @@ public class MoneyTest {
     @Test
     public void testValidate() {
         assertThrows(IllegalArgumentException.class, () -> new Money(null, 1));
-        assertThrows(IllegalArgumentException.class, () -> new Money(Currency.getInstance("USD"), -1));
-        assertTrue(new Money(Currency.getInstance("USD"), 0).validate());
+        assertDoesNotThrow(() -> new Money(Currency.getInstance("USD"), 0));
     }
 }
 

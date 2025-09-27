@@ -14,12 +14,12 @@ public class Income extends Transaction {
 
     private String source;
 
-    public Income(Money amount, String description, LocalDateTime date, String source, Account account) {
+    public Income(long amount, String description, LocalDateTime date, String source, Account account) {
         super(amount, description, date, account);
-        this.source = source;
-        if (!validate()) {
+        if (!validate(source)) {
             throw new IllegalArgumentException("Invalid Income object");
         }
+        this.source = source;
     }
 
     /**
@@ -40,8 +40,8 @@ public class Income extends Transaction {
      *
      * @return true if the Income object is valid, false otherwise.
      */
-    public boolean validate() {
-        return super.validate() && validateSource(source);
+    public boolean validate(String source) {
+        return validateSource(source);
     }
 
     /**

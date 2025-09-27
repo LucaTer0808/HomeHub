@@ -29,12 +29,12 @@ public class Expense extends Transaction {
      * @param recipient The recipient to whom the expense was paid.
      * @throws IllegalArgumentException if the Expense object is invalid based on validation rules.
      */
-    public Expense(Money amount, String description, LocalDateTime date, String recipient, Account account) {
+    public Expense(long amount, String description, LocalDateTime date, String recipient, Account account) {
         super(amount, description, date, account);
-        this.recipient = recipient;
-        if (!validate()) {
+        if (!validate(recipient)) {
             throw new IllegalArgumentException("Invalid Expense object");
         }
+        this.recipient = recipient;
     }
 
     /**
@@ -49,14 +49,13 @@ public class Expense extends Transaction {
     }
 
     /**
-     * Validates the state of the Expense object. This method ensures that both the validation
-     * criteria defined in the superclass Transaction and the specific validation for the
-     * Expense entity (i.e., the validity of the recipient) are satisfied.
+     * Validates the provided recipient string to ensure it adheres to specific rules.
      *
-     * @return true if the Expense object is valid, false otherwise.
+     * @param recipient The recipient string to be validated.
+     * @return true if the recipient passes validation criteria, false otherwise.
      */
-    public boolean validate() {
-        return super.validate() && validateRecipient(recipient);
+    public boolean validate(String recipient) {
+        return validateRecipient(recipient);
     }
 
     /**

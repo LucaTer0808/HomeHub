@@ -42,13 +42,13 @@ public class Account {
      *                       that owns the account. Must not be null.
      */
     public Account(String name, Money initialBalance, Household household) {
+        if (!validate(name, initialBalance, household)) {
+            throw new IllegalArgumentException("Invalid Account object");
+        }
         this.name = name;
         this.balance = initialBalance;
         this.transactions = new HashSet<>();
         this.household = household;
-        if (!validate()) {
-            throw new IllegalArgumentException("Invalid Account object");
-        }
     }
 
     /**
@@ -66,35 +66,14 @@ public class Account {
     }
 
     /**
-     * Updates the balance of the account. The balance represents the current monetary
-     * amount available in the account. This method ensures the account remains valid
-     * after updating the balance.
+     * Updates the account balance to the specified value while maintaining the currency of the
+     * existing balance.
      *
-     * @param balance The new monetary balance to set for the account. It must be an
-     *                instance of {@link Money} and pass its own validation checks.
-     * @throws IllegalArgumentException If the account becomes invalid after setting the balance.
+     * @param balance The new balance amount in the smallest monetary unit (e.g., cents for USD).
+     *                Must be a valid long value representing the updated financial balance.
      */
-    public void setBalance(Money balance) {
-        if (!validateBalance(balance)) {
-            throw new IllegalArgumentException("Invalid Account object");
-        }
-        this.balance = balance;
-    }
-
-    /**
-     * Sets the household associated with this account. The household represents
-     * the group or entity that owns the account. This method ensures the account
-     * remains valid after updating the household.
-     *
-     * @param household The household to associate with this account. It must be
-     *                  non-null and pass its own validation checks.
-     * @throws IllegalArgumentException If the account becomes invalid after setting the household.
-     */
-    public void setHousehold(Household household) {
-        if (!validateHousehold(household)) {
-            throw new IllegalArgumentException("Invalid Account object");
-        }
-        this.household = household;
+    public void setBalance(long balance) {
+        this.balance = new Money(this.balance.getCurrency(), balance);
     }
 
     /**
@@ -133,15 +112,15 @@ public class Account {
     }
 
     /**
-     * Validates the Account object to ensure all required fields are properly set
-     * and meet the conditions for a valid account. The validation checks that:
-     * - The account's name is not null or empty.
-     * - The balance is not null and passes its own validation.
-     * - The household associated with the account is not null.
+     * Validates the provided parameters to ensure they meet the required conditions
+     * for creating or updating an Account object.
      *
-     * @return True if the Account object is valid based on the specified criteria, false otherwise.
+     * @param name The name of the account to validate. Must not be null or empty.
+     * @param balance The monetary balance to validate. Must not be null.
+     * @param household The household associated with the account. Must not be null.
+     * @return True if all the parameters are valid, false otherwise.
      */
-    public boolean validate() {
+    public boolean validate(String name, Money balance, Household household) {
         return validateName(name) && validateBalance(balance) && validateHousehold(household);
     }
 
@@ -218,16 +197,15 @@ public class Account {
     }
 
     /**
-     * Validates the given transaction to ensure it is valid.
-     * A transaction is considered valid if it is not null and passes its own validation.
+     * Validates the provided transaction to ensure it is not null and is associated with the current account.
      *
-     * @param transaction The transaction object to be validated. Must not be null and should
-     *                    pass its internal validation checks.
+     * @param transaction The transaction to be validated. Must not be null and must have an associated account
+     *                    that matches the current account.
      * @return True if the transaction is valid, false otherwise.
      */
     private boolean validateTransaction(Transaction transaction) {
-        if (transaction == null) return false;
-        return transaction.getAmount().getCurrency().equals(balance.getCurrency());
+        return transaction != null &&
+                transaction.getAccount() == this;
     }
 }
 

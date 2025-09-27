@@ -25,25 +25,28 @@ public abstract class Transaction {
     @ManyToOne(fetch = FetchType.LAZY)
     private Account account;
 
-    public Transaction(Money amount, String description, LocalDateTime date, Account account) {
-        this.amount = amount;
+    public Transaction(long amount, String description, LocalDateTime date, Account account) {
+        if (!this.validateTransaction(amount, description, date, account)) {
+            throw new IllegalArgumentException("Invalid Transaction object");
+        }
+        this.amount = new Money(account.getBalance().getCurrency(), amount); // default to account currency
         this.description = description;
         this.date = date;
         this.account = account;
-        if (!validate()) {
-            throw new IllegalArgumentException("Invalid Transaction object");
-        }
     }
 
     /**
-     * Sets the amount for the Transaction.
-     * @param amount The monetary amount of the expense.
+     * Sets the monetary amount for the Transaction.
+     * The amount must be greater than zero and will be associated with the account's currency.
+     *
+     * @param amount The monetary amount to be set, represented in the smallest currency unit (e.g., cents for USD).
+     *               Throws IllegalArgumentException if the amount is not valid.
      */
-    public void setAmount(Money amount) {
+    public void setAmount(long amount) {
         if (!validateAmount(amount)) {
             throw new IllegalArgumentException("Invalid amount");
         }
-        this.amount = amount;
+        this.amount = new Money(account.getBalance().getCurrency(), amount);
     }
 
     /**
@@ -69,37 +72,15 @@ public abstract class Transaction {
     }
 
     /**
-     * Sets the account associated with the Transaction.
-     *
-     * @param account The account to be assigned to this Transaction. Must be a valid, non-null account.
-     * @throws IllegalArgumentException if the provided account is invalid or null.
-     */
-    public void setAccount(Account account) {
-        if (!validateAccount(account)) {
-            throw new IllegalArgumentException("Invalid account");
-        }
-        this.account = account;
-    }
-
-    /**
      * Validates the state of the Transaction object. It checks if all required fields,
      * including amount, date and description, meet the defined validation criteria.
      *
      * @return true if the Transaction object is valid, false otherwise.
      */
-    public boolean validate() {
-        return validateAmount(amount) && validateDate(date) && validateDescription(description) && validateAccount(account);
+    public boolean validateTransaction(long amount, String description, LocalDateTime date, Account account) {
+        return validateDate(date) && validateDescription(description) && validateAmount(amount) && validateAccount(account);
     }
 
-    /**
-     * Validates if the provided monetary amount is not null.
-     *
-     * @param amount The monetary amount to be validated.
-     * @return true if the amount is not null, false otherwise.
-     */
-    private boolean validateAmount(Money amount) {
-        return amount != null;
-    }
 
     /**
      * Validates the given date to ensure it is not null.
@@ -119,6 +100,16 @@ public abstract class Transaction {
      */
     private boolean validateDescription(String description) {
         return description != null && !description.isEmpty();
+    }
+
+    /**
+     * Validates the given monetary amount to ensure it is greater than zero.
+     *
+     * @param amount The monetary amount to be validated, represented as a Money object.
+     * @return true if the monetary amount is valid (greater than zero), false otherwise.
+     */
+    private boolean validateAmount(long amount) {
+        return amount > 0;
     }
 
     /**
