@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Represents a financial account in the bookkeeping system. An Account can hold multiple Transaction and
@@ -24,7 +25,7 @@ public class Account {
     private Long id;
     private String name;
     private Money balance;
-    private HashSet<Transaction> transactions;
+    private Set<Transaction> transactions;
     @ManyToOne(fetch = FetchType.LAZY)
     private Household household;
 

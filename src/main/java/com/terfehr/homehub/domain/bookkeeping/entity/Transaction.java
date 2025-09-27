@@ -20,8 +20,8 @@ public abstract class Transaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Money amount;
-    String description;
-    LocalDateTime date;
+    private String description;
+    private LocalDateTime date;
 
     public Transaction(Money amount, String description, LocalDateTime date) {
         this.amount = amount;
