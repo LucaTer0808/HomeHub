@@ -8,9 +8,10 @@ import java.math.BigDecimal;
 import java.util.Currency;
 
 /**
- * Immutable value object representing a monetary amount in a specific currency.
- * It encapsulates the currency code, the amount in the smallest unit (e.g., cents for USD),
- * and the scale (number of decimal places), as well as providing methods for common monetary operations.
+ * Represents a monetary value composed of an amount and a currency.
+ * The amount is stored in the smallest unit of the specified currency (e.g., cents in USD).
+ * This class is immutable and provides methods to format the amount with the corresponding
+ * currency symbol or ISO 4217 currency code.
  */
 @Value
 @Embeddable
