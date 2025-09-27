@@ -1,19 +1,35 @@
-# Currently used for local development and testing purposes. Contains MongoDB and PostgreSQL services databases.
-
+# Currently used for local development and testing purposes. Contains PostgreSQL services databases.
 services:
-  mongodb:
-    image: 'mongo:latest'
-    environment:
-      - 'MONGO_INITDB_DATABASE=mydatabase'
-      - 'MONGO_INITDB_ROOT_PASSWORD=secret'
-      - 'MONGO_INITDB_ROOT_USERNAME=root'
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: HomeHub
+    # Application internally runs on port 8080, external port is defined in the .env file
     ports:
-      - '27017:27017'
+    - "${SERVER_PORT}:8080"
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL_DEV: ${SPRING_DATASOURCE_URL_DEV}
+      SPRING_DATASOURCE_USERNAME_DEV: ${SPRING_DATASOURCE_USERNAME_DEV}
+      SPRING_DATASOURCE_PASSWORD_DEV: ${SPRING_DATASOURCE_PASSWORD_DEV}
+
+      SPRING_DATASOURCE_URL_PROD: ${SPRING_DATASOURCE_URL_PROD}
+      SPRING_DATASOURCE_USERNAME_PROD: ${SPRING_DATASOURCE_USERNAME_PROD}
+      SPRING_DATASOURCE_PASSWORD_PROD: ${SPRING_DATASOURCE_PASSWORD_PROD}
+
   postgres:
     image: 'postgres:latest'
+    container_name: Postgres
     environment:
-      - 'POSTGRES_DB=mydatabase'
+      - 'POSTGRES_DB=dev_db_psql'
       - 'POSTGRES_PASSWORD=secret'
-      - 'POSTGRES_USER=myuser'
+      - 'POSTGRES_USER=dev'
     ports:
       - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+volumes:
+    postgres_data:
