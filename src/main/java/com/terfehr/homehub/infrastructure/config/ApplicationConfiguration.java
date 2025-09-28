@@ -1,6 +1,7 @@
 package com.terfehr.homehub.infrastructure.config;
 
 import com.terfehr.homehub.domain.household.repository.UserRepositoryInterface;
+import com.terfehr.homehub.infrastructure.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,32 +20,21 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
  */
 @Configuration
 public class ApplicationConfiguration {
-    private final UserRepositoryInterface userRepository;
+
+    private final UserDetailsService userDetailsService;
 
     /**
-     * Constructs an instance of the ApplicationConfiguration class which initializes the
-     * configuration with a UserRepositoryInterface to manage user-related database operations.
+     * Constructor for the {@code ApplicationConfiguration} class.
+     * This constructor initializes the configuration class with a provided
+     * {@link UserDetailsService} instance, which is used to manage user details
+     * and authentication logic within the application.
      *
-     * @param userRepository the UserRepositoryInterface instance responsible for performing
-     *                       CRUD operations and querying user data
+     * @param userDetailsService the {@link UserDetailsService} instance responsible for
+     *                           retrieving user-specific data and supporting
+     *                           authentication processes
      */
-    public ApplicationConfiguration(UserRepositoryInterface userRepository) {
-        this.userRepository = userRepository;
-    }
-
-    /**
-     * Creates and configures a UserDetailsService bean, which provides user-specific data
-     * for the authentication process. This method retrieves user details based on the given
-     * username by querying the user repository. If the username is not found, it throws a
-     * UsernameNotFoundException.
-     *
-     * @return a UserDetailsService that loads user details by username
-     *         or throws a UsernameNotFoundException if the user is not found
-     */
-    @Bean
-    UserDetailsService userDetailsService() {
-        return username -> userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    public ApplicationConfiguration(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
     }
 
     /**
@@ -83,10 +73,9 @@ public class ApplicationConfiguration {
      * @return an {@link AuthenticationProvider} configured with a user details service and password encoder
      */
     @Bean
-    AuthenticationProvider authenticationProvider(){
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService());
+    DaoAuthenticationProvider authenticationProvider(){
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }
-
 }

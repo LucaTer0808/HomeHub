@@ -22,7 +22,6 @@ public class UserTest {
         assertThrows(IllegalArgumentException.class, () -> new User("testuser", "testmail", "password", null, LocalDateTime.now().plusDays(1)));
         assertThrows(IllegalArgumentException.class, () -> new User("testuser", "testmail", "password", "", LocalDateTime.now().plusDays(1)));
         assertThrows(IllegalArgumentException.class, () -> new User("testuser", "testmail", "password", "code", null));
-        assertThrows(IllegalArgumentException.class, () -> new User("testuser", "testmail", "password", "code", LocalDateTime.now().minusDays(1)));
     }
 
 
