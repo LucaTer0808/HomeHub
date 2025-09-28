@@ -45,11 +45,11 @@ public class Roommate {
     private RoommateId id;
 
     @ManyToOne
-    @MapsId("household")
+    @MapsId("householdId")
     private Household household;
 
     @ManyToOne
-    @MapsId("user")
+    @MapsId("userId")
     private User user;
 
     /**
