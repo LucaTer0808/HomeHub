@@ -5,7 +5,7 @@ import com.terfehr.homehub.domain.bookkeeping.entity.Expense;
 import com.terfehr.homehub.domain.bookkeeping.entity.Income;
 import com.terfehr.homehub.domain.bookkeeping.entity.Transaction;
 import com.terfehr.homehub.domain.bookkeeping.value.Money;
-import com.terfehr.homehub.domain.household.Household;
+import com.terfehr.homehub.domain.household.entity.Household;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;

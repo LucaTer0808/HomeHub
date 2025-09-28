@@ -1,7 +1,7 @@
 package com.terfehr.homehub.domain.bookkeeping.entity;
 
 import com.terfehr.homehub.domain.bookkeeping.value.Money;
-import com.terfehr.homehub.domain.household.Household;
+import com.terfehr.homehub.domain.household.entity.Household;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
