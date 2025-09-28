@@ -194,10 +194,10 @@ public class User implements UserDetails {
     }
 
     /**
-     * Validates if the provided email is non-null and contains the "@" symbol.
+     * Validates the provided email address to check whether it is non-null and not empty.
      *
      * @param email the email address to be validated
-     * @return true if the email is valid and contains the "@" symbol; false otherwise
+     * @return true if the email is non-null and not empty; false otherwise
      */
     private boolean validateEmail(String email) {
         return email != null && !email.isEmpty();

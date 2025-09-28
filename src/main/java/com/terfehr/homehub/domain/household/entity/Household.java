@@ -112,7 +112,7 @@ public class Household {
      * @return true if the roommate is associated with the current household, false otherwise
      */
     private boolean validateRoommate(Roommate roommate) {
-        return roommate.getHousehold().equals(this);
+        return roommate != null && roommate.getHousehold().equals(this);
     }
 
     /**

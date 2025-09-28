@@ -64,6 +64,7 @@ public class Roommate {
         }
         this.household = household;
         this.user = user;
+        this.id = new RoommateId(household.getId(), user.getId()); // could be unnecessary due to @MapsId
     }
 
     /**
