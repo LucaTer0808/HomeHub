@@ -3,20 +3,27 @@ package com.terfehr.homehub.domain.household.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+
 @Entity
 @NoArgsConstructor
 @Getter
-public class User {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(unique = true, nullable = false)
     private String username;
+    @Column(unique = true, nullable = false)
     private String email;
-    private String hashedPassword;
+    @Column(nullable = false)
+    private String password;
+    @Column(nullable = false)
+    private boolean enabled;
     @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Roommate> roommates;
 
@@ -29,10 +36,11 @@ public class User {
      * @param email the email address of the user
      * @param hashedPassword the hashed password for the user's authentication
      */
-    public User(String username, String email, String hashedPassword) {
+    public User(String username, String email, String password) {
         this.username = username;
         this.email = email;
-        this.hashedPassword = hashedPassword;
+        this.password = password;
+        this.enabled = false;
         roommates = new HashSet<>();
     }
 
@@ -49,6 +57,15 @@ public class User {
             throw new IllegalArgumentException("Invalid Roommate for this User");
         }
         this.roommates.add(roommate);
+    }
+
+    /**
+     * Retrieves the collection of granted authorities for the user.
+     *
+     * @return a collection of granted authorities associated with the user
+     */
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
     }
 
     /**
