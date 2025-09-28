@@ -20,6 +20,33 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
 
+/**
+ * <p>Filter responsible for authenticating incoming HTTP requests based on
+ * JSON Web Tokens (JWT). The filter intercepts requests, validates the
+ * provided JWT, and configures the security context if the token is valid.
+ * If any exception occurs during the authentication process, it is handled
+ * by the configured exception resolver.</p>
+ *
+ * <p>This filter extends {@link OncePerRequestFilter} to ensure it runs once per
+ * request within a single request thread.</p>
+ *
+ * <p>Dependencies:
+ * <ul>
+ * <li>{@link HandlerExceptionResolver} for handling exceptions during authentication.</li>
+ * <li>{@link JwtService} for token validation and extraction of user details.</li>
+ * <li>{@link UserDetailsService} for loading user-specific data from the security </li>
+ *   layer.
+ * </ul>
+ * </p>
+ *
+ * <p>Responsibilities:
+ * <ul>
+ * <li>Extract and validate the JWT from the "Authorization" header of the request.</li>
+ * <li>If valid, retrieve user details and set the authentication in the security context.</li>
+ * <li>Handle exceptions occurring during the authentication process.</li>
+ * </ul>
+ * </p>
+ */
 @Component
 @AllArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
