@@ -45,11 +45,11 @@ public class Roommate {
     private RoommateId id;
 
     @ManyToOne
-    @MapsId("householdId")
+    @MapsId("household")
     private Household household;
 
     @ManyToOne
-    @MapsId("userId")
+    @MapsId("user")
     private User user;
 
     /**
@@ -64,7 +64,6 @@ public class Roommate {
         }
         this.household = household;
         this.user = user;
-        this.id = new RoommateId(household.getId(), user.getId()); // could be unnecessary due to @MapsId
     }
 
     /**

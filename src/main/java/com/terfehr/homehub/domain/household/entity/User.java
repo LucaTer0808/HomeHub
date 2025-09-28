@@ -40,7 +40,7 @@ public class User implements UserDetails {
     @Column(name = "verification_code_expiration")
     private LocalDateTime verificationCodeExpiration;
 
-    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Roommate> roommates;
 
     /**

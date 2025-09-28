@@ -25,7 +25,7 @@ public class Household {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    @OneToMany(mappedBy = "householdId", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "household", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Roommate> roommates;
 
     /**
