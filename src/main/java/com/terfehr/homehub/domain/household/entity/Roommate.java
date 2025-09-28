@@ -64,8 +64,6 @@ public class Roommate {
         }
         this.household = household;
         this.user = user;
-        household.addRoommate(this);
-        user.addRoommate(this);
     }
 
     /**
