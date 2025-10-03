@@ -57,8 +57,9 @@ public class Roommate {
      *
      * @param household the household that the roommate belongs to
      * @param user the user representing the roommate
+     * @throws IllegalArgumentException If the given Household or User are invalid
      */
-    public Roommate(Household household, User user) {
+    public Roommate(Household household, User user) throws IllegalArgumentException {
         if (!validate(household, user)) {
             throw new IllegalArgumentException("Invalid Roommate object");
         }

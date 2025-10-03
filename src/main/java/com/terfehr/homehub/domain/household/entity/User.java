@@ -7,7 +7,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Represents a user in the system with authentication and authorization details.
@@ -56,7 +58,7 @@ public class User implements UserDetails {
      * @param verificationCode the verification code assigned to the user for account activation
      * @param verificationCodeExpiration the expiration date and time for the verification code
      */
-     public User(String username, String email, String password, String verificationCode, LocalDateTime verificationCodeExpiration) {
+     public User(String username, String email, String password, String verificationCode, LocalDateTime verificationCodeExpiration) throws IllegalArgumentException {
          if (!validate(username, email, password, verificationCode, verificationCodeExpiration)) {
              throw new IllegalArgumentException("Invalid arguments for User creation");
          }
@@ -66,7 +68,7 @@ public class User implements UserDetails {
         this.enabled = false;
         this.verificationCode = verificationCode;
         this.verificationCodeExpiration = verificationCodeExpiration;
-        roommates = new HashSet<>();
+        roommates = Set.of();
     }
 
     /**
@@ -77,7 +79,7 @@ public class User implements UserDetails {
      *                 if it passes validation
      * @throws IllegalArgumentException if the provided roommate is invalid
      */
-    public void addRoommate(Roommate roommate) {
+    public void addRoommate(Roommate roommate) throws IllegalArgumentException {
         if (!canAddRoommate(roommate)) {
             throw new IllegalArgumentException("Invalid Roommate for this User");
         }
@@ -91,7 +93,7 @@ public class User implements UserDetails {
      * @param roommate the Roommate object to be removed from the user's list of roommates
      * @throws IllegalArgumentException if the provided roommate is invalid or not associated with the user
      */
-    public void removeRoommate(Roommate roommate) {
+    public void removeRoommate(Roommate roommate) throws IllegalArgumentException {
         if (!canRemoveRoommate(roommate)) {
             throw new IllegalArgumentException("Invalid Roommate for this User");
         }
@@ -114,7 +116,7 @@ public class User implements UserDetails {
      *
      * @throws IllegalStateException if the user cannot be enabled
      */
-    public void enable() {
+    public void enable() throws IllegalArgumentException {
         if (!canBeEnabled()) {
             throw new IllegalStateException("User cannot be enabled");
         }

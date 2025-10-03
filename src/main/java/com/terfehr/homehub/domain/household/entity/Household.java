@@ -35,20 +35,21 @@ public class Household {
      * @param name the name of the household; must be non-null and not blank
      * @throws IllegalArgumentException if the provided name fails validation
      */
-    public Household(String name) {
+    public Household(String name) throws IllegalArgumentException {
         if (!validate(name)) {
             throw new IllegalArgumentException("Invalid arguments for Household creation");
         }
         this.name = name;
-        this.roommates = new HashSet<>();
+        this.roommates = Set.of();
     }
 
     /**
      * Adds a roommate to the current household.
      *
-     * @param roommate the roommate to be added to the household
+     * @param roommate the roommate to be added to the household.
+     * @throws IllegalArgumentException If the given Roommate is invalid.
      */
-    public void addRoommate(Roommate roommate) {
+    public void addRoommate(Roommate roommate) throws IllegalArgumentException {
         if (!canAddRoommate(roommate)) {
             throw new IllegalArgumentException("Invalid Roommate for this Household");
         }
@@ -63,7 +64,7 @@ public class Household {
      * @param roommate the roommate to be removed from the household
      * @throws IllegalArgumentException if the provided roommate is invalid or not associated with this household
      */
-    public void removeRoommate(Roommate roommate) {
+    public void removeRoommate(Roommate roommate) throws IllegalArgumentException {
         if (!canRemoveRoommate(roommate)) {
             throw new IllegalArgumentException("Invalid Roommate for this Household");
         }

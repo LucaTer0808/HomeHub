@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.HashSet;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 /**
@@ -43,14 +43,15 @@ public class Account {
      * @param initialBalance The initial monetary balance for the account. Must not be null.
      * @param household      The household associated with this account, representing the group or entity
      *                       that owns the account. Must not be null.
+     * @throws IllegalArgumentException If the given name, balance or Household is invalid.
      */
-    public Account(String name, Money initialBalance, Household household) {
+    public Account(String name, Money initialBalance, Household household) throws IllegalArgumentException {
         if (!validate(name, initialBalance, household)) {
             throw new IllegalArgumentException("Invalid Account object");
         }
         this.name = name;
         this.balance = initialBalance;
-        this.transactions = new HashSet<>();
+        this.transactions = Set.of();
         this.household = household;
     }
 
@@ -61,7 +62,7 @@ public class Account {
      * @param name The name to assign to the account. It must be non-null and non-empty.
      * @throws IllegalArgumentException If the account becomes invalid after setting the name.
      */
-    public void setName(String name) {
+    public void setName(String name) throws IllegalArgumentException {
         if (!validateName(name)) {
             throw new IllegalArgumentException("Invalid Account object");
         }
@@ -80,20 +81,35 @@ public class Account {
     }
 
     /**
-     * Adds a transaction to the account. This method validates the transaction
-     * to ensure it is not invalid and no duplicates exist within the account's transactions.
-     * If valid, the transaction is added to the account and the account's balance is updated accordingly.
+     * Adds an Expense to the Account by constructing an Expense object by the given parameters and updating the account balance afterward.
+     * If the parameters are invalid for creating an Expense, an exception is thrown.
      *
-     * @param transaction The transaction to be added to the account. It must be valid
-     *                    and not already contained within the account's existing transactions.
-     * @throws IllegalArgumentException If the provided transaction is invalid or already contained in the account.
+     * @param amount The amount of the Expense in the smallest unit.
+     * @param description A brief description of what was paid with this Expense.
+     * @param date The timestamp of when this Expense was transferred.
+     * @param recipient The recipient who received the money.
+     * @throws IllegalArgumentException If the parameters are invalid for creating an Expense.
      */
-    public void addTransaction(Transaction transaction) {
-        if (!validateTransaction(transaction) || transactions.contains(transaction)) {
-            throw new IllegalArgumentException("Invalid or already contained Transaction object");
-        }
-        this.transactions.add(transaction);
-        updateBalance(transaction);
+    public void addExpense(long amount, String description, LocalDateTime date, String recipient) throws IllegalArgumentException {
+        Expense expense = new Expense(amount, description, date, recipient, this);
+        this.transactions.add(expense);
+        updateBalance(expense);
+    }
+
+    /**
+     * Adds an Income to the Account by constructing an Income object by the given parameters and updating the account balance afterward.
+     * If the parameters are invalid for creating an Income, an exception is thrown.
+     *
+     * @param amount The amount of the Income in the smallest unit.
+     * @param description A brief description of what the Income is about.
+     * @param date The timestamp of when this Income was transferred.
+     * @param source The source who sent the money.
+     * @throws IllegalArgumentException If the parameters are invalid for creating an Income.
+     */
+    public void addIncome(long amount, String description, LocalDateTime date, String source) throws IllegalArgumentException {
+        Income income = new Income(amount, description, date, source, this);
+        this.transactions.add(income);
+        updateBalance(income);
     }
 
     /**
@@ -106,7 +122,7 @@ public class Account {
      * @throws IllegalArgumentException If the provided transaction is invalid or not
      *                                  associated with the account.
      */
-    public void removeTransaction(Transaction transaction) {
+    public void removeTransaction(Transaction transaction) throws IllegalArgumentException {
         if (!validateTransaction(transaction) || !transactions.contains(transaction)) {
             throw new IllegalArgumentException("Invalid or not contained Transaction object");
         }
