@@ -75,7 +75,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
         final String authHeader = request.getHeader("Authorization");
-        if (authHeader == null || authHeader.startsWith("Bearer ")) {
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -104,5 +105,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } catch (Exception e) {
             handlerExceptionResolver.resolveException(request, response, null, e);
         }
+    }
+
+    /**
+     * Decides whether the current {@link HttpServletRequest} should be filtered or not.
+     * If its ServletPath starts with "/auth/", it should not be filtered.
+     *
+     * @param request The Request to check
+     * @return True, if it should not be filtered. False otherwise.
+     */
+    @Override
+    public boolean shouldNotFilter(HttpServletRequest request) {
+        return request.getServletPath().startsWith("/auth/");
     }
 }
