@@ -74,21 +74,43 @@ public class Task {
 
     /**
      * Finishes the current task and sets the timestamp of the finishing time.
+     *
+     * @throws IllegalStateException If the Task is already finished.
      */
-    public void finishTask() throws IllegalArgumentException {
+    public void finishTask() throws IllegalStateException {
+        if (this.finished) {
+            throw new IllegalArgumentException("Task is already finished");
+        }
         this.finished = true;
         this.finishedAt = LocalDateTime.now();
+    }
+
+    /**
+     * Unfinishes the current task and sets the timestamp of the finishing time to null.
+     *
+     * @throws IllegalStateException If the Task is not finished yet.
+     */
+    public void unfinishTask() throws IllegalStateException {
+        if (!this.finished) {
+            throw new IllegalArgumentException("Task is not finished");
+        }
+        this.finished = false;
+        this.finishedAt = null;
     }
 
     /**
      * Assigns the Task to the given Roommate. If the given Roommate is invalid or the task is finished already, an exception is thrown.
      *
      * @param roommate The Roommate to assign the Task to.
-     * @throws IllegalArgumentException If the Roommate is invalid or the Task is already finished.
+     * @throws IllegalArgumentException If the Roommate is invalid.
+     * @throws IllegalStateException If the Task is already finished.
      */
-    public void assignToRoommate(Roommate roommate) throws IllegalArgumentException {
-        if (!validateRoommate(roommate) || this.finished) {
-            throw new IllegalArgumentException("Invalid Roommate or already finished task");
+    public void assignToRoommate(Roommate roommate) throws IllegalArgumentException, IllegalStateException {
+        if (!validateRoommate(roommate)) {
+            throw new IllegalArgumentException("Invalid Roommate");
+        }
+        if (this.finished) {
+            throw new IllegalStateException("Task is already finished");
         }
         this.roommate = roommate;
     }
@@ -96,9 +118,9 @@ public class Task {
     /**
      * Unassigns the Task from a Roommate. If the Task is finished already, an exception is thrown.
      *
-     * @throws IllegalArgumentException If the Task is finished already.
+     * @throws IllegalStateException If the Task is finished already.
      */
-    public void unassignFromRoommate() throws IllegalArgumentException {
+    public void unassignFromRoommate() throws IllegalStateException {
         if (this.finished) {
             throw new IllegalArgumentException("Task is already finished");
         }

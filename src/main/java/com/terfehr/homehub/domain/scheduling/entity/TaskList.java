@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -34,7 +35,7 @@ public class TaskList {
         }
         this.name = name;
         this.household = household;
-        this.tasks = Set.of();
+        this.tasks = new HashSet<>();
     }
 
     /**

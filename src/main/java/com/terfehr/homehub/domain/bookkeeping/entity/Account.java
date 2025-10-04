@@ -7,7 +7,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Currency;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Represents a financial account that belongs to a household and manages a set
@@ -24,6 +27,13 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter
 public class Account {
+
+    private static final Set<String> VALID_CURRENCIES = Currency // for caching purposes
+            .getAvailableCurrencies()
+            .stream()
+            .map(Currency::getCurrencyCode)
+            .collect(Collectors.toSet());
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -45,13 +55,15 @@ public class Account {
      *                       that owns the account. Must not be null.
      * @throws IllegalArgumentException If the given name, balance or Household is invalid.
      */
-    public Account(String name, Money initialBalance, Household household) throws IllegalArgumentException {
-        if (!validate(name, initialBalance, household)) {
+    public Account(String name, long amount, String currencyCode, Household household) throws IllegalArgumentException {
+        if (!validate(name, currencyCode, household)) {
             throw new IllegalArgumentException("Invalid Account object");
         }
+        Currency currency = Currency.getInstance(currencyCode);
+        Money initialBalance = new Money(currency, amount);
         this.name = name;
         this.balance = initialBalance;
-        this.transactions = Set.of();
+        this.transactions = new HashSet<>();
         this.household = household;
     }
 
@@ -97,6 +109,24 @@ public class Account {
     }
 
     /**
+     * Adds a ShoppingExpense to the Account by constructing a ShoppingExpense object by the given parameters and updating the account balance afterward.
+     * It returns the created ShoppingExpense object for setting the ShoppingSpree object later.
+     *
+     * @param amount The amount of the ShoppingExpense in the smallest unit.
+     * @param description A brief description of what was paid with this ShoppingExpense.
+     * @param date The timestamp of when this ShoppingExpense was transferred.
+     * @param recipient The recipient who received the money.
+     * @return The created ShoppingExpense object.
+     * @throws IllegalArgumentException If the parameters are invalid for creating a ShoppingExpense.
+     */
+    public ShoppingExpense addShoppingExpense(long amount, String description, LocalDateTime date, String recipient) throws IllegalArgumentException {
+        ShoppingExpense expense = new ShoppingExpense(amount, description, date, recipient, this);
+        this.transactions.add(expense);
+        updateBalance(expense);
+        return expense;
+    }
+
+    /**
      * Adds an Income to the Account by constructing an Income object by the given parameters and updating the account balance afterward.
      * If the parameters are invalid for creating an Income, an exception is thrown.
      *
@@ -128,19 +158,6 @@ public class Account {
         }
         this.transactions.remove(transaction);
         revertBalance(transaction);
-    }
-
-    /**
-     * Validates the provided parameters to ensure they meet the required conditions
-     * for creating or updating an Account object.
-     *
-     * @param name The name of the account to validate. Must not be null or empty.
-     * @param balance The monetary balance to validate. Must not be null.
-     * @param household The household associated with the account. Must not be null.
-     * @return True if all the parameters are valid, false otherwise.
-     */
-    private boolean validate(String name, Money balance, Household household) {
-        return validateName(name) && validateBalance(balance) && validateHousehold(household);
     }
 
     /**
@@ -184,6 +201,18 @@ public class Account {
     }
 
     /**
+     * Validates the provided account parameters to ensure they are not null or empty.
+     *
+     * @param name The name to be validated.
+     * @param currencyCode The currency code to be validated.
+     * @param household The household to be validated.
+     * @return True if all parameters are valid, false otherwise.
+     */
+    private boolean validate(String name, String currencyCode, Household household) {
+        return validateName(name) && validateCurrencyCode(currencyCode) && validateHousehold(household);
+    }
+
+    /**
      * Validates the provided name to ensure it is not null or empty.
      *
      * @param name The name to be validated.
@@ -194,13 +223,13 @@ public class Account {
     }
 
     /**
-     * Validates the specified balance to ensure it is not null.
+     * Validates the provided currency code to ensure it is not null and a valid Currency code according to ISO 4217.
      *
-     * @param balance The monetary balance to validate. Must not be null and must pass its own validation checks.
-     * @return True if the balance is valid, false otherwise.
+     * @param currencyCode The currency code to be validated.
+     * @return True if the currency code is not null and not empty, false otherwise.
      */
-    private boolean validateBalance(Money balance) {
-        return balance != null;
+    private boolean validateCurrencyCode(String currencyCode) {
+        return currencyCode != null && VALID_CURRENCIES.contains(currencyCode);
     }
 
     /**

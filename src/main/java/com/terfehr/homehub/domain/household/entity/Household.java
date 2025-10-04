@@ -1,5 +1,9 @@
 package com.terfehr.homehub.domain.household.entity;
 
+import com.terfehr.homehub.domain.bookkeeping.entity.Account;
+import com.terfehr.homehub.domain.scheduling.entity.TaskList;
+import com.terfehr.homehub.domain.shopping.entity.ShoppingList;
+import com.terfehr.homehub.domain.shopping.entity.ShoppingSpree;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,6 +31,12 @@ public class Household {
     private String name;
     @OneToMany(mappedBy = "household", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Roommate> roommates;
+    @OneToMany(mappedBy = "household", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Account> accounts;
+    @OneToMany(mappedBy = "household", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<TaskList> taskLists;
+    @OneToMany(mappedBy = "household", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ShoppingList> shoppingLists;
 
     /**
      * Constructs a new Household with the specified name.
@@ -40,7 +50,10 @@ public class Household {
             throw new IllegalArgumentException("Invalid arguments for Household creation");
         }
         this.name = name;
-        this.roommates = Set.of();
+        this.roommates = new HashSet<>();
+        this.accounts = new HashSet<>();
+        this.taskLists = new HashSet<>();
+        this.shoppingLists = new HashSet<>();
     }
 
     /**
