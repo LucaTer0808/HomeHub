@@ -37,6 +37,8 @@ public class Household {
     private Set<TaskList> taskLists;
     @OneToMany(mappedBy = "household", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ShoppingList> shoppingLists;
+    @OneToMany(mappedBy = "household", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ShoppingSpree> shoppingSpree;
 
     /**
      * Constructs a new Household with the specified name.
@@ -82,6 +84,33 @@ public class Household {
             throw new IllegalArgumentException("Invalid Roommate for this Household");
         }
         this.roommates.remove(roommate);
+    }
+
+    /**
+     * Adds a ShoppingSpree to the household. If the ShoppingSpree is already contained in the household,
+     * an exception is thrown.
+     *
+     * @param spree The ShoppingSpree to add.
+     * @throws IllegalArgumentException If the ShoppingSpree is already contained in the household.
+     */
+    public void addShoppingSpree(ShoppingSpree spree) throws IllegalArgumentException {
+        if (shoppingSpree.contains(spree)) {
+            throw new IllegalArgumentException("ShoppingSpree already exists");
+        }
+        this.shoppingSpree.add(spree);
+    }
+
+    /**
+     * removes a ShoppingSpree from the household. If the ShoppingSpree does not exist, an exception is thrown.
+     *
+     * @param spree The ShoppingSpree to remove.
+     * @throws IllegalArgumentException If the ShoppingSpree does not exist.
+     */
+    public void removeShoppingSpree(ShoppingSpree spree) throws IllegalArgumentException {
+        if (!shoppingSpree.contains(spree)) {
+            throw new IllegalArgumentException("ShoppingSpree does not exist");
+        }
+        this.shoppingSpree.remove(spree);
     }
 
     /**

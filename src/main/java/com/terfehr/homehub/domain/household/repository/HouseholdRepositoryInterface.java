@@ -6,7 +6,7 @@ import org.springframework.lang.NonNull;
 
 import java.util.Optional;
 
-interface HouseholdRepositoryInterface extends JpaRepository<Household, Long> {
+public interface HouseholdRepositoryInterface extends JpaRepository<Household, Long> {
 
     /**
      * Retrieves a Household by its ID from the database.

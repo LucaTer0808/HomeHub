@@ -1,11 +1,13 @@
 package com.terfehr.homehub.domain.shopping.service;
 
+import com.terfehr.homehub.domain.household.entity.Household;
 import com.terfehr.homehub.domain.shopping.entity.ShoppingList;
 import com.terfehr.homehub.domain.shopping.entity.ShoppingListItem;
+import com.terfehr.homehub.domain.shopping.entity.ShoppingSpree;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Service
@@ -13,16 +15,32 @@ import java.util.Set;
 public class ShoppingService {
 
     /**
-     * Finishes the shopping list and returns the items that were picked and then deletes them from it.
+     * Clears the shopping list of all picked items and creates a new ShoppingSpree based on the items that were picked.
+     * This ShoppingSpree is then returned.
      *
      * @param shoppingList The shopping list to be finished.
      * @return The items that were picked and then deleted from the shopping list.
      */
-    private Set<ShoppingListItem> finishShoppingList(ShoppingList shoppingList) {
+    public ShoppingSpree prepareShoppingSpree(ShoppingList shoppingList, Household household) {
         Set<ShoppingListItem> finishedItems = shoppingList.getPickedItems();
         shoppingList.deletePickedItems();
-        return finishedItems;
+
+        ShoppingSpree spree = new ShoppingSpree(LocalDateTime.now(), household);
+        populateShoppingSpree(spree, finishedItems);
+        household.addShoppingSpree(spree);
+        return spree;
     }
 
-
+    /**
+     * Populates the ShoppingSpree with the given ShoppingListItems. The ShoppingListItems are added to the given ShoppingSpree
+     * by converting their name and quantity to ShoppingSpreeItems.
+     *
+     * @param spree The ShoppingSpree to populate.
+     * @param finishedItems The ShoppingListItems to populate the ShoppingSpree with.
+     */
+    private void populateShoppingSpree(ShoppingSpree spree, Set<ShoppingListItem> finishedItems) {
+        for (ShoppingListItem item : finishedItems) {
+            spree.addShoppingSpreeItem(item.getName(), item.getQuantity());
+        }
+    }
 }

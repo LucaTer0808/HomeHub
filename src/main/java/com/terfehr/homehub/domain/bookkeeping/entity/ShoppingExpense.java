@@ -42,7 +42,7 @@ public class ShoppingExpense extends Expense {
      * @param shoppingSpree The ShoppingSpree to set.
      * @throws IllegalArgumentException if the ShoppingSpree is invalid.
      */
-    private void setShoppingSpree(ShoppingSpree shoppingSpree) throws IllegalArgumentException{
+    public void setShoppingSpree(ShoppingSpree shoppingSpree) throws IllegalArgumentException{
         if (!validateShoppingSpree(shoppingSpree)) {
             throw new IllegalArgumentException("Invalid ShoppingExpense object");
         }
