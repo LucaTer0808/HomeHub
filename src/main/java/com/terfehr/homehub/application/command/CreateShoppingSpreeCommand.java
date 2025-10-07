@@ -1,4 +1,4 @@
-package com.terfehr.homehub.application.service;
+package com.terfehr.homehub.application.command;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

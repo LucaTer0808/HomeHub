@@ -1,10 +1,10 @@
 package com.terfehr.homehub.application.service;
 
+import com.terfehr.homehub.application.command.CreateShoppingSpreeCommand;
 import com.terfehr.homehub.domain.bookkeeping.entity.Account;
 import com.terfehr.homehub.domain.bookkeeping.entity.ShoppingExpense;
 import com.terfehr.homehub.domain.bookkeeping.exception.AccountNotFoundException;
 import com.terfehr.homehub.domain.bookkeeping.repository.AccountRepositoryInterface;
-import com.terfehr.homehub.domain.bookkeeping.service.BookkeepingService;
 import com.terfehr.homehub.domain.household.entity.Household;
 import com.terfehr.homehub.domain.household.exception.HouseholdNotFoundException;
 import com.terfehr.homehub.domain.household.repository.HouseholdRepositoryInterface;
@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class CreateShoppingSpreeService {
 
     private final HouseholdRepositoryInterface householdRepository;
@@ -36,7 +37,6 @@ public class CreateShoppingSpreeService {
      * @throws ShoppingListNotFoundException If the ShoppingList with the given ID does not exist.
      * @throws AccountNotFoundException If the Account with the given ID does not exist.
      */
-    @Transactional
     public ShoppingSpree execute(CreateShoppingSpreeCommand cmd) throws HouseholdNotFoundException, ShoppingListNotFoundException, AccountNotFoundException{
         Household household = householdRepository.findById(cmd.getHouseholdId())
                 .orElseThrow(() -> new HouseholdNotFoundException("Household with ID " + cmd.getHouseholdId() + " not found"));
