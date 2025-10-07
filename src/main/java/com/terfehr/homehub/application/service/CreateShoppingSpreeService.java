@@ -4,7 +4,6 @@ import com.terfehr.homehub.domain.bookkeeping.entity.Account;
 import com.terfehr.homehub.domain.bookkeeping.entity.ShoppingExpense;
 import com.terfehr.homehub.domain.bookkeeping.exception.AccountNotFoundException;
 import com.terfehr.homehub.domain.bookkeeping.repository.AccountRepositoryInterface;
-import com.terfehr.homehub.domain.bookkeeping.service.BookkeepingService;
 import com.terfehr.homehub.domain.household.entity.Household;
 import com.terfehr.homehub.domain.household.exception.HouseholdNotFoundException;
 import com.terfehr.homehub.domain.household.repository.HouseholdRepositoryInterface;
