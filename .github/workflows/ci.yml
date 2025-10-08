@@ -1,3 +1,4 @@
+# --- Simple CI Pipeline that as of now only builds and runds code."
 name: CI Pipeline
 
 on:
