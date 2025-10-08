@@ -1,5 +1,7 @@
 package com.terfehr.homehub.domain.household.entity;
 
+import com.terfehr.homehub.domain.household.exception.InvalidRoommateException;
+import com.terfehr.homehub.domain.household.exception.InvalidUserException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,7 +9,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Represents a user in the system with authentication and authorization details.
@@ -16,6 +21,7 @@ import java.util.*;
 @Entity
 @NoArgsConstructor
 @Getter
+@Table(name = "users")
 public class User implements UserDetails {
 
     @Id
@@ -34,7 +40,7 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private boolean enabled;
 
-    @Column(name = "verification_code")
+    @Column(name = "verification_code", unique = true)
     private String verificationCode;
 
     @Column(name = "verification_code_expiration")
@@ -50,13 +56,14 @@ public class User implements UserDetails {
      * Note that the validations of all given attributes are rather of a technical nature
      * and should be handled in the service layer.
      *
-     * @param username the username of the user, which must be unique
-     * @param email the email address of the user, which must be unique
-     * @param password the password for the user
-     * @param verificationCode the verification code assigned to the user for account activation
-     * @param verificationCodeExpiration the expiration date and time for the verification code
+     * @param username the username of the user, which must be unique.
+     * @param email the email address of the user, which must be unique.
+     * @param password the password for the user.
+     * @param verificationCode the verification code assigned to the user for account activation.
+     * @param verificationCodeExpiration the expiration date and time for the verification code.
+     * @throws InvalidUserException If the given Data is faulty.
      */
-     public User(String username, String email, String password, String verificationCode, LocalDateTime verificationCodeExpiration) {
+     public User(String username, String email, String password, String verificationCode, LocalDateTime verificationCodeExpiration) throws InvalidUserException {
          if (!validate(username, email, password, verificationCode, verificationCodeExpiration)) {
              throw new IllegalArgumentException("Invalid arguments for User creation");
          }
@@ -66,7 +73,7 @@ public class User implements UserDetails {
         this.enabled = false;
         this.verificationCode = verificationCode;
         this.verificationCodeExpiration = verificationCodeExpiration;
-        roommates = new HashSet<>();
+        this.roommates = new HashSet<>();
     }
 
     /**
@@ -75,11 +82,11 @@ public class User implements UserDetails {
      *
      * @param roommate the Roommate object to be added to the user's list of roommates
      *                 if it passes validation
-     * @throws IllegalArgumentException if the provided roommate is invalid
+     * @throws InvalidRoommateException if the provided roommate is invalid
      */
-    public void addRoommate(Roommate roommate) {
+    public void addRoommate(Roommate roommate) throws InvalidRoommateException {
         if (!canAddRoommate(roommate)) {
-            throw new IllegalArgumentException("Invalid Roommate for this User");
+            throw new InvalidRoommateException("Invalid Roommate for this User");
         }
         this.roommates.add(roommate);
     }
@@ -89,11 +96,11 @@ public class User implements UserDetails {
      * This method ensures that the roommate is valid and currently associated with the user.
      *
      * @param roommate the Roommate object to be removed from the user's list of roommates
-     * @throws IllegalArgumentException if the provided roommate is invalid or not associated with the user
+     * @throws InvalidRoommateException if the provided roommate is invalid or not associated with the user
      */
-    public void removeRoommate(Roommate roommate) {
+    public void removeRoommate(Roommate roommate) throws InvalidRoommateException {
         if (!canRemoveRoommate(roommate)) {
-            throw new IllegalArgumentException("Invalid Roommate for this User");
+            throw new InvalidRoommateException("Invalid Roommate for this User");
         }
         this.roommates.remove(roommate);
     }
@@ -114,7 +121,7 @@ public class User implements UserDetails {
      *
      * @throws IllegalStateException if the user cannot be enabled
      */
-    public void enable() {
+    public void enable() throws IllegalArgumentException {
         if (!canBeEnabled()) {
             throw new IllegalStateException("User cannot be enabled");
         }

@@ -16,15 +16,25 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor
 @Getter
+@Table(name = "transactions")
+@Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Transaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
     private Money amount;
+
+    @Column(nullable = false)
     private String description;
+
+    @Column(nullable = false)
     private LocalDateTime date;
+
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account")
     private Account account;
 
     /**
@@ -37,7 +47,7 @@ public abstract class Transaction {
      * @param account The account associated with the transaction.
      * @throws IllegalArgumentException if any of the provided parameters are invalid.
      */
-    public Transaction(long amount, String description, LocalDateTime date, Account account) {
+    public Transaction(long amount, String description, LocalDateTime date, Account account) throws IllegalArgumentException {
         if (!this.validateTransaction(amount, description, date, account)) {
             throw new IllegalArgumentException("Invalid Transaction object");
         }
@@ -54,7 +64,7 @@ public abstract class Transaction {
      * @param amount The monetary amount to be set, represented in the smallest currency unit (e.g., cents for USD).
      * @throws IllegalArgumentException if the amount is not valid.
      */
-    public void setAmount(long amount) {
+    public void setAmount(long amount) throws IllegalArgumentException {
         if (!validateAmount(amount)) {
             throw new IllegalArgumentException("Invalid amount");
         }
@@ -68,7 +78,7 @@ public abstract class Transaction {
      * @param description The description of the Transaction.
      * @throws IllegalArgumentException if the description is not valid.
      */
-    public void setDescription(String description) {
+    public void setDescription(String description) throws IllegalArgumentException {
         if (!validateDescription(description)) {
             throw new IllegalArgumentException("Invalid description");
         }
@@ -82,7 +92,7 @@ public abstract class Transaction {
      * @param date The date and time of the Transaction to be set.
      * @throws IllegalArgumentException if the given date is invalid.
      */
-    public void setDate(LocalDateTime date) {
+    public void setDate(LocalDateTime date) throws IllegalArgumentException {
         if (!validateDate(date)) {
             throw new IllegalArgumentException("Invalid date");
         }

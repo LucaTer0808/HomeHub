@@ -1,7 +1,10 @@
 package com.terfehr.homehub.domain.bookkeeping.entity;
 
 import com.terfehr.homehub.domain.bookkeeping.value.Money;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -16,8 +19,10 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor
 @Getter
+@Table(name = "expenses")
 public class Expense extends Transaction {
 
+    @Column(nullable = false)
     private String recipient;
 
     /**
@@ -32,7 +37,7 @@ public class Expense extends Transaction {
      * @param account The account associated with the expense transaction.
      * @throws IllegalArgumentException if the recipient is invalid.
      */
-    public Expense(long amount, String description, LocalDateTime date, String recipient, Account account) {
+    public Expense(long amount, String description, LocalDateTime date, String recipient, Account account) throws IllegalArgumentException {
         super(amount, description, date, account);
         if (!validate(recipient)) {
             throw new IllegalArgumentException("Invalid Expense object");
@@ -47,7 +52,7 @@ public class Expense extends Transaction {
      * @param recipient The recipient to set. Must be a non-null and non-empty string.
      * @throws IllegalArgumentException if the recipient is null or empty.
      */
-    public void setRecipient(String recipient) {
+    public void setRecipient(String recipient) throws IllegalArgumentException {
         if (!validateRecipient(recipient)) {
             throw new IllegalArgumentException("Invalid recipient");
         }

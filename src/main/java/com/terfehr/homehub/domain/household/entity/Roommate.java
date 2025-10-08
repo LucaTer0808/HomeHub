@@ -1,10 +1,7 @@
 package com.terfehr.homehub.domain.household.entity;
 
 import com.terfehr.homehub.domain.household.key.RoommateId;
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MapsId;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -39,6 +36,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @Getter
+@Table(name = "roommates")
 public class Roommate {
 
     @EmbeddedId
@@ -46,10 +44,12 @@ public class Roommate {
 
     @ManyToOne
     @MapsId("householdId")
+    @JoinColumn(name = "household_id")
     private Household household;
 
     @ManyToOne
     @MapsId("userId")
+    @JoinColumn(name = "user_id")
     private User user;
 
     /**
@@ -57,11 +57,13 @@ public class Roommate {
      *
      * @param household the household that the roommate belongs to
      * @param user the user representing the roommate
+     * @throws IllegalArgumentException If the given Household or User are invalid
      */
-    public Roommate(Household household, User user) {
+    public Roommate(Household household, User user) throws IllegalArgumentException {
         if (!validate(household, user)) {
             throw new IllegalArgumentException("Invalid Roommate object");
         }
+        this.id = new  RoommateId(household.getId(), user.getId());
         this.household = household;
         this.user = user;
     }

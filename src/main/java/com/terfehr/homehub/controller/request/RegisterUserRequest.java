@@ -1,0 +1,69 @@
+package com.terfehr.homehub.controller.request;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.util.Locale;
+
+@NoArgsConstructor
+@Getter
+public class RegisterUserRequest {
+
+    private String username;
+    private String email;
+    private String password;
+    private String confirmPassword;
+
+    /**
+     * Normalizes the given Email and Username by converting it to lower case and trimming it of leading and following white spaces.
+     */
+    public void normalize() {
+        username = username.trim().toLowerCase(Locale.ROOT);
+        email = email.trim().toLowerCase(Locale.ROOT);
+    }
+
+    /**
+     * Validates the given request after normalizing all its data by orchestrating to the corresponding validation method.
+     *
+     * @return True, if the input is valid. False otherwise.
+     */
+    public boolean validate() {
+        normalize();
+        return validateUsername(username) && validateEmail(email) && validatePasswords(password, confirmPassword);
+    }
+
+    /**
+     * Validates the given username. It has to be not null and at least have a length of 5.
+     *
+     * @param username The username to validate.
+     * @return True, if the username is valid. False otherwise
+     */
+    private boolean validateUsername(String username) {
+        return username != null && username.length() >= 5;
+    }
+
+    /**
+     * Validates the given Email. It has to fit commonly used email standards.
+     *
+     * @param email The email to validate.
+     * @return True, if the email is valid. False otherwise.
+     */
+    private boolean validateEmail(String email) {
+        String regex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+        return email != null && email.matches(regex);
+    }
+
+    /**
+     * Validates the given password(s). They have to match each other, both be not null, be at least 8 digits long and contain
+     * at least 1 upper case and 1 lower case letter, one "special icon" and one number.
+     *
+     * @param password The first password to verify.
+     * @param confirmPassword The second password that has to match the first one.
+     * @return True, if the password is valid. False otherwise.
+     */
+    private boolean validatePasswords(String password, String confirmPassword) {
+        return password != null &&
+                password.equals(confirmPassword) &&
+                password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$");
+    }
+}
