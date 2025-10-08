@@ -16,15 +16,25 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor
 @Getter
+@Table(name = "transactions")
+@Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Transaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
     private Money amount;
+
+    @Column(nullable = false)
     private String description;
+
+    @Column(nullable = false)
     private LocalDateTime date;
+
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account")
     private Account account;
 
     /**

@@ -1,7 +1,9 @@
 package com.terfehr.homehub.domain.bookkeeping.entity;
 
 import com.terfehr.homehub.domain.bookkeeping.value.Money;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,8 +12,10 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor
 @Getter
+@Table(name = "incomes")
 public class Income extends Transaction {
 
+    @Column(nullable = false)
     private String source;
 
     /**

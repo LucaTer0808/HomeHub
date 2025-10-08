@@ -10,14 +10,21 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @Getter
+@Table(name = "shopping_spree_items")
 public class ShoppingSpreeItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
     private int quantity;
+
     @ManyToOne
+    @JoinColumn(name = "shopping_spree_id")
     private ShoppingSpree shoppingSpree;
 
     /**

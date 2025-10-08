@@ -23,20 +23,28 @@ import java.util.Set;
 @Entity
 @NoArgsConstructor
 @Getter
+@Table(name = "households")
 public class Household {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
     private String name;
+
     @OneToMany(mappedBy = "household", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Roommate> roommates;
+
     @OneToMany(mappedBy = "household", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Account> accounts;
+
     @OneToMany(mappedBy = "household", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<TaskList> taskLists;
+
     @OneToMany(mappedBy = "household", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ShoppingList> shoppingLists;
+
     @OneToMany(mappedBy = "household", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ShoppingSpree> shoppingSpree;
 

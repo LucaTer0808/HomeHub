@@ -13,17 +13,25 @@ import java.util.Set;
 @Entity
 @NoArgsConstructor
 @Getter
+@Table(name = "shopping_sprees")
 public class ShoppingSpree {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @OneToMany(mappedBy = "shoppingSpree", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ShoppingSpreeItem> shoppingSpreeItems;
+
+    @Column(nullable = false)
     private LocalDateTime date;
+
     @OneToOne
+    @JoinColumn(name = "shopping_expense_id")
     private ShoppingExpense shoppingExpense;
+
     @ManyToOne
+    @JoinColumn(name = "household_id")
     private Household household;
 
     /**

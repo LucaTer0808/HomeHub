@@ -12,16 +12,21 @@ import java.util.stream.Collectors;
 @Entity
 @NoArgsConstructor
 @Getter
+@Table(name = "shopping_lists")
 public class ShoppingList {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(nullable = false)
     private String name;
+
     @OneToMany(mappedBy = "shoppingList", cascade = CascadeType.ALL, orphanRemoval = true)
     Set<ShoppingListItem> shoppingListItems;
+
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "household_id")
     private Household household;
 
     /**

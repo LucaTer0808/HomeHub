@@ -10,21 +10,34 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor
 @Getter
+@Table(name = "tasks")
 public class Task {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "task_list_id")
     private TaskList taskList;
+
     @Column(nullable = false)
     private String action;
+
     @Column(nullable = false)
     private String description;
+
     @Column(nullable = false)
     private boolean finished;
+
+    @Column(nullable = false)
     private LocalDateTime finishedAt;
+
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumns({
+                    @JoinColumn(name = "household_id", referencedColumnName = "household_id"),
+                    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
+            })
     private Roommate roommate;
 
     /**

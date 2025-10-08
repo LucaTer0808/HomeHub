@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 @Entity
 @NoArgsConstructor
 @Getter
+@Table(name = "accounts")
 public class Account {
 
     private static final Set<String> VALID_CURRENCIES = Currency // for caching purposes
@@ -37,23 +38,27 @@ public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
     private Money balance;
+
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Transaction> transactions;
+
     @ManyToOne(fetch = FetchType.LAZY)
     private Household household;
 
     /**
-     * Constructs a new Account object with the specified name, initial balance, and household.
-     * The account will have an empty set of transactions upon creation.
+     * Creates a new account for the given household.
      *
-     * @param name          The name of the account, which typically identifies its purpose
-     *                       (e.g., "Checking Account", "Savings Account"). Must not be null or empty.
-     * @param initialBalance The initial monetary balance for the account. Must not be null.
-     * @param household      The household associated with this account, representing the group or entity
-     *                       that owns the account. Must not be null.
-     * @throws IllegalArgumentException If the given name, balance or Household is invalid.
+     * @param name The name of the account.
+     * @param amount The amount of the account.
+     * @param currencyCode The currency code of the account.
+     * @param household The household to which te account belongs
+     * @throws IllegalArgumentException If one of the given parameters are invalid
      */
     public Account(String name, long amount, String currencyCode, Household household) throws IllegalArgumentException {
         if (!validate(name, currencyCode, household)) {

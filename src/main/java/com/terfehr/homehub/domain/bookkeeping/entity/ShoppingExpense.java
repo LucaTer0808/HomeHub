@@ -1,8 +1,7 @@
 package com.terfehr.homehub.domain.bookkeeping.entity;
 
 import com.terfehr.homehub.domain.shopping.entity.ShoppingSpree;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,9 +10,11 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor
 @Getter
+@Table(name = "shopping_expenses")
 public class ShoppingExpense extends Expense {
 
     @OneToOne(mappedBy = "shoppingExpense")
+    @JoinColumn(name = "shopping_spree_id", nullable = false)
     private ShoppingSpree shoppingSpree;
 
     /**
@@ -24,14 +25,10 @@ public class ShoppingExpense extends Expense {
      * @param date The date and time the expense occurred.
      * @param recipient The recipient to whom the expense was paid.
      * @param account The account associated with the expense transaction.
-     * @param shoppingSpree The ShoppingSpree that was paid with this expense.
      * @throws IllegalArgumentException if the shoppingSpree is invalid.
      */
     public ShoppingExpense(long amount, String description, LocalDateTime date, String recipient, Account account) throws IllegalArgumentException {
         super(amount, description, date, recipient, account);
-        if (!validate(shoppingSpree)) {
-            throw new IllegalArgumentException("Invalid ShoppingExpense object");
-        }
         this.shoppingSpree = null;
     }
 

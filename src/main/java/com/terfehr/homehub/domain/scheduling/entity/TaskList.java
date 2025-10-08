@@ -11,15 +11,21 @@ import java.util.Set;
 @Entity
 @NoArgsConstructor
 @Getter
+@Table(name = "task_lists")
 public class TaskList {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
     private String name;
+
     @OneToMany(mappedBy = "taskList", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Task> tasks;
+
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name ="household_id")
     private Household household;
 
     /**
