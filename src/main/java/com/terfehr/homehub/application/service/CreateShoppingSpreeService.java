@@ -38,16 +38,15 @@ public class CreateShoppingSpreeService {
      * @throws AccountNotFoundException If the Account with the given ID does not exist.
      */
     public ShoppingSpree execute(CreateShoppingSpreeCommand cmd) throws HouseholdNotFoundException, ShoppingListNotFoundException, AccountNotFoundException{
-        Household household = householdRepository.findById(cmd.getHouseholdId())
-                .orElseThrow(() -> new HouseholdNotFoundException("Household with ID " + cmd.getHouseholdId() + " not found"));
-
         ShoppingList shoppingList = shoppingListRepository.findById(cmd.getShoppingListId())
                 .orElseThrow(() -> new ShoppingListNotFoundException("ShoppingList with ID " + cmd.getShoppingListId() + " not found"));
+
+        Household household = shoppingList.getHousehold();
 
         Account account = accountRepository.findById(cmd.getAccountId())
                 .orElseThrow(() -> new AccountNotFoundException("Account  with the ID " + cmd.getAccountId() + " not found"));
 
-        ShoppingSpree spree = shoppingService.prepareShoppingSpree(shoppingList, household);
+        ShoppingSpree spree = shoppingService.prepareShoppingSpree(shoppingList, household, cmd.getDate());
         ShoppingExpense expense = account.addShoppingExpense(cmd.getAmount(), cmd.getDescription(), cmd.getDate(), cmd.getRecipient());
         spree.setShoppingExpense(expense);
         expense.setShoppingSpree(spree);

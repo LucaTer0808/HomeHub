@@ -20,13 +20,15 @@ public class ShoppingService {
      * This ShoppingSpree is then returned.
      *
      * @param shoppingList The shopping list to be finished.
+     * @param household The household to add the new ShoppingSpree to.
+     * @param date The date when the ShoppingSpree happened.
      * @return The items that were picked and then deleted from the shopping list.
      */
-    public ShoppingSpree prepareShoppingSpree(ShoppingList shoppingList, Household household) {
+    public ShoppingSpree prepareShoppingSpree(ShoppingList shoppingList, Household household, LocalDateTime date) {
         Set<ShoppingListItem> pickedItems = shoppingList.getPickedItems();
         shoppingList.deletePickedItems();
 
-        ShoppingSpree spree = household.addShoppingSpree(LocalDateTime.now());
+        ShoppingSpree spree = household.addShoppingSpree(date);
         populateShoppingSpree(spree, pickedItems);
         return spree;
     }

@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * Command for registering a User. Contains information about his desired username, email and password.
+ */
 @Getter
 @AllArgsConstructor
 @Builder
