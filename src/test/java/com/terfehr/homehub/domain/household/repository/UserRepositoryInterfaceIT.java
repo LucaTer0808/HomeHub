@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ActiveProfiles("test")
-class UserRepositoryInterfaceTest {
+class UserRepositoryInterfaceIT {
 
     @Container
     @ServiceConnection
@@ -31,9 +31,9 @@ class UserRepositoryInterfaceTest {
 
     @Test
     public void testFindAll() {
-        User user = new User("BryannLasme04", "bryan.lasme@s04.de", "S04oleole", "123456789", LocalDateTime.now());
+        User user = new User("BryanLasme04", "bryan.lasme@s04.de", "S04oleole", "123456789", LocalDateTime.now());
         userRepository.save(user);
-        Optional<User> userFromDb = userRepository.findByUsername("BryannLasme04");
+        Optional<User> userFromDb = userRepository.findByUsername("BryanLasme04");
         assertEquals(userFromDb.get(), user);
     }
 }
