@@ -1,5 +1,6 @@
 package com.terfehr.homehub.domain.shopping.service;
 
+import com.terfehr.homehub.domain.bookkeeping.entity.Account;
 import com.terfehr.homehub.domain.household.entity.Household;
 import com.terfehr.homehub.domain.shopping.entity.ShoppingList;
 import com.terfehr.homehub.domain.shopping.entity.ShoppingListItem;
@@ -22,12 +23,11 @@ public class ShoppingService {
      * @return The items that were picked and then deleted from the shopping list.
      */
     public ShoppingSpree prepareShoppingSpree(ShoppingList shoppingList, Household household) {
-        Set<ShoppingListItem> finishedItems = shoppingList.getPickedItems();
+        Set<ShoppingListItem> pickedItems = shoppingList.getPickedItems();
         shoppingList.deletePickedItems();
 
-        ShoppingSpree spree = new ShoppingSpree(LocalDateTime.now(), household);
-        populateShoppingSpree(spree, finishedItems);
-        household.addShoppingSpree(spree);
+        ShoppingSpree spree = household.addShoppingSpree(LocalDateTime.now());
+        populateShoppingSpree(spree, pickedItems);
         return spree;
     }
 

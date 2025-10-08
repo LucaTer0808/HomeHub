@@ -26,7 +26,7 @@ public class CreateShoppingSpreeService {
     private final ShoppingListRepositoryInterface shoppingListRepository;
     private final AccountRepositoryInterface accountRepository;
 
-    private ShoppingService shoppingService;
+    private final ShoppingService shoppingService;
 
     /**
      * Executes the CreateShoppingSpreeCommand by creating a ShoppingSpree and associating it with an Account.
