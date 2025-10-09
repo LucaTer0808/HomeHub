@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 public class UserVerifiedEvent extends ApplicationEvent {
 
     private final UserVerifiedEventPayload payload;
-    private final LocalDateTime timestamp;
     /**
      * Constructor for UserVerifiedEvent.
      *
@@ -28,7 +27,6 @@ public class UserVerifiedEvent extends ApplicationEvent {
             throw new InvalidEventPayloadException("The given UserVerifiedEventPayload is invalid. It most likely is null");
         }
         this.payload = payload;
-        this.timestamp = LocalDateTime.now();
     }
 
     /**

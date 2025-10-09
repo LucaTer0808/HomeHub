@@ -14,8 +14,6 @@ import java.time.LocalDateTime;
 public class UserLoginEvent extends ApplicationEvent {
 
     private final UserLoginEventPayload payload;
-    private final LocalDateTime timestamp;
-
     /**
      * Constructor for UserLoginEvent.
      *
@@ -28,7 +26,6 @@ public class UserLoginEvent extends ApplicationEvent {
             throw new InvalidEventPayloadException("The given UserLoginEventPayload is invalid. It most likely is null");
         }
         this.payload = payload;
-        this.timestamp = LocalDateTime.now();
     }
 
     /**
