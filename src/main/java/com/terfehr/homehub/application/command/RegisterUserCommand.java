@@ -4,17 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.lang.NonNull;
 
 /**
  * Command for registering a User. Contains information about his desired username, email and password.
  */
-@Getter
-@AllArgsConstructor
 @Builder
-@NoArgsConstructor
-public class RegisterUserCommand {
-
-    private String username;
-    private String email;
-    private String password;
-}
+public record RegisterUserCommand(@NonNull String username, @NonNull String email, @NonNull String password) {}
