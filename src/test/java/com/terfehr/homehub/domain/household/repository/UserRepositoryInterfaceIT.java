@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Testcontainers
 @DataJpaTest
@@ -34,6 +35,7 @@ class UserRepositoryInterfaceIT {
         User user = new User("BryanLasme04", "bryan.lasme@s04.de", "S04oleole", "123456789", LocalDateTime.now());
         userRepository.save(user);
         Optional<User> userFromDb = userRepository.findByUsername("BryanLasme04");
-        assertEquals(userFromDb.get(), user);
+        assertTrue(userFromDb.isPresent());
+        assertEquals(userFromDb.get().getUsername(), user.getUsername());
     }
 }
