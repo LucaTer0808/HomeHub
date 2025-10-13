@@ -1,5 +1,6 @@
 package com.terfehr.homehub.controller.request;
 
+import jakarta.security.auth.message.callback.PrivateKeyCallback;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -7,7 +8,7 @@ import java.util.Locale;
 
 @NoArgsConstructor
 @Getter
-public class RegisterUserRequest {
+public class RegisterUserRequest implements RequestInterface{
 
     private String username;
     private String email;
@@ -15,11 +16,14 @@ public class RegisterUserRequest {
     private String confirmPassword;
 
     /**
-     * Normalizes the given Email and Username by converting it to lower case and trimming it of leading and following white spaces.
+     * Normalizes the given Email and Username and both passwords by converting it to lower case and trimming it of leading and following white spaces.
+     * If one of the fields is null, it won't be changed at all.
      */
-    public void normalize() {
-        username = username.trim().toLowerCase(Locale.ROOT);
-        email = email.trim().toLowerCase(Locale.ROOT);
+    private void normalize() {
+        username =  username != null ? username.trim().toLowerCase(Locale.ROOT) : null;
+        email =  email != null ? email.trim().toLowerCase(Locale.ROOT) : null;
+        password = password != null ? password.trim() : null;
+        confirmPassword = confirmPassword != null ? confirmPassword.trim() : null;
     }
 
     /**

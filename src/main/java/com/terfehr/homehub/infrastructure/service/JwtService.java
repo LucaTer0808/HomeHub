@@ -1,5 +1,6 @@
 package com.terfehr.homehub.infrastructure.service;
 
+import com.terfehr.homehub.application.interfaces.JwtServiceInterface;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -9,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +34,7 @@ import java.util.function.Function;
  * - JJWT library for working with JSON Web Tokens.
  */
 @Service
-public class JwtService {
+public class JwtService implements JwtServiceInterface {
 
     @Value("${security.jwt.secret-key}")
     private String secretKey;
@@ -64,7 +66,7 @@ public class JwtService {
     }
 
     /**
-     * Generates a JSON Web Token (JWT) for the specified user without additional claims.
+     * {@inheritDoc}
      *
      * @param userDetails the user details containing authentication information, primarily the username
      * @return a signed JWT as a String
@@ -82,6 +84,26 @@ public class JwtService {
      */
     public String generateToken (Map<String, Object> extractClaims, UserDetails userDetails) {
         return buildToken(extractClaims, userDetails, jwtExpirationTime);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param token The JWT token to get the creation date from.
+     * @return The creation date of the JWT token as a Date object.
+     */
+    public Date getIssuedAt(String token) {
+        return extractClaim(token, Claims::getIssuedAt);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param token The JWT token to get the expiration date from.
+     * @return The expiration date of the JWT token as a Date object.
+     */
+    public Date getExpiresAt(String token) {
+        return extractClaim(token, Claims::getExpiration);
     }
 
     /**

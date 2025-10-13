@@ -75,10 +75,21 @@ public class TaskList {
      * @throws IllegalArgumentException If the Task is not contained in the TaskList.
      */
     public void removeTask(Task task) throws IllegalArgumentException {
-        if (!this.tasks.contains(task)) {
-            throw new IllegalArgumentException("TaskList does not contain the given task");
+        if (!canRemoveTask(task)) {
+            throw new IllegalArgumentException("Task can not be removed ");
         }
         this.tasks.remove(task);
+    }
+
+    /**
+     * Decides whether the given Task can be removed from the TaskList. It has to be not null, be contained by the TaskList
+     * and
+     *
+     * @param task The Task to remove.
+     * @return True, if the Task can be removed. False otherwise.
+     */
+    private boolean canRemoveTask(Task task) {
+        return task != null & this.tasks.contains(task);
     }
 
     /**

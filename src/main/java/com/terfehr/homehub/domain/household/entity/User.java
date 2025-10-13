@@ -2,6 +2,7 @@ package com.terfehr.homehub.domain.household.entity;
 
 import com.terfehr.homehub.domain.household.exception.InvalidRoommateException;
 import com.terfehr.homehub.domain.household.exception.InvalidUserException;
+import com.terfehr.homehub.domain.household.exception.InvalidVerificationCodeException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -121,9 +122,12 @@ public class User implements UserDetails {
      *
      * @throws IllegalStateException if the user cannot be enabled
      */
-    public void enable() throws IllegalArgumentException {
-        if (!canBeEnabled()) {
-            throw new IllegalStateException("User cannot be enabled");
+    public void enable() throws IllegalStateException {
+        if (!enabled) {
+            throw new IllegalStateException("User is enabled already");
+        }
+        if (verificationCodeExpiration.isBefore(LocalDateTime.now())) {
+            throw new InvalidVerificationCodeException("Verification code expired");
         }
         this.enabled = true;
         this.verificationCode = null;
@@ -166,18 +170,6 @@ public class User implements UserDetails {
      */
     private boolean canRemoveRoommate(Roommate roommate) {
         return validateRoommate(roommate) && this.roommates.contains(roommate);
-    }
-
-    /**
-     * Determines whether the user can be enabled.
-     * A user can be enabled if they are currently disabled,
-     * have a non-null verification code, a non-null verification code
-     * expiration, and the current time is before the expiration.
-     *
-     * @return true if the user can be enabled; false otherwise
-     */
-    private boolean canBeEnabled() {
-        return !this.enabled && LocalDateTime.now().isBefore(this.verificationCodeExpiration);
     }
 
     /**
