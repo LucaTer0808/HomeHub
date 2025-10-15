@@ -1,5 +1,6 @@
 package com.terfehr.homehub.domain.household.entity;
 
+import com.terfehr.homehub.application.exception.InvalidVerificationCodeExpirationException;
 import com.terfehr.homehub.domain.household.exception.InvalidRoommateException;
 import com.terfehr.homehub.domain.household.exception.InvalidUserException;
 import com.terfehr.homehub.domain.household.exception.InvalidVerificationCodeException;
@@ -75,6 +76,32 @@ public class User implements UserDetails {
         this.verificationCode = verificationCode;
         this.verificationCodeExpiration = verificationCodeExpiration;
         this.roommates = new HashSet<>();
+    }
+
+    /**
+     * Sets the verification code of the User. If it is invalid, an exception is thrown.
+     *
+     * @param verificationCode The code to set.
+     * @throws InvalidVerificationCodeException If the verification code is invalid.
+     */
+    public void setVerificationCode(String verificationCode) throws InvalidVerificationCodeException {
+         if (!validateVerificationCode(verificationCode)) {
+             throw new InvalidVerificationCodeException("Invalid verification code");
+         }
+         this.verificationCode = verificationCode;
+    }
+
+    /**
+     * Sets the expiration timestamp of the verification code of the User.
+     *
+     * @param verificationCodeExpiration The timestamp to set.
+     * @throws InvalidVerificationCodeExpirationException If the expiration of the verification code is invalid.
+     */
+    public void setVerificationCodeExpiration(LocalDateTime verificationCodeExpiration) throws InvalidVerificationCodeExpirationException {
+         if (!validateVerificationCodeExpiration(verificationCodeExpiration)) {
+             throw new InvalidVerificationCodeExpirationException("Invalid verification code");
+         }
+         this.verificationCodeExpiration = verificationCodeExpiration;
     }
 
     /**

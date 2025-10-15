@@ -12,13 +12,13 @@ import java.util.UUID;
  * time of expiration for a possible verification.
  */
 @Service
-public class UserRegistrationService {
+public class UserService {
 
     private final UserRepositoryInterface userRepository;
     @Value("${registration.expiration_time}")
     private Integer expirationTime; // Expressed in hours
 
-    public UserRegistrationService(UserRepositoryInterface userRepository) {
+    public UserService(UserRepositoryInterface userRepository) {
         this.userRepository = userRepository;
     }
 

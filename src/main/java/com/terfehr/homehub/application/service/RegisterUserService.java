@@ -9,7 +9,7 @@ import com.terfehr.homehub.domain.household.event.UserRegisteredEvent;
 import com.terfehr.homehub.domain.household.event.payload.UserRegisteredEventPayload;
 import com.terfehr.homehub.domain.household.exception.InvalidUserException;
 import com.terfehr.homehub.domain.household.repository.UserRepositoryInterface;
-import com.terfehr.homehub.domain.household.service.UserRegistrationService;
+import com.terfehr.homehub.domain.household.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -27,7 +27,7 @@ import java.time.LocalDateTime;
 public class RegisterUserService {
 
     private final UserRepositoryInterface  userRepository;
-    private final UserRegistrationService userRegistrationService;
+    private final UserService userService;
     private final PasswordEncoder passwordEncoder;
     private final ApplicationEventPublisher publisher;
 
@@ -46,13 +46,13 @@ public class RegisterUserService {
         String username = cmd.username();
         String email =  cmd.email();
         String password = passwordEncoder.encode(cmd.password());
-        String verificationCode = userRegistrationService.generateUniqueVerificationCode();
-        LocalDateTime expiration = userRegistrationService.getVerificationCodeExpiration();
+        String verificationCode = userService.generateUniqueVerificationCode();
+        LocalDateTime expiration = userService.getVerificationCodeExpiration();
 
-        if (!userRegistrationService.isEmailUnique(email)) {
+        if (!userService.isEmailUnique(email)) {
             throw new EmailAlreadyExistsException("The given email " + email + " already exists");
         }
-        if (!userRegistrationService.isUsernameUnique(username)) {
+        if (!userService.isUsernameUnique(username)) {
             throw new UsernameAlreadyExistsException("The given username " + username + " already exists");
         }
 

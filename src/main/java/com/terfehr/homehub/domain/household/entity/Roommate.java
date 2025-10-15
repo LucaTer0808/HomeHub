@@ -52,8 +52,11 @@ public class Roommate {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     /**
-     * Constructs a new Roommate instance associating a user with a household.
+     * Constructs a new Roommate instance associating a user with a household. The Role is set to "user" by default.
      *
      * @param household the household that the roommate belongs to
      * @param user the user representing the roommate
@@ -66,6 +69,20 @@ public class Roommate {
         this.id = new  RoommateId(household.getId(), user.getId());
         this.household = household;
         this.user = user;
+        this.role = Role.ROLE_USER;
+    }
+
+    /**
+     * Sets the Role of a given Roommate. If the given role is invalid, an exception is thrown.
+     *
+     * @param role The role to set.
+     * @throws IllegalArgumentException If the given String does not represent any valid role.
+     */
+    public void setRole(String role) throws IllegalArgumentException {
+        if (!Role.isValidRole(role)) {
+            throw  new IllegalArgumentException("Invalid Roommate role");
+        }
+        this.role = Role.valueOf(role);
     }
 
     /**
