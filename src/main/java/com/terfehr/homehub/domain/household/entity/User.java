@@ -48,6 +48,15 @@ public class User implements UserDetails {
     @Column(name = "verification_code_expiration")
     private LocalDateTime verificationCodeExpiration;
 
+    @Column(name = "pending_email")
+    private String pendingEmail;
+
+    @Column(name = "email_change_code")
+    private String emailChangeCode;
+
+    @Column(name = "email_change_code_expiration")
+    private LocalDateTime emailChangeCodeExpiration;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Roommate> roommates;
 
@@ -75,6 +84,9 @@ public class User implements UserDetails {
         this.enabled = false;
         this.verificationCode = verificationCode;
         this.verificationCodeExpiration = verificationCodeExpiration;
+        this.pendingEmail = null;
+        this.emailChangeCode = null;
+        this.emailChangeCodeExpiration = null;
         this.roommates = new HashSet<>();
     }
 
@@ -85,7 +97,7 @@ public class User implements UserDetails {
      * @throws InvalidVerificationCodeException If the verification code is invalid.
      */
     public void setVerificationCode(String verificationCode) throws InvalidVerificationCodeException {
-         if (!validateVerificationCode(verificationCode)) {
+         if (!validateCode(verificationCode)) {
              throw new InvalidVerificationCodeException("Invalid verification code");
          }
          this.verificationCode = verificationCode;
@@ -98,10 +110,49 @@ public class User implements UserDetails {
      * @throws InvalidVerificationCodeExpirationException If the expiration of the verification code is invalid.
      */
     public void setVerificationCodeExpiration(LocalDateTime verificationCodeExpiration) throws InvalidVerificationCodeExpirationException {
-         if (!validateVerificationCodeExpiration(verificationCodeExpiration)) {
+         if (!ValidateExpiration(verificationCodeExpiration)) {
              throw new InvalidVerificationCodeExpirationException("Invalid verification code");
          }
          this.verificationCodeExpiration = verificationCodeExpiration;
+    }
+
+    /**
+     * Sets the pending email of the user used for changing his email address
+     *
+     * @param pendingEmail The desired pending email.
+     * @throws IllegalArgumentException If the given pending email is invalid.
+     */
+    public void setPendingEmail(String pendingEmail) throws IllegalArgumentException {
+        if (!validateEmail(pendingEmail)) {
+            throw new IllegalArgumentException("Invalid email");
+        }
+        this.pendingEmail = pendingEmail;
+    }
+
+    /**
+     * Sets the email change token of the user.
+     *
+     * @param emailChangeCode The desired email change token.
+     * @throws IllegalArgumentException If the given token is invalid
+     */
+    public void setEmailChangeToken(String emailChangeCode) throws IllegalArgumentException {
+        if (!validateCode(emailChangeCode)) {
+            throw new IllegalArgumentException("Invalid email change token");
+        }
+        this.emailChangeCode = emailChangeCode;
+    }
+
+    /**
+     * Sets the expiration of the email change token. If it is invalid, an exception is thrown.
+     *
+     * @param emailChangeCodeExpiration The desired expiration timestamp.
+     * @throws IllegalArgumentException If the given expiration is invalid.
+     */
+    public void setEmailChangeTokenExpiration(LocalDateTime emailChangeCodeExpiration) throws IllegalArgumentException {
+        if (!ValidateExpiration(emailChangeCodeExpiration)) {
+            throw new IllegalArgumentException("Invalid email change token expiration");
+        }
+        this.emailChangeCodeExpiration = emailChangeCodeExpiration;
     }
 
     /**
@@ -174,7 +225,7 @@ public class User implements UserDetails {
      */
     private boolean validate(String username, String email, String password, String verificationCode, LocalDateTime verificationCodeExpiration) {
         return validateUsername(username) && validateEmail(email) && validatePassword(password)
-                && validateVerificationCode(verificationCode) && validateVerificationCodeExpiration(verificationCodeExpiration);
+                && validateCode(verificationCode) && ValidateExpiration(verificationCodeExpiration);
     }
 
     /**
@@ -245,7 +296,7 @@ public class User implements UserDetails {
      * @param verificationCode the verification code to be validated
      * @return true if the verification code is non-null and not empty; false otherwise
      */
-    private boolean validateVerificationCode(String verificationCode) {
+    private boolean validateCode(String verificationCode) {
         return verificationCode != null && !verificationCode.isEmpty();
     }
 
@@ -256,7 +307,7 @@ public class User implements UserDetails {
      * @param verificationCodeExpiration the expiration date and time of the verification code to validate
      * @return true if the expiration date and time is non-null; false otherwise
      */
-    private boolean validateVerificationCodeExpiration(LocalDateTime verificationCodeExpiration) {
+    private boolean ValidateExpiration(LocalDateTime verificationCodeExpiration) {
         return verificationCodeExpiration != null;
     }
 }
