@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
+@Getter
 public class VerifyEmailChangeRequest implements RequestInterface {
 
     private String emailChangeCode;
