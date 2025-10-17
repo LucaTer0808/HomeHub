@@ -1,12 +1,16 @@
 package com.terfehr.homehub.application.service;
 
 import com.terfehr.homehub.application.command.ChangeEmailCommand;
+import com.terfehr.homehub.application.command.VerifyEmailChangeCommand;
 import com.terfehr.homehub.application.dto.ChangeEmailDTO;
 import com.terfehr.homehub.application.dto.UserDTO;
 import com.terfehr.homehub.application.exception.UserNotFoundException;
 import com.terfehr.homehub.domain.household.entity.User;
 import com.terfehr.homehub.domain.household.event.ChangeEmailEvent;
+import com.terfehr.homehub.domain.household.event.VerifyEmailChangeEvent;
 import com.terfehr.homehub.domain.household.event.payload.ChangeEmailEventPayload;
+import com.terfehr.homehub.domain.household.event.payload.VerifyEmailChangeEventPayload;
+import com.terfehr.homehub.domain.household.exception.InvalidChangeEmailCodeException;
 import com.terfehr.homehub.domain.household.repository.UserRepositoryInterface;
 import com.terfehr.homehub.domain.household.service.UserService;
 import com.terfehr.homehub.domain.shared.exception.InvalidEventPayloadException;
@@ -46,10 +50,7 @@ public class ChangeEmailService {
         String emailChangeToken = userService.generateUniqueEmailChangeCode();
         LocalDateTime emailChangeTokenExpiration = userService.getChangeEmailCodeExpiration();
 
-
-        user.setPendingEmail(cmd.email());
-        user.setEmailChangeToken(emailChangeToken);
-        user.setEmailChangeTokenExpiration(emailChangeTokenExpiration);
+        user.changeEmail(cmd.email(), emailChangeToken, emailChangeTokenExpiration);
 
         userRepository.save(user);
 
@@ -59,5 +60,32 @@ public class ChangeEmailService {
 
         UserDTO userDto = new UserDTO(user.getId(), user.getUsername(), user.getEmail(), user.isEnabled());
         return new ChangeEmailDTO(userDto, emailChangeToken, emailChangeTokenExpiration);
+    }
+
+    /**
+     * Executes the given VerifyEmailChangeCommand by updating the User's email address by setting the current email address as the pending one.
+     * The verification code and expiration date are then removed, an Event is published, and the updated User is returned.
+     *
+     * @param cmd The Command to execute.
+     * @return The updated User as a DTO.
+     * @throws UserNotFoundException If the User to update does not exist.
+     * @throws IllegalStateException If the email change is not pending.
+     * @throws InvalidChangeEmailCodeException If the code is expired.
+     * @throws InvalidEventPayloadException If the event payload is invalid.
+     */
+    public UserDTO execute(VerifyEmailChangeCommand cmd) throws UserNotFoundException, IllegalStateException, InvalidChangeEmailCodeException, InvalidEventPayloadException {
+
+        User user = userRepository.findByEmailChangeCode(cmd.emailChangeCode())
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        user.verifyEmailChange();
+
+        userRepository.save(user);
+
+        VerifyEmailChangeEventPayload payload = new VerifyEmailChangeEventPayload(user.getId(), user.getEmail());
+        VerifyEmailChangeEvent event = new VerifyEmailChangeEvent(this, payload);
+        publisher.publishEvent(event);
+
+        return new UserDTO(user.getId(), user.getUsername(), user.getEmail(), user.isEnabled());
     }
 }

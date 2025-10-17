@@ -1,24 +1,13 @@
 package com.terfehr.homehub.controller;
 
-import com.terfehr.homehub.application.command.RefreshVerificationCodeCommand;
-import com.terfehr.homehub.application.command.RegisterUserCommand;
-import com.terfehr.homehub.application.command.UserLoginCommand;
-import com.terfehr.homehub.application.command.VerifyUserCommand;
+import com.terfehr.homehub.application.command.*;
+import com.terfehr.homehub.application.dto.ForgotPasswordDTO;
 import com.terfehr.homehub.application.dto.RefreshVerificationCodeDTO;
 import com.terfehr.homehub.application.dto.UserDTO;
 import com.terfehr.homehub.application.dto.UserLoginDTO;
-import com.terfehr.homehub.application.service.RefreshVerificationCodeService;
-import com.terfehr.homehub.application.service.RegisterUserService;
-import com.terfehr.homehub.application.service.UserLoginService;
-import com.terfehr.homehub.application.service.VerifyUserService;
-import com.terfehr.homehub.controller.request.RefreshVerificationCodeRequest;
-import com.terfehr.homehub.controller.request.RegisterUserRequest;
-import com.terfehr.homehub.controller.request.UserLoginRequest;
-import com.terfehr.homehub.controller.request.VerifyUserRequest;
-import com.terfehr.homehub.controller.response.RefreshVerificationCodeResponse;
-import com.terfehr.homehub.controller.response.RegisterUserResponse;
-import com.terfehr.homehub.controller.response.UserLoginResponse;
-import com.terfehr.homehub.controller.response.VerifyUserResponse;
+import com.terfehr.homehub.application.service.*;
+import com.terfehr.homehub.controller.request.*;
+import com.terfehr.homehub.controller.response.*;
 import com.terfehr.homehub.infrastructure.service.JwtService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -34,6 +23,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class AuthController {
 
+    private final ChangeEmailService changeEmailService;
+    private final ForgotPasswordService forgotPasswordService;
     private final RegisterUserService registerUserService;
     private final UserLoginService userLoginService;
     private final VerifyUserService verifyUserService;
@@ -106,5 +97,35 @@ public class AuthController {
 
         RefreshVerificationCodeDTO dto = refreshVerificationCodeService.execute(cmd);
         return ResponseEntity.status(HttpStatus.OK).body(new RefreshVerificationCodeResponse(dto));
+    }
+
+    @PatchMapping("/password")
+    public ResponseEntity<ForgotPasswordResponse> forgotPassword(@RequestBody ForgotPasswordRequest request) {
+        if (!request.validate()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid forgot password request sent at " + LocalDateTime.now());
+        }
+
+        ForgotPasswordCommand cmd = ForgotPasswordCommand
+                .builder()
+                .email(request.getEmail())
+                .build();
+
+        ForgotPasswordDTO dto = forgotPasswordService.execute(cmd);
+        return ResponseEntity.status(HttpStatus.OK).body(new ForgotPasswordResponse(dto));
+    }
+
+    @PatchMapping("/email/verify")
+    public ResponseEntity<VerifyEmailChangeResponse> verifyEmailChange(@RequestBody VerifyEmailChangeRequest request) {
+        if (!request.validate()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid email change verification request sent at " + LocalDateTime.now());
+        }
+
+        VerifyEmailChangeCommand cmd = VerifyEmailChangeCommand
+                .builder()
+                .emailChangeCode(request.getEmailChangeCode())
+                .build();
+
+        UserDTO dto = changeEmailService.execute(cmd);
+        return ResponseEntity.status(HttpStatus.OK).body(new VerifyEmailChangeResponse(dto));
     }
 }

@@ -48,8 +48,8 @@ public class RefreshVerificationCodeService {
         String newCode = userService.generateUniqueVerificationCode();
         LocalDateTime expiration = userService.getVerificationCodeExpiration();
 
-        user.setVerificationCode(newCode);
-        user.setVerificationCodeExpiration(expiration);
+        user.refreshVerificationCode(newCode, expiration);
+
         userRepository.save(user);
 
         UserDTO refreshedUser = new UserDTO(user.getId(), user.getUsername(), user.getEmail(), user.isEnabled());

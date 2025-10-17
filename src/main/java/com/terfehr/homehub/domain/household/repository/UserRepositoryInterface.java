@@ -46,6 +46,15 @@ public interface UserRepositoryInterface extends JpaRepository<User, Long> {
     Optional<User> findByVerificationCode(String verificationCode);
 
     /**
+     * Retrieves an Optional containing a User entity based on the provided email change code.
+     * If no user is found with the given email change code, returns an empty Optional.
+     *
+     * @param emailChangeCode the email change code of the User to be retrieved
+     * @return an Optional containing the User entity if found, otherwise an empty Optional
+     */
+    Optional<User> findByEmailChangeCode(String emailChangeCode);
+
+    /**
      * Decides whether a User with the given Verification Code exists in the Database. Primarily used to
      * create a unique UUID Verification Code.
      *
@@ -77,4 +86,12 @@ public interface UserRepositoryInterface extends JpaRepository<User, Long> {
      * @return True, if such a User exists. False otherwise.
      */
     boolean existsByEmailChangeCode(String emailChangeCode);
+
+    /**
+     * Decides whether a User with the given Forgot Password Code exists in the Database.
+     *
+     * @param forgotPasswordCode The code to check.
+     * @return True, if such a User exists. False otherwise.
+     */
+    boolean existsByForgotPasswordCode(String forgotPasswordCode);
 }

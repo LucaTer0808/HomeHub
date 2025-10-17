@@ -1,10 +1,14 @@
 package com.terfehr.homehub.controller;
 
 import com.terfehr.homehub.application.command.ChangeEmailCommand;
+import com.terfehr.homehub.application.command.VerifyEmailChangeCommand;
 import com.terfehr.homehub.application.dto.ChangeEmailDTO;
+import com.terfehr.homehub.application.dto.UserDTO;
 import com.terfehr.homehub.application.service.ChangeEmailService;
 import com.terfehr.homehub.controller.request.ChangeEmailRequest;
+import com.terfehr.homehub.controller.request.VerifyEmailChangeRequest;
 import com.terfehr.homehub.controller.response.ChangeEmailResponse;
+import com.terfehr.homehub.controller.response.VerifyEmailChangeResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,5 +41,4 @@ public class UserController {
         ChangeEmailDTO dto = changeEmailService.execute(cmd);
         return ResponseEntity.status(HttpStatus.OK).body(new ChangeEmailResponse(dto));
     }
-
 }

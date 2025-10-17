@@ -11,10 +11,6 @@ public class RefreshVerificationCodeRequest implements RequestInterface {
 
     private String email;
 
-    public RefreshVerificationCodeRequest(String email) {
-        this.email = email;
-    }
-
     /**
      * Validates the given request after normalizing it.
      *

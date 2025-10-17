@@ -19,6 +19,8 @@ public class UserService {
     private Integer verificationCodeExpirationTime; // Expressed in hours
     @Value("${change_email.expiration_time}")
     private Integer changeEmailCodeExpirationTime; // also expressed in hours
+    @Value("${forgot_password.expiration_time}")
+    private Integer forgotPasswordCodeExpirationTime; // also expressed in hours
 
     public UserService(UserRepositoryInterface userRepository) {
         this.userRepository = userRepository;
@@ -51,6 +53,19 @@ public class UserService {
     }
 
     /**
+     * Generates a unique forgot password code with UUID.
+     *
+     * @return The unique uuid sent to the User via mail.
+     */
+    public String generateUniqueForgotPasswordCode() {
+        String uuid;
+        do {
+            uuid = UUID.randomUUID().toString();
+        } while (userRepository.existsByForgotPasswordCode(uuid));
+        return uuid;
+    }
+
+    /**
      * Returns the time when the option to verify the user has run out. The concrete value
      * can be found in the application.properties.
      *
@@ -68,6 +83,16 @@ public class UserService {
      */
     public LocalDateTime getChangeEmailCodeExpiration() {
         return LocalDateTime.now().plusHours(changeEmailCodeExpirationTime);
+    }
+
+    /**
+     * Returns the time when the option to change the password has run out. The concrete value
+     * can be found in the application.properties
+     *
+     * @return The LocalDateTime object.
+     */
+    public LocalDateTime getForgotPasswordCodeExpiration() {
+        return LocalDateTime.now().plusHours(forgotPasswordCodeExpirationTime);
     }
 
     /**

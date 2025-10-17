@@ -1,9 +1,7 @@
 package com.terfehr.homehub.domain.household.entity;
 
 import com.terfehr.homehub.application.exception.InvalidVerificationCodeExpirationException;
-import com.terfehr.homehub.domain.household.exception.InvalidRoommateException;
-import com.terfehr.homehub.domain.household.exception.InvalidUserException;
-import com.terfehr.homehub.domain.household.exception.InvalidVerificationCodeException;
+import com.terfehr.homehub.domain.household.exception.*;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -57,6 +55,12 @@ public class User implements UserDetails {
     @Column(name = "email_change_code_expiration")
     private LocalDateTime emailChangeCodeExpiration;
 
+    @Column(name = "forgot_password_code", unique = true)
+    private String forgotPasswordCode;
+
+    @Column(name = "forgot_password_code_expiration")
+    private LocalDateTime forgotPasswordCodeExpiration;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Roommate> roommates;
 
@@ -87,7 +91,23 @@ public class User implements UserDetails {
         this.pendingEmail = null;
         this.emailChangeCode = null;
         this.emailChangeCodeExpiration = null;
+        this.forgotPasswordCode = null;
+        this.forgotPasswordCodeExpiration = null;
         this.roommates = new HashSet<>();
+    }
+
+    /**
+     * Sets the email of the User. If it is invalid, an exception is thrown.
+     *
+     * @param email The email to set.
+     * @throws InvalidEmailException If the email is invalid.
+     */
+    public void setEmail(String email) throws InvalidEmailException {
+        if (email == null) {
+            throw new InvalidEmailException("Email cannot be null");
+        }
+        this.email = email;
+
     }
 
     /**
@@ -110,7 +130,7 @@ public class User implements UserDetails {
      * @throws InvalidVerificationCodeExpirationException If the expiration of the verification code is invalid.
      */
     public void setVerificationCodeExpiration(LocalDateTime verificationCodeExpiration) throws InvalidVerificationCodeExpirationException {
-         if (!ValidateExpiration(verificationCodeExpiration)) {
+         if (!validateExpiration(verificationCodeExpiration)) {
              throw new InvalidVerificationCodeExpirationException("Invalid verification code");
          }
          this.verificationCodeExpiration = verificationCodeExpiration;
@@ -149,7 +169,7 @@ public class User implements UserDetails {
      * @throws IllegalArgumentException If the given expiration is invalid.
      */
     public void setEmailChangeTokenExpiration(LocalDateTime emailChangeCodeExpiration) throws IllegalArgumentException {
-        if (!ValidateExpiration(emailChangeCodeExpiration)) {
+        if (!validateExpiration(emailChangeCodeExpiration)) {
             throw new IllegalArgumentException("Invalid email change token expiration");
         }
         this.emailChangeCodeExpiration = emailChangeCodeExpiration;
@@ -194,6 +214,31 @@ public class User implements UserDetails {
     }
 
     /**
+     * Sets a pending email change for the user by setting the pending email, the code, and the expiration date to the provided values.
+     *
+     * @param newEmail The new email to set.
+     * @param changeEmailCode The code to set.
+     * @param changeEmailCodeExpiration The expiration timestamp to set.
+     * @throws InvalidEmailException If the email is invalid.
+     * @throws InvalidChangeEmailCodeException If the code is invalid.
+     * @throws InvalidChangeEmailCodeExpirationException If the expiration of the code is invalid.
+     */
+    public void changeEmail(String newEmail, String changeEmailCode, LocalDateTime changeEmailCodeExpiration) throws InvalidEmailException, InvalidChangeEmailCodeException, InvalidChangeEmailCodeExpirationException{
+        if (!validateEmail(newEmail)) {
+            throw new InvalidEmailException("Invalid email");
+        }
+        if (!validateCode(changeEmailCode)) {
+            throw new InvalidChangeEmailCodeException("Invalid verification code");
+        }
+        if (!validateExpiration(changeEmailCodeExpiration)) {
+            throw new InvalidChangeEmailCodeExpirationException("Invalid verification code expiration");
+        }
+        this.pendingEmail = newEmail;
+        this.emailChangeCode = changeEmailCode;
+        this.emailChangeCodeExpiration = changeEmailCodeExpiration;
+    }
+
+    /**
      * Enables the user account by setting the "enabled" field to true.
      * This method clears any verification code and its associated expiration date.
      * The method ensures that the user can be enabled before performing the operation.
@@ -213,6 +258,64 @@ public class User implements UserDetails {
     }
 
     /**
+     * Called when the user forgot his password. Sets the forgot password code and its associated expiration date.
+     *
+     * @param forgotPasswordCode The forgot password code to set.
+     * @param forgotPasswordCodeExpiration The expiration timestamp to set.
+     * @throws InvalidForgotPasswordCodeException If the code is invalid.
+     * @throws InvalidForgotPasswordCodeExpirationException If the expiration of the code is invalid.
+     */
+    public void forgotPassword(String forgotPasswordCode, LocalDateTime forgotPasswordCodeExpiration) throws InvalidForgotPasswordCodeException, InvalidForgotPasswordCodeExpirationException{
+        if (!validateCode(forgotPasswordCode)) {
+            throw new InvalidForgotPasswordCodeException("Invalid verification code");
+        }
+
+        if (!validateExpiration(forgotPasswordCodeExpiration)) {
+            throw new InvalidForgotPasswordCodeExpirationException("Invalid verification code expiration");
+        }
+        this.forgotPasswordCode = forgotPasswordCode;
+        this.forgotPasswordCodeExpiration = forgotPasswordCodeExpiration;
+    }
+
+    /**
+     * Refreshes the verification code and its associated expiration date.
+     *
+     * @param verificationCode The new verification code to set.
+     * @param verificationCodeExpiration The expiration timestamp to set.
+     * @throws InvalidVerificationCodeException If the verification code is invalid.
+     * @throws InvalidVerificationCodeExpirationException If the expiration of the code is invalid.
+     */
+    public void refreshVerificationCode(String verificationCode, LocalDateTime verificationCodeExpiration) throws InvalidVerificationCodeException, InvalidVerificationCodeExpirationException{
+        if (!validateCode(verificationCode)) {
+            throw new InvalidVerificationCodeException("Invalid verification code");
+        }
+        if (!validateExpiration(verificationCodeExpiration)) {
+            throw new InvalidVerificationCodeExpirationException("Invalid verification code expiration");
+        }
+        this.verificationCode = verificationCode;
+        this.verificationCodeExpiration = verificationCodeExpiration;
+    }
+
+    /**
+     * Verifies the email change request by setting the pending email to the current email, setting the pending email, the code, and the expiration date to null.
+     *
+     * @throws IllegalStateException if the email change is not pending
+     * @throws InvalidChangeEmailCodeException if the code is expired
+     */
+    public void verifyEmailChange() throws IllegalStateException, InvalidChangeEmailCodeException {
+        if (pendingEmail != null || emailChangeCode == null || emailChangeCodeExpiration == null) {
+            throw new IllegalStateException("Email change is not pending");
+        }
+        if (emailChangeCodeExpiration.isBefore(LocalDateTime.now())) {
+            throw new InvalidChangeEmailCodeException("Email change code expired");
+        }
+        this.email = pendingEmail;
+        this.pendingEmail = null;
+        this.emailChangeCode = null;
+        this.emailChangeCodeExpiration = null;
+    }
+
+    /**
      * Validates the provided username, email, password, verification code, and
      * verification code expiration to ensure they meet required conditions.
      *
@@ -225,7 +328,7 @@ public class User implements UserDetails {
      */
     private boolean validate(String username, String email, String password, String verificationCode, LocalDateTime verificationCodeExpiration) {
         return validateUsername(username) && validateEmail(email) && validatePassword(password)
-                && validateCode(verificationCode) && ValidateExpiration(verificationCodeExpiration);
+                && validateCode(verificationCode) && validateExpiration(verificationCodeExpiration);
     }
 
     /**
@@ -307,7 +410,7 @@ public class User implements UserDetails {
      * @param verificationCodeExpiration the expiration date and time of the verification code to validate
      * @return true if the expiration date and time is non-null; false otherwise
      */
-    private boolean ValidateExpiration(LocalDateTime verificationCodeExpiration) {
+    private boolean validateExpiration(LocalDateTime verificationCodeExpiration) {
         return verificationCodeExpiration != null;
     }
 }
