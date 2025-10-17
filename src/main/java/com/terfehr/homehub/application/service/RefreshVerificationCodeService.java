@@ -1,6 +1,7 @@
 package com.terfehr.homehub.application.service;
 
 import com.terfehr.homehub.application.command.RefreshVerificationCodeCommand;
+import com.terfehr.homehub.application.dto.RefreshVerificationCodeDTO;
 import com.terfehr.homehub.application.dto.UserDTO;
 import com.terfehr.homehub.application.exception.UserNotFoundException;
 import com.terfehr.homehub.domain.household.entity.User;
@@ -29,7 +30,7 @@ public class RefreshVerificationCodeService {
      * @param cmd The Command to execute.
      * @return A UserDTO representing the user of the refreshed code.
      */
-    public UserDTO execute(RefreshVerificationCodeCommand cmd) {
+    public RefreshVerificationCodeDTO execute(RefreshVerificationCodeCommand cmd) {
 
         User user = userRepository.findByEmail(cmd.email())
                 .orElseThrow(() -> new UserNotFoundException("There is no User with the email " + cmd.email()));
@@ -47,6 +48,6 @@ public class RefreshVerificationCodeService {
         RefreshVerificationCodeEvent event = new RefreshVerificationCodeEvent(this, payload);
         publisher.publishEvent(event);
 
-        return refreshedUser;
+        return new RefreshVerificationCodeDTO(refreshedUser, newCode, expiration);
     }
 }

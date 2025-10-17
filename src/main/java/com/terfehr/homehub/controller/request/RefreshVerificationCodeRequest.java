@@ -29,6 +29,6 @@ public class RefreshVerificationCodeRequest implements RequestInterface {
      * Normalizes the email by trimming it off white-spaces and converting it to lower-case.
      */
     private void normalize() {
-        email = email.trim().toLowerCase(Locale.ROOT);
+        email = email != null ? email.trim().toLowerCase(Locale.ROOT) : null;
     }
 }

@@ -69,4 +69,12 @@ public interface UserRepositoryInterface extends JpaRepository<User, Long> {
      * @return True, if such a User exists. False otherwise
      */
     boolean existsByEmail(String email);
+
+    /**
+     * Decides whether a User with the given Email Change Code exists in the Database.
+     *
+     * @param emailChangeCode The code to check.
+     * @return True, if such a User exists. False otherwise.
+     */
+    boolean existsByEmailChangeCode(String emailChangeCode);
 }

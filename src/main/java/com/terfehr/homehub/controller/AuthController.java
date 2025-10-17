@@ -4,6 +4,7 @@ import com.terfehr.homehub.application.command.RefreshVerificationCodeCommand;
 import com.terfehr.homehub.application.command.RegisterUserCommand;
 import com.terfehr.homehub.application.command.UserLoginCommand;
 import com.terfehr.homehub.application.command.VerifyUserCommand;
+import com.terfehr.homehub.application.dto.RefreshVerificationCodeDTO;
 import com.terfehr.homehub.application.dto.UserDTO;
 import com.terfehr.homehub.application.dto.UserLoginDTO;
 import com.terfehr.homehub.application.service.RefreshVerificationCodeService;
@@ -14,6 +15,7 @@ import com.terfehr.homehub.controller.request.RefreshVerificationCodeRequest;
 import com.terfehr.homehub.controller.request.RegisterUserRequest;
 import com.terfehr.homehub.controller.request.UserLoginRequest;
 import com.terfehr.homehub.controller.request.VerifyUserRequest;
+import com.terfehr.homehub.controller.response.RefreshVerificationCodeResponse;
 import com.terfehr.homehub.controller.response.RegisterUserResponse;
 import com.terfehr.homehub.controller.response.UserLoginResponse;
 import com.terfehr.homehub.controller.response.VerifyUserResponse;
@@ -92,7 +94,7 @@ public class AuthController {
     }
 
     @PatchMapping("/refresh")
-    public ResponseEntity<UserDTO> refresh(@RequestBody RefreshVerificationCodeRequest request) {
+    public ResponseEntity<RefreshVerificationCodeResponse> refresh(@RequestBody RefreshVerificationCodeRequest request) {
         if (!request.validate()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid refresh request sent at " + LocalDateTime.now());
         }
@@ -102,7 +104,7 @@ public class AuthController {
                 .email(request.getEmail())
                 .build();
 
-        UserDTO refreshedUser = refreshVerificationCodeService.execute(cmd);
-        return ResponseEntity.status(HttpStatus.OK).body(refreshedUser);
+        RefreshVerificationCodeDTO dto = refreshVerificationCodeService.execute(cmd);
+        return ResponseEntity.status(HttpStatus.OK).body(new RefreshVerificationCodeResponse(dto));
     }
 }

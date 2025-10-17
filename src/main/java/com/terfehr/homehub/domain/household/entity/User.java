@@ -51,7 +51,7 @@ public class User implements UserDetails {
     @Column(name = "pending_email")
     private String pendingEmail;
 
-    @Column(name = "email_change_code")
+    @Column(name = "email_change_code", unique = true)
     private String emailChangeCode;
 
     @Column(name = "email_change_code_expiration")

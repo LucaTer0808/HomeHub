@@ -16,14 +16,16 @@ public class UserService {
 
     private final UserRepositoryInterface userRepository;
     @Value("${registration.expiration_time}")
-    private Integer expirationTime; // Expressed in hours
+    private Integer verificationCodeExpirationTime; // Expressed in hours
+    @Value("${change_email.expiration_time}")
+    private Integer changeEmailCodeExpirationTime; // also expressed in hours
 
     public UserService(UserRepositoryInterface userRepository) {
         this.userRepository = userRepository;
     }
 
     /**
-     * Generates a unique verification code with UUID to enable the sending of
+     * Generates a unique verification code with UUID.
      *
      * @return The unique uuid sent to the User via mail.
      */
@@ -36,13 +38,36 @@ public class UserService {
     }
 
     /**
+     * Generates a unique email change code with UUID.
+     *
+     * @return The unique uuid sent to the User via mail.
+     */
+    public String generateUniqueEmailChangeCode() {
+        String uuid;
+        do {
+            uuid = UUID.randomUUID().toString();
+        } while (userRepository.existsByEmailChangeCode(uuid));
+        return uuid;
+    }
+
+    /**
      * Returns the time when the option to verify the user has run out. The concrete value
      * can be found in the application.properties.
      *
      * @return The LocalDateTime object.
      */
     public LocalDateTime getVerificationCodeExpiration() {
-        return LocalDateTime.now().plusHours(expirationTime);
+        return LocalDateTime.now().plusHours(verificationCodeExpirationTime);
+    }
+
+    /**
+     * Returns the time when the option to change the email has run out. The concrete value
+     * can be found in the application.properties
+     *
+     * @return The LocalDateTime object.
+     */
+    public LocalDateTime getChangeEmailCodeExpiration() {
+        return LocalDateTime.now().plusHours(changeEmailCodeExpirationTime);
     }
 
     /**
