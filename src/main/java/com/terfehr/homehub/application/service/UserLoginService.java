@@ -11,6 +11,7 @@ import com.terfehr.homehub.domain.household.event.UserLoginEvent;
 import com.terfehr.homehub.domain.household.event.payload.UserLoginEventPayload;
 import com.terfehr.homehub.domain.household.exception.InvalidUserException;
 import com.terfehr.homehub.domain.household.repository.UserRepositoryInterface;
+import com.terfehr.homehub.domain.shared.exception.InvalidEventPayloadException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -43,8 +44,9 @@ public class UserLoginService {
      * @throws UserNotFoundException If the User with the given email address does not exist.
      * @throws InvalidPasswordException If the given password is incorrect.
      * @throws InvalidUserException If the given User to the UserDTO is invalid.
+     * @throws InvalidEventPayloadException If the event payload is invalid.
      */
-    public UserLoginDTO execute(UserLoginCommand cmd) throws UserNotFoundException, InvalidPasswordException, InvalidUserException {
+    public UserLoginDTO execute(UserLoginCommand cmd) throws UserNotFoundException, InvalidPasswordException, InvalidUserException, InvalidEventPayloadException {
         String email = cmd.email();
         String password = cmd.password();
 

@@ -10,6 +10,7 @@ import com.terfehr.homehub.domain.household.event.payload.UserRegisteredEventPay
 import com.terfehr.homehub.domain.household.exception.InvalidUserException;
 import com.terfehr.homehub.domain.household.repository.UserRepositoryInterface;
 import com.terfehr.homehub.domain.household.service.UserService;
+import com.terfehr.homehub.domain.shared.exception.InvalidEventPayloadException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -41,8 +42,9 @@ public class RegisterUserService {
      * @throws EmailAlreadyExistsException If the email address is already taken.
      * @throws UsernameAlreadyExistsException IF the username is already taken.
      * @throws InvalidUserException If the given user to the UserDTO is invalid.
+     * @throws InvalidEventPayloadException If the event payload is invalid.
      */
-    public UserDTO execute(RegisterUserCommand cmd) throws EmailAlreadyExistsException, UsernameAlreadyExistsException, InvalidUserException {
+    public UserDTO execute(RegisterUserCommand cmd) throws EmailAlreadyExistsException, UsernameAlreadyExistsException, InvalidUserException, InvalidEventPayloadException {
         String username = cmd.username();
         String email =  cmd.email();
         String password = passwordEncoder.encode(cmd.password());

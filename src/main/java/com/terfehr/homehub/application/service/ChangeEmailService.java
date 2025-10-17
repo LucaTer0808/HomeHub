@@ -9,6 +9,7 @@ import com.terfehr.homehub.domain.household.event.ChangeEmailEvent;
 import com.terfehr.homehub.domain.household.event.payload.ChangeEmailEventPayload;
 import com.terfehr.homehub.domain.household.repository.UserRepositoryInterface;
 import com.terfehr.homehub.domain.household.service.UserService;
+import com.terfehr.homehub.domain.shared.exception.InvalidEventPayloadException;
 import com.terfehr.homehub.infrastructure.service.AuthUserProvider;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -25,7 +26,17 @@ public class ChangeEmailService {
     private final UserService userService;
     private final ApplicationEventPublisher publisher;
 
-    public ChangeEmailDTO execute(ChangeEmailCommand cmd) {
+    /**
+     * Executes the ChangeEmailCommand by fetching the represented User from the Database, updating his email address,
+     * generating a unique verification code and expiration date and then publishing an Event that informs about said update.
+     *
+     * @param cmd The Command to execute.
+     * @return A ChangeEmailDTO containing the updated User as a DTO and the generated verification code and expiration date.
+     * @throws UserNotFoundException If the User to update does not exist.
+     * @throws IllegalArgumentException If some argument is invalid.
+     * @throws InvalidEventPayloadException If the event payload is invalid.
+     */
+    public ChangeEmailDTO execute(ChangeEmailCommand cmd) throws UserNotFoundException, IllegalArgumentException, InvalidEventPayloadException {
 
         String username = authUserProvider.getUsername();
 

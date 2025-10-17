@@ -10,11 +10,11 @@ public class ChangeEmailEvent extends ApplicationEvent {
 
     private final ChangeEmailEventPayload eventPayload;
 
-    public ChangeEmailEvent(Object source, ChangeEmailEventPayload eventPayload) {
+    public ChangeEmailEvent(Object source, ChangeEmailEventPayload eventPayload) throws InvalidEventPayloadException{
         super(source);
         if (eventPayload == null) {
             throw new InvalidEventPayloadException("Event payload cannot be null");
-        }d
+        }
         this.eventPayload = eventPayload;
     }
 }
