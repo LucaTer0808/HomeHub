@@ -8,14 +8,12 @@ import com.terfehr.homehub.application.dto.UserLoginDTO;
 import com.terfehr.homehub.application.service.*;
 import com.terfehr.homehub.controller.request.*;
 import com.terfehr.homehub.controller.response.*;
-import com.terfehr.homehub.infrastructure.service.JwtService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.sql.CommonDataSource;
 import java.time.LocalDateTime;
 
 @RestController
