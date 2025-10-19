@@ -24,6 +24,7 @@ public class AuthController {
     private final ChangeEmailService changeEmailService;
     private final ForgotPasswordService forgotPasswordService;
     private final RegisterUserService registerUserService;
+    private final ResetPasswordService resetPasswordService;
     private final UserLoginService userLoginService;
     private final VerifyUserService verifyUserService;
     private final RefreshVerificationCodeService refreshVerificationCodeService;
@@ -125,5 +126,21 @@ public class AuthController {
 
         UserDTO dto = changeEmailService.execute(cmd);
         return ResponseEntity.status(HttpStatus.OK).body(new VerifyEmailChangeResponse(dto));
+    }
+
+    @PatchMapping("/password/reset")
+    public ResponseEntity<ResetPasswordResponse> resetPassword(@RequestBody ResetPasswordRequest request) {
+        if (!request.validate()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid forgotten password change request sent at " + LocalDateTime.now());
+        }
+
+        ResetPasswordCommand cmd = ResetPasswordCommand
+                .builder()
+                .forgotPasswordCode(request.getForgotPasswordCode())
+                .password(request.getPassword())
+                .build();
+
+        UserDTO dto = resetPasswordService.execute(cmd);
+        return ResponseEntity.status(HttpStatus.OK).body(new ResetPasswordResponse(dto));
     }
 }

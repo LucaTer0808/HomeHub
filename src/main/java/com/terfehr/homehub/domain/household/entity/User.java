@@ -1,5 +1,6 @@
 package com.terfehr.homehub.domain.household.entity;
 
+import com.terfehr.homehub.application.exception.InvalidPasswordException;
 import com.terfehr.homehub.application.exception.InvalidVerificationCodeExpirationException;
 import com.terfehr.homehub.domain.household.exception.*;
 import jakarta.persistence.*;
@@ -94,85 +95,6 @@ public class User implements UserDetails {
         this.forgotPasswordCode = null;
         this.forgotPasswordCodeExpiration = null;
         this.roommates = new HashSet<>();
-    }
-
-    /**
-     * Sets the email of the User. If it is invalid, an exception is thrown.
-     *
-     * @param email The email to set.
-     * @throws InvalidEmailException If the email is invalid.
-     */
-    public void setEmail(String email) throws InvalidEmailException {
-        if (email == null) {
-            throw new InvalidEmailException("Email cannot be null");
-        }
-        this.email = email;
-
-    }
-
-    /**
-     * Sets the verification code of the User. If it is invalid, an exception is thrown.
-     *
-     * @param verificationCode The code to set.
-     * @throws InvalidVerificationCodeException If the verification code is invalid.
-     */
-    public void setVerificationCode(String verificationCode) throws InvalidVerificationCodeException {
-         if (!validateCode(verificationCode)) {
-             throw new InvalidVerificationCodeException("Invalid verification code");
-         }
-         this.verificationCode = verificationCode;
-    }
-
-    /**
-     * Sets the expiration timestamp of the verification code of the User.
-     *
-     * @param verificationCodeExpiration The timestamp to set.
-     * @throws InvalidVerificationCodeExpirationException If the expiration of the verification code is invalid.
-     */
-    public void setVerificationCodeExpiration(LocalDateTime verificationCodeExpiration) throws InvalidVerificationCodeExpirationException {
-         if (!validateExpiration(verificationCodeExpiration)) {
-             throw new InvalidVerificationCodeExpirationException("Invalid verification code");
-         }
-         this.verificationCodeExpiration = verificationCodeExpiration;
-    }
-
-    /**
-     * Sets the pending email of the user used for changing his email address
-     *
-     * @param pendingEmail The desired pending email.
-     * @throws IllegalArgumentException If the given pending email is invalid.
-     */
-    public void setPendingEmail(String pendingEmail) throws IllegalArgumentException {
-        if (!validateEmail(pendingEmail)) {
-            throw new IllegalArgumentException("Invalid email");
-        }
-        this.pendingEmail = pendingEmail;
-    }
-
-    /**
-     * Sets the email change token of the user.
-     *
-     * @param emailChangeCode The desired email change token.
-     * @throws IllegalArgumentException If the given token is invalid
-     */
-    public void setEmailChangeToken(String emailChangeCode) throws IllegalArgumentException {
-        if (!validateCode(emailChangeCode)) {
-            throw new IllegalArgumentException("Invalid email change token");
-        }
-        this.emailChangeCode = emailChangeCode;
-    }
-
-    /**
-     * Sets the expiration of the email change token. If it is invalid, an exception is thrown.
-     *
-     * @param emailChangeCodeExpiration The desired expiration timestamp.
-     * @throws IllegalArgumentException If the given expiration is invalid.
-     */
-    public void setEmailChangeTokenExpiration(LocalDateTime emailChangeCodeExpiration) throws IllegalArgumentException {
-        if (!validateExpiration(emailChangeCodeExpiration)) {
-            throw new IllegalArgumentException("Invalid email change token expiration");
-        }
-        this.emailChangeCodeExpiration = emailChangeCodeExpiration;
     }
 
     /**
@@ -294,6 +216,25 @@ public class User implements UserDetails {
         }
         this.verificationCode = verificationCode;
         this.verificationCodeExpiration = verificationCodeExpiration;
+    }
+
+    /**
+     * Resets the password of the user by setting the password to the provided value. It also sets the forgot password code and its associated expiration date to null.
+     *
+     * @param newPassword The new password to set.
+     * @throws InvalidPasswordException If the password is invalid.
+     * @throws InvalidForgotPasswordCodeExpirationException If the forgot password code has expired.
+     */
+    public void resetPassword(String newPassword) throws InvalidPasswordException, InvalidForgotPasswordCodeExpirationException {
+        if (!validatePassword(password)) {
+            throw new InvalidPasswordException("Invalid password");
+        }
+        if (forgotPasswordCodeExpiration.isBefore(LocalDateTime.now())) {
+            throw new InvalidForgotPasswordCodeExpirationException("Forgot password code expired. Please apply for another password change");
+        }
+        this.password = newPassword;
+        this.forgotPasswordCode = null;
+        this.forgotPasswordCodeExpiration = null;
     }
 
     /**
