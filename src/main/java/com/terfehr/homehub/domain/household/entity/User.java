@@ -222,11 +222,15 @@ public class User implements UserDetails {
      * Resets the password of the user by setting the password to the provided value. It also sets the forgot password code and its associated expiration date to null.
      *
      * @param newPassword The new password to set.
+     * @throws IllegalStateException If the password change is not pending.
      * @throws InvalidPasswordException If the password is invalid.
      * @throws InvalidForgotPasswordCodeExpirationException If the forgot password code has expired.
      */
-    public void resetPassword(String newPassword) throws InvalidPasswordException, InvalidForgotPasswordCodeExpirationException {
-        if (!validatePassword(password)) {
+    public void resetPassword(String newPassword) throws IllegalStateException, InvalidPasswordException, InvalidForgotPasswordCodeExpirationException {
+        if (forgotPasswordCode == null || forgotPasswordCodeExpiration == null) {
+            throw new IllegalStateException("No password change has been requested. Please apply for a new password change request.");
+        }
+        if (!validatePassword(newPassword)) {
             throw new InvalidPasswordException("Invalid password");
         }
         if (forgotPasswordCodeExpiration.isBefore(LocalDateTime.now())) {
