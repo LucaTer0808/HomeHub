@@ -31,7 +31,7 @@ public class AuthController {
 
     @GetMapping
     public String welcome() {
-        return "Welcome to HomeHub! To register, please call /auth/register with POST";
+        return "Welcome to HomeHub! To register, please call /auth/register with POST\n";
     }
 
     @PostMapping("/register")
