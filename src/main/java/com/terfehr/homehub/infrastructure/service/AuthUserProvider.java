@@ -2,6 +2,9 @@ package com.terfehr.homehub.infrastructure.service;
 
 import com.terfehr.homehub.application.exception.UserNotFoundException;
 import com.terfehr.homehub.application.interfaces.AuthUserProviderInterface;
+import com.terfehr.homehub.domain.household.entity.User;
+import com.terfehr.homehub.domain.household.repository.UserRepositoryInterface;
+import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -9,7 +12,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
+@AllArgsConstructor
 public class AuthUserProvider implements AuthUserProviderInterface {
+
+    private final UserRepositoryInterface userRepository;
 
     /**
      * {@inheritDoc}
@@ -35,5 +41,17 @@ public class AuthUserProvider implements AuthUserProviderInterface {
         }
 
         return userDetails.getUsername();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * Uses the getUsername() method to retrieve the User object from the database.
+     * @return The User object.
+     * @throws UserNotFoundException If the User object could not be found.
+     */
+    public User getUser() throws UserNotFoundException{
+        return userRepository.findByUsername(getUsername())
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
     }
 }

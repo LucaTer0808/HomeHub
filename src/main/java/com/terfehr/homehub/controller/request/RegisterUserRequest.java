@@ -8,11 +8,13 @@ import java.util.Locale;
 
 @NoArgsConstructor
 @Getter
-public class RegisterUserRequest implements RequestInterface{
+public class RegisterUserRequest implements RequestInterface {
 
     private String username;
     private String email;
     private String password;
+    private String firstName;
+    private String lastName;
     private String confirmPassword;
 
     /**
@@ -23,6 +25,8 @@ public class RegisterUserRequest implements RequestInterface{
         username =  username != null ? username.trim().toLowerCase(Locale.ROOT) : null;
         email =  email != null ? email.trim().toLowerCase(Locale.ROOT) : null;
         password = password != null ? password.trim() : null;
+        firstName = firstName != null ? firstName.trim() : null;
+        lastName = lastName != null ? lastName.trim() : null;
         confirmPassword = confirmPassword != null ? confirmPassword.trim() : null;
     }
 
@@ -33,7 +37,7 @@ public class RegisterUserRequest implements RequestInterface{
      */
     public boolean validate() {
         normalize();
-        return validateUsername(username) && validateEmail(email) && validatePasswords(password, confirmPassword);
+        return validateUsername(username) && validateEmail(email) && validatePasswords(password, confirmPassword) && validateNames(firstName, lastName);
     }
 
     /**
@@ -67,7 +71,17 @@ public class RegisterUserRequest implements RequestInterface{
      */
     private boolean validatePasswords(String password, String confirmPassword) {
         return password != null &&
-                password.equals(confirmPassword) &&
-                password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$");
+                password.equals(confirmPassword);
+    }
+
+    /**
+     * Validates the given names. They have to be non-null and non-blank.
+     *
+     * @param firstName The first name to validate.
+     * @param lastName The last name to validate.
+     * @return True, if the names are valid. False otherwise.
+     */
+    private boolean validateNames(String firstName, String lastName) {
+        return firstName != null && !firstName.isBlank() && lastName != null && !lastName.isBlank();
     }
 }

@@ -45,6 +45,8 @@ public class AuthController {
                 .username(request.getUsername())
                 .email(request.getEmail())
                 .password(request.getPassword())
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
                 .build();
 
         UserDTO registeredUser = registerUserService.execute(cmd);

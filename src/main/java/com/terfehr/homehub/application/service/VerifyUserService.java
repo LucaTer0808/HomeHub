@@ -48,7 +48,7 @@ public class VerifyUserService {
         user.enable();
 
         userRepository.save(user);
-        UserDTO dto = new UserDTO(user.getId(), user.getUsername(), user.getEmail(), user.isEnabled());
+        UserDTO dto = new UserDTO(user.getId(), user.getUsername(), user.getEmail(), user.getFirstName(), user.getLastName(), user.isEnabled());
 
         UserVerifiedEventPayload payload = new UserVerifiedEventPayload(user.getId(), user.getEmail(), user.getUsername(), user.isEnabled());
         UserVerifiedEvent event = new UserVerifiedEvent(this, payload);

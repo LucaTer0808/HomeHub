@@ -1,8 +1,11 @@
 package com.terfehr.homehub.domain.household.entity;
 
+import com.terfehr.homehub.application.exception.InvalidNameException;
 import com.terfehr.homehub.application.exception.InvalidPasswordException;
+import com.terfehr.homehub.application.exception.InvalidUsernameException;
 import com.terfehr.homehub.application.exception.InvalidVerificationCodeExpirationException;
 import com.terfehr.homehub.domain.household.exception.*;
+import com.terfehr.homehub.domain.household.service.UserService;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,6 +40,12 @@ public class User implements UserDetails {
 
     @Column(nullable = false)
     private String password;
+
+    @Column(name = "first_name", nullable = false)
+    private String firstName;
+
+    @Column(name = "last_name", nullable = false)
+    private String lastName;
 
     @Column(nullable = false)
     private boolean enabled;
@@ -77,15 +86,51 @@ public class User implements UserDetails {
      * @param password the password for the user.
      * @param verificationCode the verification code assigned to the user for account activation.
      * @param verificationCodeExpiration the expiration date and time for the verification code.
-     * @throws InvalidUserException If the given Data is faulty.
+     * @throws InvalidUsernameException if the username is invalid.
+     * @throws InvalidEmailException if the email is invalid.
+     * @throws InvalidPasswordException if the password is invalid.
+     * @throws InvalidNameException if the first or last name is invalid.
+     * @throws InvalidVerificationCodeException if the verification code is invalid.
+     * @throws InvalidVerificationCodeExpirationException if the verification code expiration is invalid.
      */
-     public User(String username, String email, String password, String verificationCode, LocalDateTime verificationCodeExpiration) throws InvalidUserException {
-         if (!validate(username, email, password, verificationCode, verificationCodeExpiration)) {
-             throw new IllegalArgumentException("Invalid arguments for User creation");
+     public User(String username, String email, String password, String firstName, String lastName, String verificationCode, LocalDateTime verificationCodeExpiration) throws
+             InvalidUsernameException,
+             InvalidEmailException,
+             InvalidPasswordException,
+             InvalidNameException,
+             InvalidVerificationCodeException,
+             InvalidVerificationCodeExpirationException
+
+     {
+         if (!validateUsername(username)) {
+             throw new InvalidUsernameException("The given username does not satisfy the requirements");
          }
+
+         if (!validateEmail(email)) {
+             throw new InvalidEmailException("Invalid email");
+         }
+
+         if (!validatePassword(password)) {
+             throw new InvalidPasswordException("Invalid password");
+         }
+
+         if (!validateNames(firstName, lastName)) {
+             throw new InvalidNameException("Invalid names passed. Probably, one passed name is null");
+         }
+
+         if (!validateCode(verificationCode)) {
+             throw new InvalidVerificationCodeException("Invalid verification code");
+         }
+
+         if (!validateExpiration(verificationCodeExpiration)) {
+             throw new InvalidVerificationCodeExpirationException("Invalid verification code expiration");
+         }
+
         this.username = username;
         this.email = email;
         this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.enabled = false;
         this.verificationCode = verificationCode;
         this.verificationCodeExpiration = verificationCodeExpiration;
@@ -95,35 +140,6 @@ public class User implements UserDetails {
         this.forgotPasswordCode = null;
         this.forgotPasswordCodeExpiration = null;
         this.roommates = new HashSet<>();
-    }
-
-    /**
-     * Adds a roommate to the current user's list of roommates after validating the input.
-     * This method ensures that the roommate is valid and properly associated with the user.
-     *
-     * @param roommate the Roommate object to be added to the user's list of roommates
-     *                 if it passes validation
-     * @throws InvalidRoommateException if the provided roommate is invalid
-     */
-    public void addRoommate(Roommate roommate) throws InvalidRoommateException {
-        if (!canAddRoommate(roommate)) {
-            throw new InvalidRoommateException("Invalid Roommate for this User");
-        }
-        this.roommates.add(roommate);
-    }
-
-    /**
-     * Removes a roommate from the user's list of roommates after validating the input.
-     * This method ensures that the roommate is valid and currently associated with the user.
-     *
-     * @param roommate the Roommate object to be removed from the user's list of roommates
-     * @throws InvalidRoommateException if the provided roommate is invalid or not associated with the user
-     */
-    public void removeRoommate(Roommate roommate) throws InvalidRoommateException {
-        if (!canRemoveRoommate(roommate)) {
-            throw new InvalidRoommateException("Invalid Roommate for this User");
-        }
-        this.roommates.remove(roommate);
     }
 
     /**
@@ -158,6 +174,21 @@ public class User implements UserDetails {
         this.pendingEmail = newEmail;
         this.emailChangeCode = changeEmailCode;
         this.emailChangeCodeExpiration = changeEmailCodeExpiration;
+    }
+
+    /**
+     * Changes the name of the User by changing the first and last name simultaneously.
+     *
+     * @param firstName The new first name.
+     * @param lastName The new last name.
+     * @throws InvalidNameException If one of the names is invalid.
+     */
+    public void changeName(String firstName, String lastName) throws InvalidNameException {
+        if (!validateNames(firstName, lastName)) {
+            throw new InvalidNameException("Invalid names passed. Probably, one passed name is null");
+        }
+        this.firstName = firstName;
+        this.lastName = lastName;
     }
 
     /**
@@ -242,6 +273,32 @@ public class User implements UserDetails {
     }
 
     /**
+     * Sets the password of the user.
+     *
+     * @param password The new password to set.
+     * @throws InvalidPasswordException If the password is invalid.
+     */
+    public void setPassword(String password) throws InvalidPasswordException {
+        if (!validatePassword(password)) {
+            throw new InvalidPasswordException("Invalid password");
+        }
+        this.password = password;
+    }
+
+    /**
+     * Sets the username of the user.
+     *
+     * @param username The new username to set.
+     * @throws InvalidUsernameException If the username is invalid.
+     */
+    public void setUsername(String username) throws InvalidUsernameException {
+        if (!validateUsername(username)) {
+            throw new InvalidUsernameException("The given username does not satisfy the requirements");
+        }
+        this.username = username;
+    }
+
+    /**
      * Verifies the email change request by setting the pending email to the current email, setting the pending email, the code, and the expiration date to null.
      *
      * @throws IllegalStateException if the email change is not pending
@@ -258,22 +315,6 @@ public class User implements UserDetails {
         this.pendingEmail = null;
         this.emailChangeCode = null;
         this.emailChangeCodeExpiration = null;
-    }
-
-    /**
-     * Validates the provided username, email, password, verification code, and
-     * verification code expiration to ensure they meet required conditions.
-     *
-     * @param username the username to be validated
-     * @param email the email address to be validated
-     * @param password the password to be validated
-     * @param verificationCode the verification code to be validated
-     * @param verificationCodeExpiration the expiration date and time of the verification code to be validated
-     * @return true if all parameters are valid; false otherwise
-     */
-    private boolean validate(String username, String email, String password, String verificationCode, LocalDateTime verificationCodeExpiration) {
-        return validateUsername(username) && validateEmail(email) && validatePassword(password)
-                && validateCode(verificationCode) && validateExpiration(verificationCodeExpiration);
     }
 
     /**
@@ -309,33 +350,46 @@ public class User implements UserDetails {
     }
 
     /**
-     * Validates the username to check whether it is non-null and not empty.
+     * Validates the username to check whether it is non-null and at least 5 characters long.
      *
      * @param username the username to be validated
      * @return true if the username is non-null and not empty; false otherwise
      */
     private boolean validateUsername(String username) {
-        return username != null && !username.isEmpty();
+        return username != null && username.length() >= 5;
     }
 
     /**
-     * Validates the provided email address to check whether it is non-null and not empty.
+     * Validates the provided email address to check whether it is non-null and matches a certain regex.
      *
      * @param email the email address to be validated
-     * @return true if the email is non-null and not empty; false otherwise
+     * @return true if the email is non-null and not regex-matching. false otherwise
      */
     private boolean validateEmail(String email) {
-        return email != null && !email.isEmpty();
+        String regex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+        return email != null && email.matches(regex);
     }
 
     /**
-     * Validates the provided password to ensure it is non-null and not empty.
+     * Validates the provided password to check whether it is non-null and non-blank. Since this is the hashed password already,
+     * the real check for sufficiency happens in {@link UserService}.
      *
-     * @param password the password to be validated
-     * @return true if the password is non-null and not empty; false otherwise
+     * @param password The password to be validated.
+     * @return True, if the password is valid. False otherwise.
      */
     private boolean validatePassword(String password) {
-        return password != null && !password.isEmpty();
+        return password != null && !password.isBlank();
+    }
+
+    /**
+     * Validates the given names of the user. They have to be non-null and non-blank.
+     *
+     * @param firstName The first name to validate.
+     * @param lastName The last name to validate.
+     * @return True, if the names are valid. False otherwise.
+     */
+    private boolean validateNames(String firstName, String lastName) {
+        return firstName != null && !firstName.isBlank() && lastName != null && !lastName.isBlank();
     }
 
     /**

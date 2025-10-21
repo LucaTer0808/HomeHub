@@ -7,9 +7,9 @@ import com.terfehr.homehub.domain.household.entity.User;
 import com.terfehr.homehub.domain.household.event.ResetPasswordEvent;
 import com.terfehr.homehub.domain.household.event.payload.ResetPasswordEventPayload;
 import com.terfehr.homehub.domain.household.repository.UserRepositoryInterface;
+import com.terfehr.homehub.domain.household.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,14 +18,13 @@ public class ResetPasswordService {
 
     private final ApplicationEventPublisher publisher;
     private final UserRepositoryInterface userRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final UserService userService;
 
     public UserDTO execute(ResetPasswordCommand cmd) {
         User user = userRepository.findByForgotPasswordCode(cmd.forgotPasswordCode())
                 .orElseThrow(() -> new UserNotFoundException("There is no user with forgot password code: " + cmd.forgotPasswordCode()));
 
-        String encodedPassword = passwordEncoder.encode(cmd.password());
-        user.resetPassword(encodedPassword);
+        userService.resetPassword(user, cmd.password());
 
         userRepository.save(user);
 
@@ -33,6 +32,6 @@ public class ResetPasswordService {
         ResetPasswordEvent event = new ResetPasswordEvent(this, payload);
         publisher.publishEvent(event);
 
-        return new UserDTO(user.getId(), user.getUsername(), user.getEmail(), user.isEnabled());
+        return new UserDTO(user.getId(), user.getUsername(), user.getEmail(), user.getFirstName(), user.getLastName(), user.isEnabled());
     }
 }

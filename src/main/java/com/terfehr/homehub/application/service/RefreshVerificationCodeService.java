@@ -45,19 +45,16 @@ public class RefreshVerificationCodeService {
         User user = userRepository.findByEmail(cmd.email())
                 .orElseThrow(() -> new UserNotFoundException("There is no User with the email " + cmd.email()));
 
-        String newCode = userService.generateUniqueVerificationCode();
-        LocalDateTime expiration = userService.getVerificationCodeExpiration();
-
-        user.refreshVerificationCode(newCode, expiration);
+        userService.refreshVerificationCode(user);
 
         userRepository.save(user);
 
-        UserDTO refreshedUser = new UserDTO(user.getId(), user.getUsername(), user.getEmail(), user.isEnabled());
+        UserDTO refreshedUser = new UserDTO(user.getId(), user.getUsername(), user.getEmail(), user.getFirstName(), user.getLastName(), user.isEnabled());
 
-        RefreshVerificationCodeEventPayload payload = new RefreshVerificationCodeEventPayload(user.getId(), user.getUsername(), newCode, expiration);
+        RefreshVerificationCodeEventPayload payload = new RefreshVerificationCodeEventPayload(user.getId(), user.getUsername(), user.getVerificationCode(), user.getVerificationCodeExpiration());
         RefreshVerificationCodeEvent event = new RefreshVerificationCodeEvent(this, payload);
         publisher.publishEvent(event);
 
-        return new RefreshVerificationCodeDTO(refreshedUser, newCode, expiration);
+        return new RefreshVerificationCodeDTO(refreshedUser, user.getVerificationCode(), user.getVerificationCodeExpiration());
     }
 }

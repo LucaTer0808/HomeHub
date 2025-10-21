@@ -27,14 +27,11 @@ public class ForgotPasswordService {
         User user = userRepository.findByEmail(cmd.email())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        String forgotPasswordCode = userService.generateUniqueForgotPasswordCode();
-        LocalDateTime forgotPasswordCodeExpiration = userService.getForgotPasswordCodeExpiration();
-
-        user.forgotPassword(forgotPasswordCode, forgotPasswordCodeExpiration);
+        userService.forgotPassword(user);
 
         userRepository.save(user);
 
-        ForgotPasswordEventPayload payload = new ForgotPasswordEventPayload(user.getId(),user.getEmail(), forgotPasswordCode, forgotPasswordCodeExpiration);
+        ForgotPasswordEventPayload payload = new ForgotPasswordEventPayload(user.getId(),user.getEmail(), user.getForgotPasswordCode(), user.getForgotPasswordCodeExpiration());
         ForgotPasswordEvent event = new ForgotPasswordEvent(this, payload);
         publisher.publishEvent(event);
 

@@ -57,7 +57,7 @@ public class UserLoginService {
             throw new InvalidPasswordException("The given password is incorrect");
         }
 
-        UserDTO loggedInUser = new UserDTO(user.getId(), user.getUsername(), user.getEmail(), user.isEnabled());
+        UserDTO loggedInUser = new UserDTO(user.getId(), user.getUsername(), user.getEmail(), user.getFirstName(), user.getLastName(), user.isEnabled());
         String jwtToken = jwtService.generateToken(user);
         Date createdAt = jwtService.getIssuedAt(jwtToken);
         Date expiresAt = jwtService.getExpiresAt(jwtToken);

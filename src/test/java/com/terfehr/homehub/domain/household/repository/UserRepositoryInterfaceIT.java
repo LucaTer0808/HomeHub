@@ -32,7 +32,7 @@ class UserRepositoryInterfaceIT {
 
     @Test
     public void testFindAll() {
-        User user = new User("BryanLasme04", "bryan.lasme@s04.de", "S04oleole", "123456789", LocalDateTime.now());
+        User user = new User("BryanLasme04", "bryan.lasme@s04.de", "234!asdfsa%sdf234wersaSSd", "Bryan", "Lastme", "123456789", LocalDateTime.now());
         userRepository.save(user);
         Optional<User> userFromDb = userRepository.findByUsername("BryanLasme04");
         assertTrue(userFromDb.isPresent());

@@ -47,19 +47,16 @@ public class ChangeEmailService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        String emailChangeToken = userService.generateUniqueEmailChangeCode();
-        LocalDateTime emailChangeTokenExpiration = userService.getChangeEmailCodeExpiration();
-
-        user.changeEmail(cmd.email(), emailChangeToken, emailChangeTokenExpiration);
+        userService.changeEmail(user, cmd.email());
 
         userRepository.save(user);
 
-        ChangeEmailEventPayload payload = new ChangeEmailEventPayload(user.getId(), user.getEmail(), cmd.email(), emailChangeToken, emailChangeTokenExpiration);
+        ChangeEmailEventPayload payload = new ChangeEmailEventPayload(user.getId(), user.getEmail(), cmd.email(), user.getEmailChangeCode(), user.getEmailChangeCodeExpiration());
         ChangeEmailEvent event = new ChangeEmailEvent(this, payload);
         publisher.publishEvent(event);
 
-        UserDTO userDto = new UserDTO(user.getId(), user.getUsername(), user.getEmail(), user.isEnabled());
-        return new ChangeEmailDTO(userDto, emailChangeToken, emailChangeTokenExpiration);
+        UserDTO userDto = new UserDTO(user.getId(), user.getUsername(), user.getEmail(), user.getFirstName(), user.getLastName(), user.isEnabled());
+        return new ChangeEmailDTO(userDto, user.getEmailChangeCode(), user.getEmailChangeCodeExpiration());
     }
 
     /**
@@ -86,6 +83,6 @@ public class ChangeEmailService {
         VerifyEmailChangeEvent event = new VerifyEmailChangeEvent(this, payload);
         publisher.publishEvent(event);
 
-        return new UserDTO(user.getId(), user.getUsername(), user.getEmail(), user.isEnabled());
+        return new UserDTO(user.getId(), user.getUsername(), user.getEmail(), user.getFirstName(), user.getLastName(), user.isEnabled());
     }
 }
