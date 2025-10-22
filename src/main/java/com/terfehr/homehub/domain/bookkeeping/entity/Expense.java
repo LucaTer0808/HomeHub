@@ -1,6 +1,7 @@
 package com.terfehr.homehub.domain.bookkeeping.entity;
 
 import com.terfehr.homehub.domain.bookkeeping.value.Money;
+import com.terfehr.homehub.domain.household.entity.Roommate;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -35,10 +36,11 @@ public class Expense extends Transaction {
      * @param date The date and time the expense occurred.
      * @param recipient The recipient to whom the expense was paid.
      * @param account The account associated with the expense transaction.
+     * @param roommate The roommate associated with the expense transaction.
      * @throws IllegalArgumentException if the recipient is invalid.
      */
-    public Expense(long amount, String description, LocalDateTime date, String recipient, Account account) throws IllegalArgumentException {
-        super(amount, description, date, account);
+    public Expense(long amount, String description, LocalDateTime date, String recipient, Account account, Roommate roommate) throws IllegalArgumentException {
+        super(amount, description, date, account, roommate);
         if (!validate(recipient)) {
             throw new IllegalArgumentException("Invalid Expense object");
         }

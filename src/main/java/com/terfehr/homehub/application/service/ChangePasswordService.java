@@ -10,7 +10,8 @@ import com.terfehr.homehub.domain.household.event.ChangePasswordEvent;
 import com.terfehr.homehub.domain.household.event.payload.ChangePasswordEventPayload;
 import com.terfehr.homehub.domain.household.repository.UserRepositoryInterface;
 import com.terfehr.homehub.domain.household.service.UserService;
-import com.terfehr.homehub.domain.shared.exception.InvalidEventPayloadException;
+import com.terfehr.homehub.domain.shared.exception.InvalidDomainEventPayloadException;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class ChangePasswordService {
 
     private final ApplicationEventPublisher publisher;
@@ -31,11 +33,11 @@ public class ChangePasswordService {
      * @param cmd The Command to execute.
      * @return A UserDTO containing the updated User as a DTO. Since this is transferred to the client, the password itself is not included.
      * @throws AuthenticationCredentialsNotFoundException If there is no user in the security context.
-     * @throws InvalidEventPayloadException If the event payload is invalid.
+     * @throws InvalidDomainEventPayloadException If the event payload is invalid.
      * @throws UserNotFoundException If the User to update does not exist.
      * @throws InvalidPasswordException If the given password is invalid.
      */
-    public UserDTO execute(ChangePasswordCommand cmd) throws AuthenticationCredentialsNotFoundException, InvalidEventPayloadException, UserNotFoundException, InvalidPasswordException {
+    public UserDTO execute(ChangePasswordCommand cmd) throws AuthenticationCredentialsNotFoundException, InvalidDomainEventPayloadException, UserNotFoundException, InvalidPasswordException {
         User user = userProvider.getUser();
 
         userService.setPassword(user, cmd.password());

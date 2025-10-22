@@ -1,6 +1,7 @@
 package com.terfehr.homehub.domain.bookkeeping.entity;
 
 import com.terfehr.homehub.domain.bookkeeping.value.Money;
+import com.terfehr.homehub.domain.household.entity.Roommate;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,8 +35,15 @@ public abstract class Transaction {
     private LocalDateTime date;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "account")
+    @JoinColumn(name = "account_id")
     private Account account;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumns({
+            @JoinColumn(name = "household_id", referencedColumnName = "household_id"),
+            @JoinColumn(name = "user_id", referencedColumnName = "user_id")
+    })
+    private Roommate roommate;
 
     /**
      * Creates a new Transaction object with the specified amount, description, date, and account.
@@ -47,14 +55,22 @@ public abstract class Transaction {
      * @param account The account associated with the transaction.
      * @throws IllegalArgumentException if any of the provided parameters are invalid.
      */
-    public Transaction(long amount, String description, LocalDateTime date, Account account) throws IllegalArgumentException {
-        if (!this.validateTransaction(amount, description, date, account)) {
+    public Transaction(long amount, String description, LocalDateTime date, Account account, Roommate roommate) throws IllegalArgumentException {
+        if (!this.validateTransaction(amount, description, date, account, roommate)) {
             throw new IllegalArgumentException("Invalid Transaction object");
         }
         this.amount = new Money(account.getBalance().getCurrency(), amount); // default to account currency
         this.description = description;
         this.date = date;
         this.account = account;
+        this.roommate = roommate;
+    }
+
+    /**
+     * Removes the roommate from the Transaction by setting the roommate to null.
+     */
+    public void removeRoommate() {
+        this.roommate = null;
     }
 
     /**
@@ -108,8 +124,8 @@ public abstract class Transaction {
      * @param account The account associated with the transaction.
      * @return true if all provided parameters are valid, false otherwise.
      */
-    private boolean validateTransaction(long amount, String description, LocalDateTime date, Account account) {
-        return validateDate(date) && validateDescription(description) && validateAmount(amount) && validateAccount(account);
+    private boolean validateTransaction(long amount, String description, LocalDateTime date, Account account, Roommate roommate) {
+        return validateDate(date) && validateDescription(description) && validateAmount(amount) && validateAccount(account) && validateRoommate(roommate);
     }
 
 
@@ -151,5 +167,15 @@ public abstract class Transaction {
      */
     private boolean validateAccount(Account account) {
         return account != null;
+    }
+
+    /**
+     * Validates the given roommate to ensure it is not null.
+     *
+     * @param roommate The roommate to be validated.
+     * @return true if the roommate is not null, false otherwise.
+     */
+    private boolean validateRoommate(Roommate roommate) {
+        return roommate != null;
     }
 }

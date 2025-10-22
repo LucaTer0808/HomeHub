@@ -1,6 +1,6 @@
 package com.terfehr.homehub.domain.household.service;
 
-import com.terfehr.homehub.application.exception.InvalidNameException;
+import com.terfehr.homehub.domain.shared.exception.InvalidNameException;
 import com.terfehr.homehub.application.exception.InvalidPasswordException;
 import com.terfehr.homehub.application.exception.InvalidUsernameException;
 import com.terfehr.homehub.application.exception.InvalidVerificationCodeExpirationException;

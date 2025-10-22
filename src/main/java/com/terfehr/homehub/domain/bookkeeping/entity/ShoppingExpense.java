@@ -1,5 +1,6 @@
 package com.terfehr.homehub.domain.bookkeeping.entity;
 
+import com.terfehr.homehub.domain.household.entity.Roommate;
 import com.terfehr.homehub.domain.shopping.entity.ShoppingSpree;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -25,25 +26,12 @@ public class ShoppingExpense extends Expense {
      * @param date The date and time the expense occurred.
      * @param recipient The recipient to whom the expense was paid.
      * @param account The account associated with the expense transaction.
+     * @param roommate The roommate associated with the expense transaction.
      * @throws IllegalArgumentException if the shoppingSpree is invalid.
      */
-    public ShoppingExpense(long amount, String description, LocalDateTime date, String recipient, Account account) throws IllegalArgumentException {
-        super(amount, description, date, recipient, account);
+    public ShoppingExpense(long amount, String description, LocalDateTime date, String recipient, Account account, Roommate roommate) throws IllegalArgumentException {
+        super(amount, description, date, recipient, account, roommate);
         this.shoppingSpree = null;
-    }
-
-    /**
-     * Sets the ShoppingSpree associated with the ShoppingExpense. If the ShoppingSpree is invalid, an exception is thrown. This method is mostly used
-     * to work around the fact that either the ShoppingSpree or the ShoppingExpense must be persisted before the other can be set.
-     *
-     * @param shoppingSpree The ShoppingSpree to set.
-     * @throws IllegalArgumentException if the ShoppingSpree is invalid.
-     */
-    public void setShoppingSpree(ShoppingSpree shoppingSpree) throws IllegalArgumentException{
-        if (!validateShoppingSpree(shoppingSpree)) {
-            throw new IllegalArgumentException("Invalid ShoppingExpense object");
-        }
-        this.shoppingSpree = shoppingSpree;
     }
 
     /**

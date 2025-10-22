@@ -2,6 +2,7 @@ package com.terfehr.homehub.domain.bookkeeping.entity;
 
 import com.terfehr.homehub.domain.bookkeeping.value.Money;
 import com.terfehr.homehub.domain.household.entity.Household;
+import com.terfehr.homehub.domain.household.entity.Roommate;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -49,6 +50,7 @@ public class Account {
     private Set<Transaction> transactions;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "household_id")
     private Household household;
 
     /**
@@ -105,10 +107,11 @@ public class Account {
      * @param description A brief description of what was paid with this Expense.
      * @param date The timestamp of when this Expense was transferred.
      * @param recipient The recipient who received the money.
+     * @param roommate The roommate who paid the money.
      * @throws IllegalArgumentException If the parameters are invalid for creating an Expense.
      */
-    public void addExpense(long amount, String description, LocalDateTime date, String recipient) throws IllegalArgumentException {
-        Expense expense = new Expense(amount, description, date, recipient, this);
+    public void addExpense(long amount, String description, LocalDateTime date, String recipient, Roommate roommate) throws IllegalArgumentException {
+        Expense expense = new Expense(amount, description, date, recipient, this, roommate);
         this.transactions.add(expense);
         updateBalance(expense);
     }
@@ -124,8 +127,8 @@ public class Account {
      * @return The created ShoppingExpense object.
      * @throws IllegalArgumentException If the parameters are invalid for creating a ShoppingExpense.
      */
-    public ShoppingExpense addShoppingExpense(long amount, String description, LocalDateTime date, String recipient) throws IllegalArgumentException {
-        ShoppingExpense expense = new ShoppingExpense(amount, description, date, recipient, this);
+    public ShoppingExpense addShoppingExpense(long amount, String description, LocalDateTime date, String recipient, Roommate roommate) throws IllegalArgumentException {
+        ShoppingExpense expense = new ShoppingExpense(amount, description, date, recipient, this, roommate);
         this.transactions.add(expense);
         updateBalance(expense);
         return expense;
@@ -139,10 +142,11 @@ public class Account {
      * @param description A brief description of what the Income is about.
      * @param date The timestamp of when this Income was transferred.
      * @param source The source who sent the money.
+     * @param roommate The roommate who paid the money.
      * @throws IllegalArgumentException If the parameters are invalid for creating an Income.
      */
-    public void addIncome(long amount, String description, LocalDateTime date, String source) throws IllegalArgumentException {
-        Income income = new Income(amount, description, date, source, this);
+    public void addIncome(long amount, String description, LocalDateTime date, String source, Roommate roommate) throws IllegalArgumentException {
+        Income income = new Income(amount, description, date, source, this, roommate);
         this.transactions.add(income);
         updateBalance(income);
     }

@@ -1,5 +1,6 @@
 package com.terfehr.homehub.domain.household.entity;
 
+import com.terfehr.homehub.domain.shared.exception.InvalidNameException;
 import com.terfehr.homehub.domain.bookkeeping.entity.Account;
 import com.terfehr.homehub.domain.scheduling.entity.TaskList;
 import com.terfehr.homehub.domain.shopping.entity.ShoppingList;
@@ -56,7 +57,7 @@ public class Household {
      * @param name the name of the household; must be non-null and not blank
      * @throws IllegalArgumentException if the provided name fails validation
      */
-    public Household(String name) throws IllegalArgumentException {
+    public Household(String name) throws InvalidNameException {
         if (!validate(name)) {
             throw new IllegalArgumentException("Invalid arguments for Household creation");
         }
@@ -218,6 +219,22 @@ public class Household {
             throw new IllegalArgumentException("ShoppingSpree does not exist");
         }
         this.shoppingSprees.remove(spree);
+    }
+
+    /**
+     * Checks if the household has only one roommate.
+     *
+     * @return True if the household has only one roommate, false otherwise.
+     */
+    public boolean isLastRoommate() {
+        return this.roommates.size() == 1;
+    }
+
+    /**
+     * Promotes the first roommate to admin. If the household has no roommates, does nothing.
+     */
+    public void promoteRandomUserToAdmin() {
+        roommates.stream().findFirst().ifPresent(r -> r.setRole(Role.ROLE_ADMIN.name()));
     }
 
     /**

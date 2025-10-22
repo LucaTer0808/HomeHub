@@ -1,6 +1,6 @@
 package com.terfehr.homehub.domain.household.entity;
 
-import com.terfehr.homehub.application.exception.InvalidNameException;
+import com.terfehr.homehub.domain.shared.exception.InvalidNameException;
 import com.terfehr.homehub.application.exception.InvalidPasswordException;
 import com.terfehr.homehub.application.exception.InvalidUsernameException;
 import com.terfehr.homehub.application.exception.InvalidVerificationCodeExpirationException;
@@ -140,6 +140,19 @@ public class User implements UserDetails {
         this.forgotPasswordCode = null;
         this.forgotPasswordCodeExpiration = null;
         this.roommates = new HashSet<>();
+    }
+
+    /**
+     * Adds a Roommate to the user's list of roommates. The Roommate must not yet be part of the user's list of roommates.
+     *
+     * @param roommate The Roommate to add.
+     * @throws InvalidRoommateException If the Roommate is already part of the user's list of roommates or is null.
+     */
+    public void addRoommate(Roommate roommate) throws InvalidRoommateException {
+        if (!canAddRoommate(roommate)) {
+            throw new InvalidRoommateException("Roommate is already part of the user's list of roommates");
+        }
+        this.roommates.add(roommate);
     }
 
     /**

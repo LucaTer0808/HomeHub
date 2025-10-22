@@ -11,15 +11,15 @@ import com.terfehr.homehub.domain.household.event.payload.RefreshVerificationCod
 import com.terfehr.homehub.domain.household.exception.InvalidVerificationCodeException;
 import com.terfehr.homehub.domain.household.repository.UserRepositoryInterface;
 import com.terfehr.homehub.domain.household.service.UserService;
-import com.terfehr.homehub.domain.shared.exception.InvalidEventPayloadException;
+import com.terfehr.homehub.domain.shared.exception.InvalidDomainEventPayloadException;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-
 @Service
 @AllArgsConstructor
+@Transactional
 public class RefreshVerificationCodeService {
 
     private final ApplicationEventPublisher publisher;
@@ -35,12 +35,12 @@ public class RefreshVerificationCodeService {
      * @throws UserNotFoundException If the User to update does not exist.
      * @throws InvalidVerificationCodeException If the verification code is expired.
      * @throws InvalidVerificationCodeExpirationException If the expiration of the verification code is invalid.
-     * @throws InvalidEventPayloadException If the event payload is invalid.
+     * @throws InvalidDomainEventPayloadException If the event payload is invalid.
      */
     public RefreshVerificationCodeDTO execute(RefreshVerificationCodeCommand cmd) throws UserNotFoundException,
             InvalidVerificationCodeException,
             InvalidVerificationCodeExpirationException,
-            InvalidEventPayloadException {
+            InvalidDomainEventPayloadException {
 
         User user = userRepository.findByEmail(cmd.email())
                 .orElseThrow(() -> new UserNotFoundException("There is no User with the email " + cmd.email()));

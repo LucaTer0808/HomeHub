@@ -1,11 +1,9 @@
 package com.terfehr.homehub.domain.household.event;
 
 import com.terfehr.homehub.domain.household.event.payload.UserRegisteredEventPayload;
-import com.terfehr.homehub.domain.shared.exception.InvalidEventPayloadException;
+import com.terfehr.homehub.domain.shared.exception.InvalidDomainEventPayloadException;
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
-
-import java.time.LocalDateTime;
 
 /**
  * Event that informs its listeners about the given User being registered.
@@ -24,7 +22,7 @@ public class UserRegisteredEvent extends ApplicationEvent {
     public UserRegisteredEvent(Object source, UserRegisteredEventPayload payload) {
         super(source);
         if (!validatePayload(payload)) {
-            throw new InvalidEventPayloadException("The given UserRegisteredEventPayload is invalid. It most likely is null");
+            throw new InvalidDomainEventPayloadException("The given UserRegisteredEventPayload is invalid. It most likely is null");
         }
         this.payload = payload;
     }

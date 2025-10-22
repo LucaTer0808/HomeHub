@@ -1,7 +1,7 @@
 package com.terfehr.homehub.domain.household.event;
 
 import com.terfehr.homehub.domain.household.event.payload.ResetPasswordEventPayload;
-import com.terfehr.homehub.domain.shared.exception.InvalidEventPayloadException;
+import com.terfehr.homehub.domain.shared.exception.InvalidDomainEventPayloadException;
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
 
@@ -13,7 +13,7 @@ public class ResetPasswordEvent extends ApplicationEvent {
     public ResetPasswordEvent(Object source, ResetPasswordEventPayload eventPayload) {
         super(source);
         if (eventPayload == null) {
-            throw new InvalidEventPayloadException("ResetPasswordEventPayload cannot be null");
+            throw new InvalidDomainEventPayloadException("ResetPasswordEventPayload cannot be null");
         }
         this.eventPayload = eventPayload;
     }

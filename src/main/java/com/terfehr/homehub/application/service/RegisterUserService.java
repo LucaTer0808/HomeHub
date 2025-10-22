@@ -10,13 +10,12 @@ import com.terfehr.homehub.domain.household.exception.InvalidEmailException;
 import com.terfehr.homehub.domain.household.exception.InvalidUserException;
 import com.terfehr.homehub.domain.household.repository.UserRepositoryInterface;
 import com.terfehr.homehub.domain.household.service.UserService;
-import com.terfehr.homehub.domain.shared.exception.InvalidEventPayloadException;
+import com.terfehr.homehub.domain.shared.exception.InvalidDomainEventPayloadException;
+import com.terfehr.homehub.domain.shared.exception.InvalidNameException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
 
 /**
  * ApplicationService that handles the logic for registering a new User.
@@ -40,7 +39,7 @@ public class RegisterUserService {
      * @throws EmailAlreadyExistsException If the email address is already taken.
      * @throws UsernameAlreadyExistsException IF the username is already taken.
      * @throws InvalidUserException If the given user to the UserDTO is invalid.
-     * @throws InvalidEventPayloadException If the event payload is invalid.
+     * @throws InvalidDomainEventPayloadException If the event payload is invalid.
      * @throws InvalidUsernameException If the username is invalid.
      * @throws InvalidEmailException If the email is invalid.
      * @throws InvalidPasswordException If the password is invalid.
@@ -48,7 +47,7 @@ public class RegisterUserService {
      */
     public UserDTO execute(RegisterUserCommand cmd) throws EmailAlreadyExistsException,
             UsernameAlreadyExistsException,
-            InvalidEventPayloadException,
+            InvalidDomainEventPayloadException,
             InvalidUsernameException,
             InvalidEmailException,
             InvalidPasswordException,

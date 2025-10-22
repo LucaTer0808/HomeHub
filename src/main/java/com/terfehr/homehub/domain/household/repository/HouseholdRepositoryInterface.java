@@ -1,10 +1,12 @@
 package com.terfehr.homehub.domain.household.repository;
 
 import com.terfehr.homehub.domain.household.entity.Household;
+import com.terfehr.homehub.domain.household.entity.Roommate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.lang.NonNull;
 
 import java.util.Optional;
+import java.util.Set;
 
 public interface HouseholdRepositoryInterface extends JpaRepository<Household, Long> {
 

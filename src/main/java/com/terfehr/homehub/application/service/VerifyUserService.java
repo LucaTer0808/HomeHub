@@ -8,7 +8,7 @@ import com.terfehr.homehub.domain.household.event.UserVerifiedEvent;
 import com.terfehr.homehub.domain.household.event.payload.UserVerifiedEventPayload;
 import com.terfehr.homehub.domain.household.exception.InvalidVerificationCodeException;
 import com.terfehr.homehub.domain.household.repository.UserRepositoryInterface;
-import com.terfehr.homehub.domain.shared.exception.InvalidEventPayloadException;
+import com.terfehr.homehub.domain.shared.exception.InvalidDomainEventPayloadException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -32,13 +32,13 @@ public class VerifyUserService {
      * @throws IllegalArgumentException If the passed User to the UserDTO is invalid.
      * @throws IllegalStateException If the User cannot be verified.
      * @throws InvalidVerificationCodeException If the verification code is expired.
-     * @throws InvalidEventPayloadException If the event payload is invalid.
+     * @throws InvalidDomainEventPayloadException If the event payload is invalid.
      */
     public UserDTO execute(VerifyUserCommand cmd) throws UserNotFoundException,
             IllegalStateException,
             IllegalArgumentException,
             InvalidVerificationCodeException,
-            InvalidEventPayloadException {
+            InvalidDomainEventPayloadException {
 
         String verificationCode = cmd.verificationCode();
 

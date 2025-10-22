@@ -61,6 +61,13 @@ public class Task {
     }
 
     /**
+     * Removes the Roommate from the Task by setting the Roommate to null.
+     */
+    public void removeRoommate() {
+        this.roommate = null;
+    }
+
+    /**
      * Sets the action of the Task. If the action is invalid or the Task is already finished, an exception is thrown.
      *
      * @param action The action to set.

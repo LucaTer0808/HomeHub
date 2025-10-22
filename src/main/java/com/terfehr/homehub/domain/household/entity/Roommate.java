@@ -1,5 +1,7 @@
 package com.terfehr.homehub.domain.household.entity;
 
+import com.terfehr.homehub.domain.household.exception.InvalidHouseholdException;
+import com.terfehr.homehub.domain.household.exception.InvalidUserException;
 import com.terfehr.homehub.domain.household.key.RoommateId;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -60,11 +62,15 @@ public class Roommate {
      *
      * @param household the household that the roommate belongs to
      * @param user the user representing the roommate
-     * @throws IllegalArgumentException If the given Household or User are invalid
+     * @throws InvalidHouseholdException If the provided household is invalid
+     * @throws InvalidUserException If the provided user is invalid
      */
-    public Roommate(Household household, User user) throws IllegalArgumentException {
-        if (!validate(household, user)) {
-            throw new IllegalArgumentException("Invalid Roommate object");
+    public Roommate(Household household, User user) throws InvalidHouseholdException, InvalidUserException {
+        if (!validateHousehold(household)) {
+            throw new InvalidHouseholdException("Invalid household provided");
+        }
+        if (!validateUser(user)) {
+            throw new InvalidUserException("Invalid user provided");
         }
         this.id = new  RoommateId(household.getId(), user.getId());
         this.household = household;
@@ -83,6 +89,15 @@ public class Roommate {
             throw  new IllegalArgumentException("Invalid Roommate role");
         }
         this.role = Role.valueOf(role);
+    }
+
+    /**
+     * Checks whether the Roommate is an admin.
+     *
+     * @return True, if the Roommate is an admin. False otherwise.
+     */
+    public boolean isAdmin() {
+        return this.role .equals(Role.ROLE_ADMIN);
     }
 
     /**

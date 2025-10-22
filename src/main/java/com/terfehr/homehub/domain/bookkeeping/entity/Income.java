@@ -1,6 +1,7 @@
 package com.terfehr.homehub.domain.bookkeeping.entity;
 
 import com.terfehr.homehub.domain.bookkeeping.value.Money;
+import com.terfehr.homehub.domain.household.entity.Roommate;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -28,10 +29,11 @@ public class Income extends Transaction {
      * @param date The date and time the source occurred.
      * @param source The source to whom the source was paid.
      * @param account The account associated with the source transaction.
+     * @param roommate The roommate associated with the source transaction.
      * @throws IllegalArgumentException if the source is invalid.
      */
-    public Income(long amount, String description, LocalDateTime date, String source, Account account) throws IllegalArgumentException {
-        super(amount, description, date, account);
+    public Income(long amount, String description, LocalDateTime date, String source, Account account, Roommate roommate) throws IllegalArgumentException {
+        super(amount, description, date, account, roommate);
         if (!validate(source)) {
             throw new IllegalArgumentException("Invalid Income object");
         }

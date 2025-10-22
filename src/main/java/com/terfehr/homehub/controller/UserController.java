@@ -1,17 +1,16 @@
 package com.terfehr.homehub.controller;
 
-import com.terfehr.homehub.application.command.ChangeEmailCommand;
-import com.terfehr.homehub.application.command.ChangeNameCommand;
-import com.terfehr.homehub.application.command.ChangePasswordCommand;
-import com.terfehr.homehub.application.command.ChangeUsernameCommand;
+import com.terfehr.homehub.application.command.*;
 import com.terfehr.homehub.application.dto.ChangeEmailDTO;
 import com.terfehr.homehub.application.dto.ChangeUsernameDTO;
+import com.terfehr.homehub.application.dto.DeleteUserDTO;
 import com.terfehr.homehub.application.dto.UserDTO;
 import com.terfehr.homehub.application.service.*;
 import com.terfehr.homehub.controller.request.*;
 import com.terfehr.homehub.controller.response.ChangeEmailResponse;
 import com.terfehr.homehub.controller.response.ChangeNameResponse;
 import com.terfehr.homehub.controller.response.ChangeUsernameResponse;
+import com.terfehr.homehub.controller.response.DeleteUserResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +28,7 @@ public class UserController {
     private final ChangeNameService changeNameService;
     private final ChangePasswordService changePasswordService;
     private final ChangeUsernameService changeUsernameService;
+    private final DeleteUserService deleteUserService;
     private final GetUserService getUserService;
 
     @GetMapping
@@ -96,5 +96,20 @@ public class UserController {
 
         UserDTO dto = changeNameService.execute(cmd);
         return ResponseEntity.status(HttpStatus.OK).body(new ChangeNameResponse(dto));
+    }
+
+    @DeleteMapping
+    public ResponseEntity<DeleteUserResponse> deleteUser(@RequestBody DeleteUserRequest request) {
+        if (!request.validate()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid delete user request sent at " + LocalDateTime.now());
+        }
+
+        DeleteUserCommand cmd = DeleteUserCommand
+                .builder()
+                .password(request.getPassword())
+                .build();
+
+        DeleteUserDTO dto = deleteUserService.execute(cmd);
+        return ResponseEntity.status(HttpStatus.OK).body(new DeleteUserResponse(dto));
     }
 }

@@ -13,16 +13,16 @@ import com.terfehr.homehub.domain.household.event.payload.VerifyEmailChangeEvent
 import com.terfehr.homehub.domain.household.exception.InvalidChangeEmailCodeException;
 import com.terfehr.homehub.domain.household.repository.UserRepositoryInterface;
 import com.terfehr.homehub.domain.household.service.UserService;
-import com.terfehr.homehub.domain.shared.exception.InvalidEventPayloadException;
+import com.terfehr.homehub.domain.shared.exception.InvalidDomainEventPayloadException;
 import com.terfehr.homehub.infrastructure.service.AuthUserProvider;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-
 @Service
 @AllArgsConstructor
+@Transactional
 public class ChangeEmailService {
 
     private final AuthUserProvider authUserProvider;
@@ -38,9 +38,9 @@ public class ChangeEmailService {
      * @return A ChangeEmailDTO containing the updated User as a DTO and the generated verification code and expiration date.
      * @throws UserNotFoundException If the User to update does not exist.
      * @throws IllegalArgumentException If some argument is invalid.
-     * @throws InvalidEventPayloadException If the event payload is invalid.
+     * @throws InvalidDomainEventPayloadException If the event payload is invalid.
      */
-    public ChangeEmailDTO execute(ChangeEmailCommand cmd) throws UserNotFoundException, IllegalArgumentException, InvalidEventPayloadException {
+    public ChangeEmailDTO execute(ChangeEmailCommand cmd) throws UserNotFoundException, IllegalArgumentException, InvalidDomainEventPayloadException {
 
         String username = authUserProvider.getUsername();
 
@@ -68,9 +68,9 @@ public class ChangeEmailService {
      * @throws UserNotFoundException If the User to update does not exist.
      * @throws IllegalStateException If the email change is not pending.
      * @throws InvalidChangeEmailCodeException If the code is expired.
-     * @throws InvalidEventPayloadException If the event payload is invalid.
+     * @throws InvalidDomainEventPayloadException If the event payload is invalid.
      */
-    public UserDTO execute(VerifyEmailChangeCommand cmd) throws UserNotFoundException, IllegalStateException, InvalidChangeEmailCodeException, InvalidEventPayloadException {
+    public UserDTO execute(VerifyEmailChangeCommand cmd) throws UserNotFoundException, IllegalStateException, InvalidChangeEmailCodeException, InvalidDomainEventPayloadException {
 
         User user = userRepository.findByEmailChangeCode(cmd.emailChangeCode())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));

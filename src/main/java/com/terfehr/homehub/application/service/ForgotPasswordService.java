@@ -8,6 +8,7 @@ import com.terfehr.homehub.domain.household.event.ForgotPasswordEvent;
 import com.terfehr.homehub.domain.household.event.payload.ForgotPasswordEventPayload;
 import com.terfehr.homehub.domain.household.repository.UserRepositoryInterface;
 import com.terfehr.homehub.domain.household.service.UserService;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class ForgotPasswordService {
 
     private final ApplicationEventPublisher publisher;
