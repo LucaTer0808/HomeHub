@@ -13,7 +13,7 @@ public class ChangeHouseholdNameEvent extends ApplicationEvent {
     public ChangeHouseholdNameEvent(Object source, ChangeHouseholdNameEventPayload payload) {
         super(source);
         if (payload == null) {
-            throw new InvalidDomainEventPayloadException("ChangeHouseholdNameEventPayload cannot be null")
+            throw new InvalidDomainEventPayloadException("ChangeHouseholdNameEventPayload cannot be null");
         }
         this.payload = payload;
     }
