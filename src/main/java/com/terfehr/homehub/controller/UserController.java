@@ -99,7 +99,7 @@ public class UserController {
     }
 
     @DeleteMapping
-    public ResponseEntity<DeleteUserResponse> deleteUser(@RequestBody DeleteUserRequest request) {
+    public ResponseEntity<Void> deleteUser(@RequestBody DeleteUserRequest request) {
         if (!request.validate()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid delete user request sent at " + LocalDateTime.now());
         }
@@ -109,7 +109,7 @@ public class UserController {
                 .password(request.getPassword())
                 .build();
 
-        DeleteUserDTO dto = deleteUserService.execute(cmd);
-        return ResponseEntity.status(HttpStatus.OK).body(new DeleteUserResponse(dto));
+        deleteUserService.execute(cmd);
+        return ResponseEntity.noContent().build();
     }
 }

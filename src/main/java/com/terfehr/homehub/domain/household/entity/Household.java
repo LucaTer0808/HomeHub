@@ -74,15 +74,13 @@ public class Household {
      * is invalid, an exception is thrown.
      *
      * @param name The name to set.
-     * @return The updated Household.
      * @throws IllegalArgumentException If the given name is invalid.
      */
-    public Household setName(String name) throws IllegalArgumentException {
+    public void changeName(String name) throws IllegalArgumentException {
         if (!validateName(name)) {
             throw new IllegalArgumentException("Invalid arguments for Household name");
         }
         this.name = name;
-        return this;
     }
 
     /**

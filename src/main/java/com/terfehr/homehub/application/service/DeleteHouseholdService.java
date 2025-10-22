@@ -1,0 +1,42 @@
+package com.terfehr.homehub.application.service;
+
+import com.terfehr.homehub.application.command.DeleteHouseholdCommand;
+import com.terfehr.homehub.application.exception.HouseholdNotFoundException;
+import com.terfehr.homehub.domain.household.entity.Household;
+import com.terfehr.homehub.domain.household.event.DeleteHouseholdEvent;
+import com.terfehr.homehub.domain.household.event.payload.DeleteHouseholdEventPayload;
+import com.terfehr.homehub.domain.household.repository.HouseholdRepositoryInterface;
+import com.terfehr.homehub.domain.shared.exception.InvalidDomainEventPayloadException;
+import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.stereotype.Service;
+
+@Service
+@AllArgsConstructor
+@Transactional
+public class DeleteHouseholdService {
+
+    private final ApplicationEventPublisher publisher;
+    private final HouseholdRepositoryInterface householdRepository;
+
+    /**
+     * Executes the DeleteHouseholdCommand by fetching the represented Household from the Database and deleting it.
+     * Due to cascadeType.ALL, all entities that belong to the Household will be deleted as well, including the Roommates.
+     *
+     * @param cmd The Command to execute.
+     * @throws HouseholdNotFoundException If the Household to delete does not exist.
+     * @throws InvalidDomainEventPayloadException If the event payload is invalid.
+     */
+    public void execute(DeleteHouseholdCommand cmd) throws HouseholdNotFoundException, InvalidDomainEventPayloadException {
+
+        Household household = householdRepository.findById(cmd.id())
+                .orElseThrow(() -> new HouseholdNotFoundException("There is no household with id " + cmd.id()));
+
+        householdRepository.delete(household);
+
+        DeleteHouseholdEventPayload payload = new DeleteHouseholdEventPayload(cmd.id());
+        DeleteHouseholdEvent event = new DeleteHouseholdEvent(this, payload);
+        publisher.publishEvent(event);
+    }
+}
