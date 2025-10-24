@@ -54,7 +54,7 @@ public class RegisterUserService {
             InvalidNameException
 
     {
-        User registeredUser = userService.create(cmd.username(), cmd.email(), cmd.password(), cmd.firstName(), cmd.lastName());
+        User registeredUser = userService.create(cmd.username(), cmd.email(), cmd.password(), cmd.confirmPassword(), cmd.firstName(), cmd.lastName());
 
         userRepository.save(registeredUser);
 

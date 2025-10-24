@@ -4,5 +4,5 @@ import lombok.Builder;
 import org.springframework.lang.NonNull;
 
 @Builder
-public record ChangePasswordCommand(@NonNull String password) {
+public record ChangePasswordCommand(@NonNull String password, @NonNull String confirmPassword) {
 }

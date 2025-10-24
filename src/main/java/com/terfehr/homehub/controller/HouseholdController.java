@@ -14,13 +14,11 @@ import com.terfehr.homehub.controller.request.CreateHouseholdRequest;
 import com.terfehr.homehub.controller.response.ChangeHouseholdNameResponse;
 import com.terfehr.homehub.controller.response.CreateHouseholdResponse;
 import com.terfehr.homehub.controller.response.GetHouseholdResponse;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/household")
@@ -33,14 +31,10 @@ public class HouseholdController {
     private final GetHouseholdService getHouseholdService;
 
     @PostMapping
-    public ResponseEntity<CreateHouseholdResponse> createHousehold(@RequestBody CreateHouseholdRequest request) {
-        if (!request.validate()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid household creation request sent at " + LocalDateTime.now());
-        }
-
+    public ResponseEntity<CreateHouseholdResponse> createHousehold(@Valid @RequestBody CreateHouseholdRequest request) {
         CreateHouseholdCommand cmd = CreateHouseholdCommand
                 .builder()
-                .name(request.getName())
+                .name(request.name())
                 .build();
 
         HouseholdDTO dto = createHouseholdService.execute(cmd);
@@ -48,11 +42,7 @@ public class HouseholdController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<GetHouseholdResponse> getHousehold(@PathVariable Long id) {
-        if (id == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid household id sent at " + LocalDateTime.now());
-        }
-
+    public ResponseEntity<GetHouseholdResponse> getHousehold(@PathVariable long id) {
         GetHouseholdCommand cmd = GetHouseholdCommand
                 .builder()
                 .id(id)
@@ -63,11 +53,7 @@ public class HouseholdController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteHousehold(@PathVariable Long id) {
-        if (id == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid household id sent at " + LocalDateTime.now());
-        }
-
+    public ResponseEntity<Void> deleteHousehold(@PathVariable long id) {
         DeleteHouseholdCommand cmd = DeleteHouseholdCommand
                 .builder()
                 .id(id)
@@ -78,15 +64,11 @@ public class HouseholdController {
     }
 
     @PatchMapping("/{id}/name")
-    public ResponseEntity<ChangeHouseholdNameResponse> changeHouseholdName(@PathVariable Long id, @RequestBody ChangeHouseholdNameRequest request) {
-        if (id == null || !request.validate()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid household name change request sent at " + LocalDateTime.now());
-        }
-
+    public ResponseEntity<ChangeHouseholdNameResponse> changeHouseholdName(@PathVariable long id, @Valid @RequestBody ChangeHouseholdNameRequest request) {
         ChangeHouseholdNameCommand cmd = ChangeHouseholdNameCommand
                 .builder()
                 .id(id)
-                .name(request.getName())
+                .name(request.name())
                 .build();
 
         HouseholdDTO dto = changeHouseholdNameService.execute(cmd);

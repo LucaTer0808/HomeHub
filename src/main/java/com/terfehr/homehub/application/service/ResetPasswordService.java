@@ -26,7 +26,7 @@ public class ResetPasswordService {
         User user = userRepository.findByForgotPasswordCode(cmd.forgotPasswordCode())
                 .orElseThrow(() -> new UserNotFoundException("There is no user with forgot password code: " + cmd.forgotPasswordCode()));
 
-        userService.resetPassword(user, cmd.password());
+        userService.resetPassword(user, cmd.password(), cmd.confirmPassword());
 
         userRepository.save(user);
 

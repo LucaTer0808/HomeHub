@@ -1,18 +1,10 @@
 package com.terfehr.homehub.controller.request;
 
-import lombok.Getter;
+import com.terfehr.homehub.infrastructure.jackson.Trim;
+import jakarta.validation.constraints.NotBlank;
 
-@Getter
-public class ChangeHouseholdNameRequest implements RequestInterface {
-
-    private String name;
-
-    public boolean validate() {
-        normalize();
-        return name != null && !name.isEmpty();
-    }
-
-    private void normalize() {
-        name = name != null ? name.trim() : null;
-    }
-}
+public record ChangeHouseholdNameRequest(
+        @Trim
+        @NotBlank(message = "Household name cannot be blank!")
+        String name
+) {}

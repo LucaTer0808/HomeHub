@@ -4,12 +4,14 @@ import com.terfehr.homehub.application.command.DeleteUserCommand;
 import com.terfehr.homehub.application.dto.DeleteUserDTO;
 import com.terfehr.homehub.application.event.DeleteUserEvent;
 import com.terfehr.homehub.application.event.payload.DeleteUserEventPayload;
+import com.terfehr.homehub.application.exception.InvalidPasswordException;
 import com.terfehr.homehub.application.interfaces.AuthUserProviderInterface;
 import com.terfehr.homehub.domain.bookkeeping.service.TransactionService;
 import com.terfehr.homehub.domain.household.entity.Roommate;
 import com.terfehr.homehub.domain.household.entity.User;
 import com.terfehr.homehub.domain.household.repository.UserRepositoryInterface;
 import com.terfehr.homehub.domain.household.service.HouseholdService;
+import com.terfehr.homehub.domain.household.service.UserService;
 import com.terfehr.homehub.domain.scheduling.service.TaskService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -23,12 +25,13 @@ import java.util.Set;
 @Transactional
 public class DeleteUserService {
 
-    private final HouseholdService householdService;
     private final ApplicationEventPublisher publisher;
+    private final AuthUserProviderInterface userProvider;
+    private final HouseholdService householdService;
     private final TaskService taskService;
     private final TransactionService transactionService;
-    private final AuthUserProviderInterface userProvider;
     private final UserRepositoryInterface userRepository;
+    private final UserService userService;
 
     /**
      * Command to execute the deletion of a User. All unfinished tasks that belong to the user will be stripped of the reference to the user. Same goes for the ShoppingSprees
@@ -41,6 +44,11 @@ public class DeleteUserService {
      */
     public DeleteUserDTO execute(DeleteUserCommand cmd) {
         User user = userProvider.getUser();
+
+        if (!userService.doesPasswordMatch(user, cmd.password())) {
+            throw new InvalidPasswordException("The password you entered is incorrect. The deletion will be canceled.");
+        }
+
         Set<Roommate> roommates = user.getRoommates();
 
         transactionService.setNullByRoommates(roommates);

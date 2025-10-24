@@ -40,7 +40,7 @@ public class ChangePasswordService {
     public UserDTO execute(ChangePasswordCommand cmd) throws AuthenticationCredentialsNotFoundException, InvalidDomainEventPayloadException, UserNotFoundException, InvalidPasswordException {
         User user = userProvider.getUser();
 
-        userService.setPassword(user, cmd.password());
+        userService.changePassword(user, cmd.password(), cmd.confirmPassword());
 
         userRepository.save(user);
 

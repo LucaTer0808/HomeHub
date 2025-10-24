@@ -8,13 +8,11 @@ import com.terfehr.homehub.application.dto.UserLoginDTO;
 import com.terfehr.homehub.application.service.*;
 import com.terfehr.homehub.controller.request.*;
 import com.terfehr.homehub.controller.response.*;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/auth")
@@ -35,18 +33,15 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<RegisterUserResponse> register(@RequestBody RegisterUserRequest request) {
-        if (!request.validate()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Registration request sent at " + LocalDateTime.now() + ". The reason might be a faulty password, username or email address.");
-        }
-
+    public ResponseEntity<RegisterUserResponse> register(@Valid @RequestBody RegisterUserRequest request) {
         RegisterUserCommand cmd = RegisterUserCommand
                 .builder()
-                .username(request.getUsername())
-                .email(request.getEmail())
-                .password(request.getPassword())
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
+                .username(request.username())
+                .email(request.email())
+                .password(request.password())
+                .confirmPassword(request.confirmPassword())
+                .firstName(request.firstName())
+                .lastName(request.lastName())
                 .build();
 
         UserDTO registeredUser = registerUserService.execute(cmd);
@@ -55,14 +50,10 @@ public class AuthController {
     }
 
     @PatchMapping("/verify")
-    public ResponseEntity<VerifyUserResponse> verify(@RequestBody VerifyUserRequest request) {
-        if (!request.validate()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid verification request sent at " + LocalDateTime.now());
-        }
-
+    public ResponseEntity<VerifyUserResponse> verify(@Valid @RequestBody VerifyUserRequest request) {
         VerifyUserCommand cmd = VerifyUserCommand
                 .builder()
-                .verificationCode(request.getVerificationCode())
+                .verificationCode(request.verificationCode())
                 .build();
 
         UserDTO verifiedUser = verifyUserService.execute(cmd);
@@ -70,15 +61,11 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserLoginResponse> login(@RequestBody UserLoginRequest request) {
-        if (!request.validate()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid login request sent at " + LocalDateTime.now());
-        }
-
+    public ResponseEntity<UserLoginResponse> login(@Valid @RequestBody UserLoginRequest request) {
         UserLoginCommand cmd = UserLoginCommand
                 .builder()
-                .email(request.getEmail())
-                .password((request.getPassword()))
+                .email(request.email())
+                .password(request.password())
                 .build();
 
         UserLoginDTO dto = userLoginService.execute(cmd);
@@ -86,14 +73,10 @@ public class AuthController {
     }
 
     @PatchMapping("/refresh")
-    public ResponseEntity<RefreshVerificationCodeResponse> refresh(@RequestBody RefreshVerificationCodeRequest request) {
-        if (!request.validate()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid refresh request sent at " + LocalDateTime.now());
-        }
-
+    public ResponseEntity<RefreshVerificationCodeResponse> refresh(@Valid @RequestBody RefreshVerificationCodeRequest request) {
         RefreshVerificationCodeCommand cmd = RefreshVerificationCodeCommand
                 .builder()
-                .email(request.getEmail())
+                .email(request.email())
                 .build();
 
         RefreshVerificationCodeDTO dto = refreshVerificationCodeService.execute(cmd);
@@ -101,14 +84,10 @@ public class AuthController {
     }
 
     @PatchMapping("/password")
-    public ResponseEntity<ForgotPasswordResponse> forgotPassword(@RequestBody ForgotPasswordRequest request) {
-        if (!request.validate()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid forgot password request sent at " + LocalDateTime.now());
-        }
-
+    public ResponseEntity<ForgotPasswordResponse> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
         ForgotPasswordCommand cmd = ForgotPasswordCommand
                 .builder()
-                .email(request.getEmail())
+                .email(request.email())
                 .build();
 
         ForgotPasswordDTO dto = forgotPasswordService.execute(cmd);
@@ -116,14 +95,10 @@ public class AuthController {
     }
 
     @PatchMapping("/email/verify")
-    public ResponseEntity<VerifyEmailChangeResponse> verifyEmailChange(@RequestBody VerifyEmailChangeRequest request) {
-        if (!request.validate()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid email change verification request sent at " + LocalDateTime.now());
-        }
-
+    public ResponseEntity<VerifyEmailChangeResponse> verifyEmailChange(@Valid @RequestBody VerifyEmailChangeRequest request) {
         VerifyEmailChangeCommand cmd = VerifyEmailChangeCommand
                 .builder()
-                .emailChangeCode(request.getEmailChangeCode())
+                .emailChangeCode(request.emailChangeCode())
                 .build();
 
         UserDTO dto = changeEmailService.execute(cmd);
@@ -131,15 +106,12 @@ public class AuthController {
     }
 
     @PatchMapping("/password/reset")
-    public ResponseEntity<ResetPasswordResponse> resetPassword(@RequestBody ResetPasswordRequest request) {
-        if (!request.validate()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid forgotten password change request sent at " + LocalDateTime.now());
-        }
-
+    public ResponseEntity<ResetPasswordResponse> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
         ResetPasswordCommand cmd = ResetPasswordCommand
                 .builder()
-                .forgotPasswordCode(request.getForgotPasswordCode())
-                .password(request.getPassword())
+                .forgotPasswordCode(request.forgotPasswordCode())
+                .password(request.password())
+                .confirmPassword(request.confirmPassword())
                 .build();
 
         UserDTO dto = resetPasswordService.execute(cmd);

@@ -1,32 +1,19 @@
 package com.terfehr.homehub.controller.request;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.terfehr.homehub.infrastructure.jackson.Trim;
+import jakarta.validation.constraints.NotBlank;
 
-@NoArgsConstructor
-@Getter
-public class ResetPasswordRequest implements RequestInterface {
+public record ResetPasswordRequest(
+    @Trim
+    @NotBlank(message = "Password cannot be blank!")
+    String password,
 
-    private String password;
-    private String confirmPassword;
-    private String forgotPasswordCode;
+    @Trim
+    @NotBlank(message = "Confirmed password cannot be blank!")
+    String confirmPassword,
 
-    public boolean validate() {
-        normalize();
-        return validatePasswords() && validateForgotPasswordCode();
-    }
+    @Trim
+    @NotBlank(message = "ForgotPasswordCode cannot be blank!")
+    String forgotPasswordCode
+) {}
 
-    private void normalize() {
-        password = password != null ? password.trim() : null;
-        confirmPassword = confirmPassword != null ? confirmPassword.trim() : null;
-        forgotPasswordCode = forgotPasswordCode != null ? forgotPasswordCode.trim() : null;
-    }
-
-    private boolean validatePasswords() {
-        return password != null && password.equals(confirmPassword);
-    }
-
-    private boolean validateForgotPasswordCode() {
-        return forgotPasswordCode != null;
-    }
-}

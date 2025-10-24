@@ -1,20 +1,10 @@
 package com.terfehr.homehub.controller.request;
 
-import lombok.Getter;
+import com.terfehr.homehub.infrastructure.jackson.Trim;
+import jakarta.validation.constraints.NotBlank;
 
-import java.util.Locale;
-
-@Getter
-public class ChangeUsernameRequest implements RequestInterface {
-
-    private String username;
-
-    public boolean validate() {
-        normalize();
-        return username != null;
-    }
-
-    private void normalize() {
-        username = username != null ? username.trim().toLowerCase(Locale.ROOT) : null;
-    }
-}
+public record ChangeUsernameRequest(
+        @Trim
+        @NotBlank(message = "Username cannot be blank!")
+        String username
+) {}

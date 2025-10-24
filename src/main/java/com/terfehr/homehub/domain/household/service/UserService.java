@@ -49,22 +49,34 @@ public class UserService {
     }
 
     /**
+     * Compares the given password to the password of the given User that is currently in use.
+     *
+     * @param user The user to compare the password to.
+     * @param password The password to compare.
+     * @return True, if the passwords match. False otherwise.
+     */
+    public boolean doesPasswordMatch(User user, String password) {
+        return passwordEncoder.matches(password, user.getPassword());
+    }
+
+    /**
      * Creates a new User in the database. The password is encoded before being saved.
      *
      * @param username The username of the User.
      * @param email The email of the User.
      * @param rawPassword The raw password of the User.
+     * @param rawConfirmPassword the raw confirmed password of the User.
      * @param firstName The first name of the User.
      * @param lastName The last name of the User.
      * @return The newly created User.
      * @throws InvalidUsernameException If the username is invalid.
      * @throws InvalidEmailException If the email is invalid.
-     * @throws InvalidPasswordException If the password is invalid.
+     * @throws InvalidPasswordException If the password does not match the confirmed password or does not satisfy the formal requirements.
      * @throws InvalidNameException If the first or last name is invalid.
      * @throws InvalidVerificationCodeException If the verification code is invalid.
      * @throws InvalidVerificationCodeExpirationException If the verification code expiration is invalid.
      */
-    public User create(String username, String email, String rawPassword, String firstName, String lastName) throws
+    public User create(String username, String email, String rawPassword, String rawConfirmPassword, String firstName, String lastName) throws
             InvalidUsernameException,
             InvalidEmailException,
             InvalidPasswordException,
@@ -80,8 +92,9 @@ public class UserService {
             throw new InvalidEmailException("The email " + email + " is already taken. Please choose another.");
         }
 
-        if (!validatePassword(rawPassword)) {
-            throw new InvalidPasswordException("The password does not satisfy the requirements. Please chose a stronger password.");
+        if (!validatePassword(rawPassword, rawConfirmPassword)) {
+            throw new InvalidPasswordException("The password does not satisfy the requirements or does not match the confirmed password. " +
+                    "Please chose a stronger password or make sure that both of your passwords match each other.");
         }
 
         String encodedPassword = passwordEncoder.encode(rawPassword);
@@ -117,9 +130,10 @@ public class UserService {
      *
      * @param user The User to reset the password for.
      * @param password The new password to set.
+     * @param confirmPassword The confirmed password to check for equality.
      */
-    public void resetPassword(User user, String password) {
-        if (!validatePassword(password)) {
+    public void resetPassword(User user, String password, String confirmPassword) {
+        if (!validatePassword(password, confirmPassword)) {
             throw new InvalidPasswordException("Invalid password");
         }
         String encodedPassword = passwordEncoder.encode(password);
@@ -127,13 +141,15 @@ public class UserService {
     }
 
     /**
-     * Sets the password of the User. If the password is invalid, an exception is thrown.
+     * Sets the password of the User. If the password is invalid or does not match the confirmed password, an exception is thrown.
      *
      * @param user The User to set the password for.
      * @param password The password to set.
+     * @param confirmPassword The confirmed password.
+     * @throws InvalidPasswordException If the given passwords are invalid or do not match.
      */
-    public void setPassword(User user, String password) throws InvalidPasswordException {
-        if (!validatePassword(password)) {
+    public void changePassword(User user, String password, String confirmPassword) throws InvalidPasswordException {
+        if (!validatePassword(password, confirmPassword)) {
             throw new InvalidPasswordException("Invalid password");
         }
         String encodedPassword = passwordEncoder.encode(password);
@@ -246,5 +262,17 @@ public class UserService {
         return password != null &&
                 password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^a-zA-Z\\d]).{8,}$");
 
+    }
+
+    /**
+     * Validates the two given passwords. They have to be equal to each other and satisfy the criteria specified
+     * in the validatePassword method that only expects one parameter
+     *
+     * @param rawPassword The raw password to validate.
+     * @param rawConfirmPassword The raw confirmed password to validate.
+     * @return True, if the passwords are valid. False otherwise.
+     */
+    private boolean validatePassword(String rawPassword, String rawConfirmPassword) {
+        return rawPassword != null && rawPassword.equals(rawConfirmPassword) && validatePassword(rawPassword);
     }
 }

@@ -3,14 +3,11 @@ package com.terfehr.homehub.controller;
 import com.terfehr.homehub.application.command.*;
 import com.terfehr.homehub.application.dto.ChangeEmailDTO;
 import com.terfehr.homehub.application.dto.ChangeUsernameDTO;
-import com.terfehr.homehub.application.dto.DeleteUserDTO;
 import com.terfehr.homehub.application.dto.UserDTO;
 import com.terfehr.homehub.application.service.*;
 import com.terfehr.homehub.controller.request.*;
-import com.terfehr.homehub.controller.response.ChangeEmailResponse;
-import com.terfehr.homehub.controller.response.ChangeNameResponse;
-import com.terfehr.homehub.controller.response.ChangeUsernameResponse;
-import com.terfehr.homehub.controller.response.DeleteUserResponse;
+import com.terfehr.homehub.controller.response.*;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,14 +35,10 @@ public class UserController {
     }
 
     @PatchMapping("/username")
-    public ResponseEntity<ChangeUsernameResponse> changeUsername(@RequestBody ChangeUsernameRequest request) {
-        if (!request.validate()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid username change request sent at " + LocalDateTime.now());
-        }
-
+    public ResponseEntity<ChangeUsernameResponse> changeUsername(@Valid @RequestBody ChangeUsernameRequest request) {
         ChangeUsernameCommand cmd = ChangeUsernameCommand
                 .builder()
-                .username(request.getUsername())
+                .username(request.username())
                 .build();
 
         ChangeUsernameDTO dto = changeUsernameService.execute(cmd);
@@ -53,14 +46,10 @@ public class UserController {
     }
 
     @PatchMapping("/email")
-    public ResponseEntity<ChangeEmailResponse> changeEmail(@RequestBody ChangeEmailRequest request) {
-        if (!request.validate()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid email change request sent at " + LocalDateTime.now());
-        }
-
+    public ResponseEntity<ChangeEmailResponse> changeEmail(@Valid @RequestBody ChangeEmailRequest request) {
         ChangeEmailCommand cmd = ChangeEmailCommand
                 .builder()
-                .email(request.getEmail())
+                .email(request.email())
                 .build();
 
         ChangeEmailDTO dto = changeEmailService.execute(cmd);
@@ -68,14 +57,11 @@ public class UserController {
     }
 
     @PatchMapping("/password")
-    public ResponseEntity<ChangePasswordResponse> changePassword(@RequestBody ChangePasswordRequest request) {
-        if (!request.validate()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid password change request sent at " + LocalDateTime.now());
-        }
-
+    public ResponseEntity<ChangePasswordResponse> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
         ChangePasswordCommand cmd = ChangePasswordCommand
                 .builder()
-                .password(request.getPassword())
+                .password(request.password())
+                .confirmPassword(request.confirmPassword())
                 .build();
 
         UserDTO user = changePasswordService.execute(cmd);
@@ -83,15 +69,11 @@ public class UserController {
     }
 
     @PatchMapping("/name")
-    public ResponseEntity<ChangeNameResponse> changeName(@RequestBody ChangeNameRequest request) {
-        if (!request.validate()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid name change request sent at " + LocalDateTime.now());
-        }
-
+    public ResponseEntity<ChangeNameResponse> changeName(@Valid @RequestBody ChangeNameRequest request) {
         ChangeNameCommand cmd = ChangeNameCommand
                 .builder()
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
+                .firstName(request.firstName())
+                .lastName(request.lastName())
                 .build();
 
         UserDTO dto = changeNameService.execute(cmd);
@@ -99,14 +81,10 @@ public class UserController {
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> deleteUser(@RequestBody DeleteUserRequest request) {
-        if (!request.validate()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid delete user request sent at " + LocalDateTime.now());
-        }
-
+    public ResponseEntity<Void> deleteUser(@Valid @RequestBody DeleteUserRequest request) {
         DeleteUserCommand cmd = DeleteUserCommand
                 .builder()
-                .password(request.getPassword())
+                .password(request.password())
                 .build();
 
         deleteUserService.execute(cmd);

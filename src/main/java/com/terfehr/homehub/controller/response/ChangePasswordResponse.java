@@ -1,4 +1,4 @@
-package com.terfehr.homehub.controller.request;
+package com.terfehr.homehub.controller.response;
 
 import com.terfehr.homehub.application.dto.UserDTO;
 import com.terfehr.homehub.application.exception.InvalidUserDTOException;

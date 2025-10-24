@@ -1,22 +1,14 @@
 package com.terfehr.homehub.controller.request;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.terfehr.homehub.infrastructure.jackson.Trim;
+import jakarta.validation.constraints.NotBlank;
 
-@NoArgsConstructor
-@Getter
-public class ChangeNameRequest implements RequestInterface {
+public record ChangeNameRequest(
+    @Trim
+    @NotBlank(message = "First name cannot be blank!")
+    String firstName,
 
-    private String firstName;
-    private String lastName;
-
-    public boolean validate() {
-        normalize();
-        return firstName != null && lastName != null;
-    }
-
-    private void normalize() {
-        firstName = firstName != null ? firstName.trim() : null;
-        lastName = lastName != null ? lastName.trim() : null;
-    }
-}
+    @Trim
+    @NotBlank(message = "Last name cannot be blank!")
+    String lastName
+) {}

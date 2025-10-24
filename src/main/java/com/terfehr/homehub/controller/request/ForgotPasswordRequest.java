@@ -1,20 +1,10 @@
 package com.terfehr.homehub.controller.request;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.terfehr.homehub.infrastructure.jackson.TrimAndLowerCase;
+import jakarta.validation.constraints.NotBlank;
 
-@NoArgsConstructor
-@Getter
-public class ForgotPasswordRequest {
-
-    private String email;
-
-    public void normalize() {
-        email = email != null ? email.trim().toLowerCase() : null;
-    }
-
-    public boolean validate() {
-        normalize();
-        return email != null;
-    }
-}
+public record ForgotPasswordRequest(
+        @TrimAndLowerCase
+        @NotBlank(message = "Email cannot be blank!")
+        String email
+) {}
