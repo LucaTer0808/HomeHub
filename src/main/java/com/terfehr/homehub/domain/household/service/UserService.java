@@ -1,5 +1,7 @@
 package com.terfehr.homehub.domain.household.service;
 
+import com.terfehr.homehub.domain.household.entity.Household;
+import com.terfehr.homehub.domain.household.entity.Roommate;
 import com.terfehr.homehub.domain.shared.exception.InvalidNameException;
 import com.terfehr.homehub.application.exception.InvalidPasswordException;
 import com.terfehr.homehub.application.exception.InvalidUsernameException;
@@ -122,6 +124,20 @@ public class UserService {
         String newCode = generateUniqueVerificationCode();
         LocalDateTime expiration = getVerificationCodeExpiration();
         user.refreshVerificationCode(newCode, expiration);
+    }
+
+    /**
+     * Removes all roommates associated with the given household from the Roommates collection of the User
+     * represented by the Roommate
+     *
+     * @param household The household to remove the roommates from.
+     * @throws InvalidRoommateException If the given household is invalid. Should not occur here.
+     */
+    public void removeRoommatesByHousehold(Household household) throws InvalidRoommateException{
+        for (Roommate roommate : household.getRoommates()) {
+            User user = roommate.getUser();
+            user.removeRoommate(roommate);
+        }
     }
 
     /**

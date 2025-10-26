@@ -263,6 +263,19 @@ public class User implements UserDetails {
     }
 
     /**
+     * Removes a Roommate from the user's list of roommates. The Roommate must be part of the user's list of roommates and be valid.
+     *
+     * @param roommate The Roommate to remove.
+     * @throws InvalidRoommateException If the Roommate is not part of the user's list of roommates or is null.
+     */
+    public void removeRoommate(Roommate roommate) throws InvalidRoommateException {
+        if (!canRemoveRoommate(roommate)) {
+            throw new InvalidRoommateException("Roommate is not part of the user's list of roommates or invalid. Might be null");
+        }
+        this.roommates.remove(roommate);
+    }
+
+    /**
      * Resets the password of the user by setting the password to the provided value. It also sets the forgot password code and its associated expiration date to null.
      *
      * @param newPassword The new password to set.
