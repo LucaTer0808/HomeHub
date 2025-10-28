@@ -1,13 +1,7 @@
 package com.terfehr.homehub.domain.household.service;
 
-import com.terfehr.homehub.domain.household.entity.Household;
-import com.terfehr.homehub.domain.household.entity.Role;
-import com.terfehr.homehub.domain.household.entity.Roommate;
-import com.terfehr.homehub.domain.household.entity.User;
-import com.terfehr.homehub.domain.household.exception.InvalidHouseholdException;
-import com.terfehr.homehub.domain.household.exception.InvalidUserException;
+import com.terfehr.homehub.domain.household.entity.*;
 import com.terfehr.homehub.domain.household.repository.HouseholdRepositoryInterface;
-import com.terfehr.homehub.domain.shared.exception.InvalidNameException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

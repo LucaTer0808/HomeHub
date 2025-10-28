@@ -1,5 +1,8 @@
 package com.terfehr.homehub.domain.household.entity;
 
+import com.terfehr.homehub.domain.household.exception.InvalidHouseholdException;
+import com.terfehr.homehub.domain.household.exception.InvalidInvitationException;
+import com.terfehr.homehub.domain.household.exception.InvalidUserException;
 import com.terfehr.homehub.domain.shared.exception.InvalidNameException;
 import com.terfehr.homehub.domain.bookkeeping.entity.Account;
 import com.terfehr.homehub.domain.scheduling.entity.TaskList;
@@ -39,6 +42,9 @@ public class Household {
     private Set<Roommate> roommates;
 
     @OneToMany(mappedBy = "household", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Invitation> invitations;
+
+    @OneToMany(mappedBy = "household", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Account> accounts;
 
     @OneToMany(mappedBy = "household", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -63,6 +69,7 @@ public class Household {
         }
         this.name = name;
         this.roommates = new HashSet<>();
+        this.invitations = new HashSet<>();
         this.accounts = new HashSet<>();
         this.taskLists = new HashSet<>();
         this.shoppingLists = new HashSet<>();
@@ -97,6 +104,23 @@ public class Household {
     }
 
     /**
+     * Invites a User to the household by creating, adding and returning an Invitation object.
+     *
+     * @param user the User to invite to the household.
+     * @return The newly created and added Invitation.
+     * @throws InvalidHouseholdException If the calling Household is unsufficient for creating an Invitation.
+     * @throws InvalidUserException If the given User is insufficient to create an Invitation from it.
+     */
+    public Invitation invite(User user) throws InvalidUserException {
+        if (!canInvite(user)) {
+            throw new InvalidUserException("Invalid Invitation for this Household");
+        }
+        Invitation invitation = new Invitation(this, user);
+        this.invitations.add(invitation);
+        return invitation;
+    }
+
+    /**
      * Removes a specified roommate from the current household.
      * Validates the roommate's association with the household before removal.
      * Throws an exception if the roommate is invalid or not associated with the household.
@@ -109,114 +133,6 @@ public class Household {
             throw new IllegalArgumentException("Invalid Roommate for this Household");
         }
         this.roommates.remove(roommate);
-    }
-
-    /**
-     * Adds a new Account to the Household by constructing it on the fly and then adding it to itself. It then returns
-     * the account entity.
-     *
-     * @param name The name of the account.
-     * @param amount The initial balance.
-     * @param currencyCode The currency in which  the account operates
-     *
-     * @throws IllegalArgumentException If the given parameters are not valid to create an Account.
-     */
-    public Account addAccount(String name, long amount, String currencyCode) throws IllegalArgumentException {
-        Account account = new Account(name, amount, currencyCode, this);
-        this.accounts.add(account);
-        return account;
-    }
-
-    /**
-     * Removes the given Account from the Household if it is contained. An Exception is thrown otherwise.
-     *
-     * @param account The Account to remove.
-     * @throws IllegalArgumentException If the Account is not part of the household.
-     */
-    public void removeAccount(Account account) throws IllegalArgumentException {
-        if (!this.accounts.contains(account)) {
-            throw new IllegalArgumentException("Invalid account for this Household");
-        }
-    }
-
-    /**
-     * Adds a new TaskList to the Household by building it on the fly and then returning it. If The given
-     * parameter names are invalid, an exception is thrown.
-     *
-     * @param name The desired name for the TaskList.
-     * @return The built and added TaskList.
-     * @throws IllegalArgumentException If the given name is insufficient.
-     */
-    public TaskList addTaskList(String name) throws IllegalArgumentException {
-        TaskList list =  new TaskList(name, this);
-        this.taskLists.add(list);
-        return list;
-    }
-
-    /**
-     * Tries to remove the given TaskList from the Household. If it is invalid or not contained,
-     * an exception is thrown.
-     *
-     * @param list The TaskList to remove from the Household.
-     * @throws IllegalArgumentException If the TaskList can not be removed.
-     */
-    public void removeTaskList(TaskList list) throws IllegalArgumentException {
-        if (!canRemoveTaskList(list)) {
-            throw new IllegalArgumentException("Invalid task list for this Household");
-        }
-    }
-
-    /**
-     * Adds and returns a ShoppingList by constructing it on the fly, adding it to the Household and finally returning it.
-     * If the given parameters are insufficient to construct a ShoppingList, an exception is thrown.
-     *
-     * @param name The desired name of the ShoppingList.
-     * @return The created and added ShoppingList.
-     * @throws IllegalArgumentException If the given parameters are insufficient for creating a ShoppingList.
-     */
-    public ShoppingList addShoppingList(String name) throws IllegalArgumentException {
-        ShoppingList list = new ShoppingList(name, this);
-        this.shoppingLists.add(list);
-        return list;
-    }
-
-    /**
-     * Tries to remove the given ShoppingList from the Household. If it can not be removed,
-     * an exception is thrown.
-     *
-     * @param list The ShoppingList to remove
-     * @throws IllegalArgumentException If the given ShoppingList can not be removed.
-     */
-    public void removeShoppingList(ShoppingList list) throws IllegalArgumentException {
-        if (!canRemoveShoppingList(list)) {
-            throw new  IllegalArgumentException("Invalid shopping list for this Household");
-        }
-        this.shoppingLists.remove(list);
-    }
-
-    /**
-     * Adds a ShoppingSpree to the household by creating it on the fly and then returning it.
-     *
-     * @param date The time when the ShoppingSpree took place.
-     * @return Returns the newly created ShoppingList.
-     */
-    public ShoppingSpree addShoppingSpree(LocalDateTime date) {
-        ShoppingSpree spree = new ShoppingSpree(date, this);
-        this.shoppingSprees.add(spree);
-        return spree;
-    }
-
-    /**
-     * removes a ShoppingSpree from the household. If the ShoppingSpree does not exist, an exception is thrown.
-     *
-     * @param spree The ShoppingSpree to remove.
-     * @throws IllegalArgumentException If the ShoppingSpree does not exist.
-     */
-    public void removeShoppingSpree(ShoppingSpree spree) throws IllegalArgumentException {
-        if (!shoppingSprees.contains(spree)) {
-            throw new IllegalArgumentException("ShoppingSpree does not exist");
-        }
-        this.shoppingSprees.remove(spree);
     }
 
     /**
@@ -257,6 +173,17 @@ public class Household {
     }
 
     /**
+     * Checks if the User can be invited. This is the case if the User
+     * is neither part of the Household via a Roommate already nor has been Invited and is references by an existing Invitation.
+     *
+     * @param user The User to check for possible invitation.
+     * @return True, if the Invitation can happen. False otherwise.
+     */
+    private boolean canInvite(User user) {
+        return validateUser(user) && !isInvited(user) && !isPartOf(user);
+    }
+
+    /**
      * Determines whether a specified roommate can be removed from the household.
      * A roommate can be removed if they are associated with the household and the household
      * contains more than one roommate.
@@ -269,34 +196,44 @@ public class Household {
     }
 
     /**
-     * Decides if the given TaskList can be removed from the Household. It has to be valid and contained by the household.
+     * Checks if the User has already been invited to this household.
+     * Happens after the validation of the User itself.
      *
-     * @param list The TaskList to remove.
-     * @return True, if it can be removed. False otherwise.
+     * @param user The User to check for existing invitation.
+     * @return True if the User already received an Invitation. False otherwise.
+     * @throws InvalidUserException If the given User is invalid.
      */
-    private boolean canRemoveTaskList(TaskList list) {
-        return validateTaskList(list) && this.taskLists.contains(list);
+    private boolean isInvited(User user) throws InvalidUserException {
+        if (!validateUser(user)) {
+            throw new InvalidUserException("The given User is invalid! It might be null!");
+        }
+        return invitations.stream().anyMatch(i -> i.getUser().equals(user));
     }
 
     /**
-     * Decides if the given ShoppingLIst can be removed from the Household. It has to be valid and contained by the Household.
+     * Checks if the User is already part of this household. This is the case
+     * if a Roommate with said User exists.
+     * Happens after the validation of the User itself.
      *
-     * @param list The ShoppingList to remove.
-     * @return True, if the given ShoppingList can be removed. False otherwise.
+     * @param user The User to check for possible invitation.
+     * @return True if the User already is part of the household. False otherwise.
+     * @throws InvalidUserException If the given User is invalid.
      */
-    private boolean canRemoveShoppingList(ShoppingList list) {
-        return validateShoppingList(list) && this.shoppingLists.contains(list);
+    private boolean isPartOf(User user) throws InvalidUserException {
+        if (!validateUser(user)) {
+            throw new InvalidUserException("The given User is invalid! It might be null!");
+        }
+        return roommates.stream().anyMatch(r -> r.getUser().equals(user));
     }
 
     /**
-     * Determines if the given ShoppingSpree can be added to this household. It has to be valid and not already
-     * be part of this Household.
+     * Validates the given User by checking if it is null.
      *
-     * @param spree The Spree to add.
-     * @return True, if the ShoppingSpree can be added. False otherwise.
+     * @param user The User to validate.
+     * @return True, if it is valid. False otherwise.
      */
-    private boolean canAddShoppingSpree(ShoppingSpree spree) {
-        return validateShoppingSpree(spree) && !shoppingSprees.contains(spree);
+    private boolean validateUser(User user) {
+        return user != null;
     }
 
     /**
@@ -309,16 +246,6 @@ public class Household {
      */
     private boolean validateRoommate(Roommate roommate) {
         return roommate != null && roommate.getHousehold().equals(this);
-    }
-
-    /**
-     * Validates the given Shopping Spree. It can not be null and the shopping sprees household has to be this.
-     *
-     * @param spree The ShoppingSpree to check.
-     * @return True, if it is valid. False otherwise.
-     */
-    private boolean validateShoppingSpree(ShoppingSpree spree) {
-        return spree != null && spree.getHousehold().equals(this);
     }
 
     /**

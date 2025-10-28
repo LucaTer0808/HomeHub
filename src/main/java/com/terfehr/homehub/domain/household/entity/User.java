@@ -9,6 +9,7 @@ import com.terfehr.homehub.domain.household.service.UserService;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.engine.spi.CascadeStyle;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -73,6 +74,9 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Roommate> roommates;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Invitation> invitations;
 
     /**
      * Constructs a new User object with the specified username, email, password,
@@ -140,6 +144,7 @@ public class User implements UserDetails {
         this.forgotPasswordCode = null;
         this.forgotPasswordCodeExpiration = null;
         this.roommates = new HashSet<>();
+        this.invitations = new HashSet<>();
     }
 
     /**
@@ -212,7 +217,7 @@ public class User implements UserDetails {
      * @throws IllegalStateException if the user cannot be enabled
      */
     public void enable() throws IllegalStateException {
-        if (!enabled) {
+        if (enabled) {
             throw new IllegalStateException("User is enabled already");
         }
         if (verificationCodeExpiration.isBefore(LocalDateTime.now())) {
@@ -260,6 +265,19 @@ public class User implements UserDetails {
         }
         this.verificationCode = verificationCode;
         this.verificationCodeExpiration = verificationCodeExpiration;
+    }
+
+    /**
+     * Makes the User get invited to a Household by adding the given Invitation to its Invitation collection.
+     *
+     * @param invitation The Invitation to receive.
+     * @throws InvalidInvitationException If the receivable Invitation is invalid. Should never happen since this case is covered by canReceiveInvitation().
+     */
+    public void receiveInvitation(Invitation invitation) throws InvalidInvitationException {
+        if (!canReceiveInvitation(invitation)) {
+            throw new InvalidInvitationException("Invalid invitation");
+        }
+        this.invitations.add(invitation);
     }
 
     /**
@@ -355,6 +373,18 @@ public class User implements UserDetails {
     }
 
     /**
+     * Determines whether the User can receive the Invitation to the Household. This is the case if the
+     * Invitation itself is valid and does not refer to a Household that the User was already invited to or is already
+     * part of.
+     *
+     * @param invitation The Invitation to check for receival.
+     * @return True, if the User can receive the Invitation. False otherwise.
+     */
+    private boolean canReceiveInvitation(Invitation invitation) {
+        return validateInvitation(invitation) && !isInvited(invitation) && !isPartOf(invitation);
+    }
+
+    /**
      * Determines whether a given Roommate can be removed from the user's list of roommates.
      * The method checks if the Roommate is valid and currently part of the user's list of roommates.
      *
@@ -363,6 +393,46 @@ public class User implements UserDetails {
      */
     private boolean canRemoveRoommate(Roommate roommate) {
         return validateRoommate(roommate) && this.roommates.contains(roommate);
+    }
+
+    /**
+     * Checks if the User was already invited to the Household referenced by the given Invitation. This happens after
+     * the Invitation is validated.
+     *
+     * @param invitation The Invitation to be validated and checked for its Household.
+     * @return True, if the User was already invited. False otherwise.
+     * @throws InvalidInvitationException If the given Invitation is invalid.
+     */
+    private boolean isInvited(Invitation invitation) throws InvalidInvitationException {
+        if (!validateInvitation(invitation)) {
+            throw new InvalidInvitationException("Invalid invitation");
+        }
+        return invitations.stream().anyMatch(i -> i.getUser().equals(invitation.getUser()));
+    }
+
+    /**
+     * Checks if the User was already added to the Household referenced by the given Invitation. This happens after
+     * the Invitation is validated and is the case, if a Roommate with said Household exists.
+     *
+     * @param invitation The Invitation to be validated and checked for its Household.
+     * @return True, if the User was already added. False otherwise.
+     * @throws InvalidInvitationException If the given Invitation is invalid.
+     */
+    private boolean isPartOf(Invitation invitation) {
+        if (!validateInvitation(invitation)) {
+            throw new InvalidInvitationException("Invalid invitation");
+        }
+        return roommates.stream().anyMatch(r -> r.getUser().equals(invitation.getUser()));
+    }
+
+    /**
+     * Validates the given Invitation by checking if it does not equal null.
+     *
+     * @param invitation The Invitation to validate.
+     * @return True, if the given Invitation is valid. False otherwise.
+     */
+    private boolean validateInvitation(Invitation invitation) {
+        return invitation != null;
     }
 
     /**

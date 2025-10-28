@@ -1,19 +1,16 @@
 package com.terfehr.homehub.controller;
 
-import com.terfehr.homehub.application.command.ChangeHouseholdNameCommand;
-import com.terfehr.homehub.application.command.CreateHouseholdCommand;
-import com.terfehr.homehub.application.command.DeleteHouseholdCommand;
-import com.terfehr.homehub.application.command.GetHouseholdCommand;
+import com.terfehr.homehub.application.command.*;
 import com.terfehr.homehub.application.dto.HouseholdDTO;
-import com.terfehr.homehub.application.service.ChangeHouseholdNameService;
-import com.terfehr.homehub.application.service.CreateHouseholdService;
-import com.terfehr.homehub.application.service.DeleteHouseholdService;
-import com.terfehr.homehub.application.service.GetHouseholdService;
+import com.terfehr.homehub.application.dto.UserInvitationDTO;
+import com.terfehr.homehub.application.service.*;
 import com.terfehr.homehub.controller.request.ChangeHouseholdNameRequest;
 import com.terfehr.homehub.controller.request.CreateHouseholdRequest;
+import com.terfehr.homehub.controller.request.InviteUserToHouseholdRequest;
 import com.terfehr.homehub.controller.response.ChangeHouseholdNameResponse;
 import com.terfehr.homehub.controller.response.CreateHouseholdResponse;
 import com.terfehr.homehub.controller.response.GetHouseholdResponse;
+import com.terfehr.homehub.controller.response.InviteUserToHouseholdResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,6 +26,7 @@ public class HouseholdController {
     private final CreateHouseholdService createHouseholdService;
     private final DeleteHouseholdService deleteHouseholdService;
     private final GetHouseholdService getHouseholdService;
+    private final InviteUserToHouseholdService inviteUserToHouseholdService;
 
     @PostMapping
     public ResponseEntity<CreateHouseholdResponse> createHousehold(@Valid @RequestBody CreateHouseholdRequest request) {
@@ -73,5 +71,17 @@ public class HouseholdController {
 
         HouseholdDTO dto = changeHouseholdNameService.execute(cmd);
         return ResponseEntity.status(HttpStatus.OK).body(new ChangeHouseholdNameResponse(dto));
+    }
+
+    @PostMapping("/{id}/invitation")
+    public ResponseEntity<InviteUserToHouseholdResponse> inviteUserToHousehold(@PathVariable long id, @Valid @RequestBody InviteUserToHouseholdRequest request) {
+        InviteUserToHouseholdCommand cmd = InviteUserToHouseholdCommand
+                .builder()
+                .id(id)
+                .email(request.email())
+                .build();
+
+        UserInvitationDTO dto = inviteUserToHouseholdService.execute(cmd);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new InviteUserToHouseholdResponse(dto));
     }
 }
