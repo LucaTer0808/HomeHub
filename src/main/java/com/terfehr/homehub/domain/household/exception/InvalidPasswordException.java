@@ -1,4 +1,4 @@
-package com.terfehr.homehub.application.exception;
+package com.terfehr.homehub.domain.household.exception;
 
 public class InvalidPasswordException extends RuntimeException {
     public InvalidPasswordException(String message) {

@@ -2,7 +2,7 @@ package com.terfehr.homehub.application.service;
 
 import com.terfehr.homehub.application.command.ChangePasswordCommand;
 import com.terfehr.homehub.application.dto.UserDTO;
-import com.terfehr.homehub.application.exception.InvalidPasswordException;
+import com.terfehr.homehub.domain.household.exception.InvalidPasswordException;
 import com.terfehr.homehub.application.exception.UserNotFoundException;
 import com.terfehr.homehub.application.interfaces.AuthUserProviderInterface;
 import com.terfehr.homehub.domain.household.entity.User;

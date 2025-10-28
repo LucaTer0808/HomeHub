@@ -4,7 +4,7 @@ import com.terfehr.homehub.application.command.DeleteUserCommand;
 import com.terfehr.homehub.application.dto.DeleteUserDTO;
 import com.terfehr.homehub.application.event.DeleteUserEvent;
 import com.terfehr.homehub.application.event.payload.DeleteUserEventPayload;
-import com.terfehr.homehub.application.exception.InvalidPasswordException;
+import com.terfehr.homehub.domain.household.exception.InvalidPasswordException;
 import com.terfehr.homehub.application.interfaces.AuthUserProviderInterface;
 import com.terfehr.homehub.domain.bookkeeping.service.TransactionService;
 import com.terfehr.homehub.domain.household.entity.Roommate;

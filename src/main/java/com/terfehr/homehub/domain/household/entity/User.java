@@ -1,15 +1,14 @@
 package com.terfehr.homehub.domain.household.entity;
 
 import com.terfehr.homehub.domain.shared.exception.InvalidNameException;
-import com.terfehr.homehub.application.exception.InvalidPasswordException;
-import com.terfehr.homehub.application.exception.InvalidUsernameException;
-import com.terfehr.homehub.application.exception.InvalidVerificationCodeExpirationException;
+import com.terfehr.homehub.domain.household.exception.InvalidPasswordException;
+import com.terfehr.homehub.domain.household.exception.InvalidUsernameException;
+import com.terfehr.homehub.domain.household.exception.InvalidVerificationCodeExpirationException;
 import com.terfehr.homehub.domain.household.exception.*;
 import com.terfehr.homehub.domain.household.service.UserService;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.engine.spi.CascadeStyle;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

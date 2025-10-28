@@ -3,7 +3,7 @@ package com.terfehr.homehub.application.service;
 import com.terfehr.homehub.application.command.ChangeUsernameCommand;
 import com.terfehr.homehub.application.dto.ChangeUsernameDTO;
 import com.terfehr.homehub.application.dto.UserDTO;
-import com.terfehr.homehub.application.exception.InvalidUsernameException;
+import com.terfehr.homehub.domain.household.exception.InvalidUsernameException;
 import com.terfehr.homehub.application.interfaces.AuthUserProviderInterface;
 import com.terfehr.homehub.application.interfaces.JwtServiceInterface;
 import com.terfehr.homehub.domain.household.entity.User;

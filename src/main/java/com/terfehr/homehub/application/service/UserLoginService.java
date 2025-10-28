@@ -3,7 +3,7 @@ package com.terfehr.homehub.application.service;
 import com.terfehr.homehub.application.command.UserLoginCommand;
 import com.terfehr.homehub.application.dto.UserDTO;
 import com.terfehr.homehub.application.dto.UserLoginDTO;
-import com.terfehr.homehub.application.exception.InvalidPasswordException;
+import com.terfehr.homehub.domain.household.exception.InvalidPasswordException;
 import com.terfehr.homehub.application.exception.UserNotFoundException;
 import com.terfehr.homehub.application.interfaces.JwtServiceInterface;
 import com.terfehr.homehub.domain.household.entity.User;

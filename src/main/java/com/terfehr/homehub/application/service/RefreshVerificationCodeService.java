@@ -3,7 +3,7 @@ package com.terfehr.homehub.application.service;
 import com.terfehr.homehub.application.command.RefreshVerificationCodeCommand;
 import com.terfehr.homehub.application.dto.RefreshVerificationCodeDTO;
 import com.terfehr.homehub.application.dto.UserDTO;
-import com.terfehr.homehub.application.exception.InvalidVerificationCodeExpirationException;
+import com.terfehr.homehub.domain.household.exception.InvalidVerificationCodeExpirationException;
 import com.terfehr.homehub.application.exception.UserNotFoundException;
 import com.terfehr.homehub.domain.household.entity.User;
 import com.terfehr.homehub.domain.household.event.RefreshVerificationCodeEvent;
