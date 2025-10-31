@@ -1,6 +1,7 @@
 package com.terfehr.homehub.domain.household.service;
 
 import com.terfehr.homehub.domain.household.entity.Household;
+import com.terfehr.homehub.domain.household.entity.Invitation;
 import com.terfehr.homehub.domain.household.entity.Roommate;
 import com.terfehr.homehub.domain.shared.exception.InvalidNameException;
 import com.terfehr.homehub.domain.household.exception.InvalidPasswordException;
@@ -14,6 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -127,17 +130,42 @@ public class UserService {
     }
 
     /**
+     * Removes all invitations associated with the given household from the Invitations collection of the User
+     * represented by the Invitation
+     * @param household The household to remove the invitations from.
+     * @throws InvalidInvitationException If the given household is invalid. Should not occur here.
+     * @return The set of users whose invitations were removed.
+     */
+    public Set<User> removeInvitationsByHousehold(Household household) throws InvalidInvitationException {
+        Set<User> changedUsers = new HashSet<>();
+
+        for (Invitation invitation : household.getInvitations()) {
+            User user = invitation.getUser();
+            user.removeInvitation(invitation);
+            changedUsers.add(user);
+        }
+
+        return changedUsers;
+    }
+
+    /**
      * Removes all roommates associated with the given household from the Roommates collection of the User
      * represented by the Roommate
      *
      * @param household The household to remove the roommates from.
      * @throws InvalidRoommateException If the given household is invalid. Should not occur here.
+     * @return The set of users whose roommates were removed.
      */
-    public void removeRoommatesByHousehold(Household household) throws InvalidRoommateException{
+    public Set<User> removeRoommatesByHousehold(Household household) throws InvalidRoommateException {
+        Set<User> changedUsers = new HashSet<>();
+
         for (Roommate roommate : household.getRoommates()) {
             User user = roommate.getUser();
             user.removeRoommate(roommate);
+            changedUsers.add(user);
         }
+
+        return changedUsers;
     }
 
     /**
