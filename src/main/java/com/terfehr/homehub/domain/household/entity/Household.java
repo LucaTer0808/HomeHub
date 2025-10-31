@@ -2,6 +2,7 @@ package com.terfehr.homehub.domain.household.entity;
 
 import com.terfehr.homehub.domain.household.exception.InvalidHouseholdException;
 import com.terfehr.homehub.domain.household.exception.InvalidInvitationException;
+import com.terfehr.homehub.domain.household.exception.InvalidRoommateException;
 import com.terfehr.homehub.domain.household.exception.InvalidUserException;
 import com.terfehr.homehub.domain.shared.exception.InvalidNameException;
 import com.terfehr.homehub.domain.bookkeeping.entity.Account;
@@ -121,16 +122,30 @@ public class Household {
     }
 
     /**
+     * Removes a specified Invitation from the current household if it can be removed.
+     * If not, an exception is thrown.
+     *
+     * @param invitation the Invitation to be removed from the household.
+     * @throws InvalidInvitationException if the provided Invitation is invalid or not associated with this household
+     */
+    public void removeInvitation(Invitation invitation) throws InvalidInvitationException {
+        if (!canRemoveInvitation(invitation)) {
+            throw new InvalidInvitationException("Invalid Invitation for this Household");
+        }
+        this.invitations.remove(invitation);
+    }
+
+    /**
      * Removes a specified roommate from the current household.
      * Validates the roommate's association with the household before removal.
      * Throws an exception if the roommate is invalid or not associated with the household.
      *
      * @param roommate the roommate to be removed from the household
-     * @throws IllegalArgumentException if the provided roommate is invalid or not associated with this household
+     * @throws InvalidRoommateException if the provided roommate is invalid or not associated with this household
      */
-    public void removeRoommate(Roommate roommate) throws IllegalArgumentException {
+    public void removeRoommate(Roommate roommate) throws InvalidRoommateException {
         if (!canRemoveRoommate(roommate)) {
-            throw new IllegalArgumentException("Invalid Roommate for this Household");
+            throw new InvalidRoommateException("Invalid Roommate for this Household");
         }
         this.roommates.remove(roommate);
     }
@@ -184,6 +199,15 @@ public class Household {
     }
 
     /**
+     * Checks if the given Invitation can be removed from the household. It has to be valid and be part of this household.
+     * @param invitation The Invitation to check for removal
+     * @return True, if the Invitation can be removed; false otherwise
+     */
+    private boolean canRemoveInvitation(Invitation invitation) {
+        return validateInvitation(invitation) && this.invitations.contains(invitation);
+    }
+
+    /**
      * Determines whether a specified roommate can be removed from the household.
      * A roommate can be removed if they are associated with the household and the household
      * contains more than one roommate.
@@ -192,7 +216,7 @@ public class Household {
      * @return true if the roommate can be removed; false otherwise
      */
     private boolean canRemoveRoommate(Roommate roommate) {
-        return this.roommates.contains(roommate) && this.roommates.size() > 1;
+        return validateRoommate(roommate) && this.roommates.contains(roommate) && this.roommates.size() > 1;
     }
 
     /**
@@ -227,13 +251,14 @@ public class Household {
     }
 
     /**
-     * Validates the given User by checking if it is null.
+     * Validates the given Invitation. It has to be not null.
+     * the household calling this method.
      *
-     * @param user The User to validate.
-     * @return True, if it is valid. False otherwise.
+     * @param invitation The Invitation to validate.
+     * @return True, if the Invitation is valid. False otherwise.
      */
-    private boolean validateUser(User user) {
-        return user != null;
+    private boolean validateInvitation(Invitation invitation) {
+        return invitation != null;
     }
 
     /**
@@ -246,6 +271,16 @@ public class Household {
      */
     private boolean validateRoommate(Roommate roommate) {
         return roommate != null && roommate.getHousehold().equals(this);
+    }
+
+    /**
+     * Validates the given User by checking if it is null.
+     *
+     * @param user The User to validate.
+     * @return True, if it is valid. False otherwise.
+     */
+    private boolean validateUser(User user) {
+        return user != null;
     }
 
     /**

@@ -6,6 +6,7 @@ import com.terfehr.homehub.application.dto.UserInvitationDTO;
 import com.terfehr.homehub.application.service.*;
 import com.terfehr.homehub.controller.request.ChangeHouseholdNameRequest;
 import com.terfehr.homehub.controller.request.CreateHouseholdRequest;
+import com.terfehr.homehub.controller.request.DeleteInvitationRequest;
 import com.terfehr.homehub.controller.request.InviteUserToHouseholdRequest;
 import com.terfehr.homehub.controller.response.ChangeHouseholdNameResponse;
 import com.terfehr.homehub.controller.response.CreateHouseholdResponse;
@@ -25,6 +26,7 @@ public class HouseholdController {
     private final ChangeHouseholdNameService changeHouseholdNameService;
     private final CreateHouseholdService createHouseholdService;
     private final DeleteHouseholdService deleteHouseholdService;
+    private final DeleteInvitationService deleteInvitationService;
     private final GetHouseholdService getHouseholdService;
     private final InviteUserToHouseholdService inviteUserToHouseholdService;
 
@@ -83,5 +85,17 @@ public class HouseholdController {
 
         UserInvitationDTO dto = inviteUserToHouseholdService.execute(cmd);
         return ResponseEntity.status(HttpStatus.CREATED).body(new InviteUserToHouseholdResponse(dto));
+    }
+
+    @DeleteMapping("/{id}/invitation")
+    public ResponseEntity<Void> deleteInvitation(@PathVariable long id, @Valid @RequestBody DeleteInvitationRequest request) {
+        DeleteInvitationCommand cmd = DeleteInvitationCommand
+                .builder()
+                .id(id)
+                .email(request.email())
+                .build();
+
+        deleteInvitationService.execute(cmd);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -280,6 +280,19 @@ public class User implements UserDetails {
     }
 
     /**
+     * Removes an Invitation from the user's list of invitations. The Invitation must be part of the user's list of invitations and be valid.
+     *
+     * @param invitation The Invitation to remove.
+     * @throws InvalidInvitationException If the Invitation is not part of the user's invitations or is null.
+     */
+    public void removeInvitation(Invitation invitation) throws InvalidInvitationException {
+        if (!canRemoveInvitation(invitation)) {
+            throw new InvalidInvitationException("Invitation is not part of the user's invitations or invalid. Might be null");
+        }
+        this.invitations.remove(invitation);
+    }
+
+    /**
      * Removes a Roommate from the user's list of roommates. The Roommate must be part of the user's list of roommates and be valid.
      *
      * @param roommate The Roommate to remove.
@@ -381,6 +394,17 @@ public class User implements UserDetails {
      */
     private boolean canReceiveInvitation(Invitation invitation) {
         return validateInvitation(invitation) && !isInvited(invitation) && !isPartOf(invitation);
+    }
+
+    /**
+     * Determines whether the User can remove the Invitation from his list of invitations.
+     * This is the case if the Invitation itself is valid and is part of the User's list of invitations.
+     *
+     * @param invitation The Invitation to check for removal.
+     * @return True, if the User can remove the Invitation. False otherwise.
+     */
+    private boolean canRemoveInvitation(Invitation invitation) {
+        return validateInvitation(invitation) && this.invitations.contains(invitation);
     }
 
     /**
