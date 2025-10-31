@@ -14,6 +14,28 @@ import java.util.stream.Collectors;
 public class HouseholdService {
 
     /**
+     * Creates a new Roommate from the given Invitation and then removes the Invitation from the Household and the User.
+     * Also adds the newly created Roommate to the Household and the User.
+     *
+     * @param invitation The Invitation to convert to a Roommate.
+     * @return The newly created Roommate.
+     */
+    public Roommate convertInvitationToRoommate(Invitation invitation) {
+        Household household = invitation.getHousehold();
+        User user = invitation.getUser();
+
+        household.removeInvitation(invitation);
+        user.removeInvitation(invitation);
+
+        Roommate roommate = new Roommate(household, user);
+
+        household.addRoommate(roommate);
+        user.addRoommate(roommate);
+
+        return roommate;
+    }
+
+    /**
      * Deletes the given invitations from all households they are associated with the invitation itself.
      *
      * @param invitations The set of invitations to delete from households.

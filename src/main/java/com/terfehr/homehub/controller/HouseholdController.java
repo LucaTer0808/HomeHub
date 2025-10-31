@@ -2,16 +2,14 @@ package com.terfehr.homehub.controller;
 
 import com.terfehr.homehub.application.command.*;
 import com.terfehr.homehub.application.dto.HouseholdDTO;
+import com.terfehr.homehub.application.dto.RoommateDTO;
 import com.terfehr.homehub.application.dto.UserInvitationDTO;
 import com.terfehr.homehub.application.service.*;
 import com.terfehr.homehub.controller.request.ChangeHouseholdNameRequest;
 import com.terfehr.homehub.controller.request.CreateHouseholdRequest;
 import com.terfehr.homehub.controller.request.DeleteInvitationRequest;
 import com.terfehr.homehub.controller.request.InviteUserToHouseholdRequest;
-import com.terfehr.homehub.controller.response.ChangeHouseholdNameResponse;
-import com.terfehr.homehub.controller.response.CreateHouseholdResponse;
-import com.terfehr.homehub.controller.response.GetHouseholdResponse;
-import com.terfehr.homehub.controller.response.InviteUserToHouseholdResponse;
+import com.terfehr.homehub.controller.response.*;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,6 +27,7 @@ public class HouseholdController {
     private final DeleteInvitationService deleteInvitationService;
     private final GetHouseholdService getHouseholdService;
     private final InviteUserToHouseholdService inviteUserToHouseholdService;
+    private final JoinHouseholdService joinHouseholdService;
 
     @PostMapping
     public ResponseEntity<CreateHouseholdResponse> createHousehold(@Valid @RequestBody CreateHouseholdRequest request) {
@@ -97,5 +96,16 @@ public class HouseholdController {
 
         deleteInvitationService.execute(cmd);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/roommate")
+    public ResponseEntity<JoinHouseholdResponse> joinHousehold(@PathVariable long id) {
+        JoinHouseholdCommand cmd = JoinHouseholdCommand
+                .builder()
+                .id(id)
+                .build();
+
+        RoommateDTO dto = joinHouseholdService.execute(cmd);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new JoinHouseholdResponse(dto));
     }
 }
