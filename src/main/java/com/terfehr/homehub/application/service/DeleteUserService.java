@@ -1,7 +1,6 @@
 package com.terfehr.homehub.application.service;
 
 import com.terfehr.homehub.application.command.DeleteUserCommand;
-import com.terfehr.homehub.application.dto.DeleteUserDTO;
 import com.terfehr.homehub.application.event.DeleteUserEvent;
 import com.terfehr.homehub.application.event.payload.DeleteUserEventPayload;
 import com.terfehr.homehub.domain.bookkeeping.entity.Transaction;
@@ -100,12 +99,15 @@ public class DeleteUserService {
 
     /**
      * Deletes all Households that are associated with one of the given roommates where the Roommate
-     * is the only Roommate left in the household. Makes the whole household deletable
+     * is the only Roommate left in the household. Makes the whole household deletable and also removes the Invitations
+     * from the invited Users.
      *
      * @param roommates The roommates to get the Households for.
      */
     private void deleteDeletableHouseholds(Set<Roommate> roommates) {
         Set<Household> deletableHouseholds = getHouseholdsWithLastRoommate(roommates);
+        Set<User> affectedUsers = userService.removeInvitationsByHouseholds(deletableHouseholds);
+        userRepository.saveAll(affectedUsers);
         householdRepository.deleteAll(deletableHouseholds);
     }
 
@@ -118,11 +120,11 @@ public class DeleteUserService {
      */
     private void updateHouseholds(Set<Roommate> roommates, Set<Invitation> invitations) {
         Set<AbstractMap.SimpleEntry<Roommate, Household>>  householdsWhereRoommateIsAdmin = getAdminTransferableHouseholds(roommates);
-        Set<Household> households = householdService.leaveHouseholdWithAdminTransfer(householdsWhereRoommateIsAdmin);
+        Set<Household> households = householdService.leaveHouseholdsWithAdminTransfer(householdsWhereRoommateIsAdmin);
 
         Set<Roommate> nonAdminRoommates = getNonAdminRoommates(roommates);
-        households.addAll(householdService.leaveHousehold(nonAdminRoommates));
-        households.addAll(householdService.deleteInvitationFromHouseholds(invitations));
+        households.addAll(householdService.leaveHouseholds(nonAdminRoommates));
+        households.addAll(householdService.deleteInvitationsFromHousehold(invitations));
 
         householdRepository.saveAll(households);
     }

@@ -5,13 +5,11 @@ import com.terfehr.homehub.application.dto.HouseholdDTO;
 import com.terfehr.homehub.application.dto.RoommateDTO;
 import com.terfehr.homehub.application.dto.UserInvitationDTO;
 import com.terfehr.homehub.application.service.*;
-import com.terfehr.homehub.controller.request.ChangeHouseholdNameRequest;
-import com.terfehr.homehub.controller.request.CreateHouseholdRequest;
-import com.terfehr.homehub.controller.request.DeleteInvitationRequest;
-import com.terfehr.homehub.controller.request.InviteUserToHouseholdRequest;
+import com.terfehr.homehub.controller.request.*;
 import com.terfehr.homehub.controller.response.*;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class HouseholdController {
 
+    private final ApplicationEventPublisher publisher;
     private final ChangeHouseholdNameService changeHouseholdNameService;
     private final CreateHouseholdService createHouseholdService;
     private final DeleteHouseholdService deleteHouseholdService;
@@ -28,6 +27,8 @@ public class HouseholdController {
     private final GetHouseholdService getHouseholdService;
     private final InviteUserToHouseholdService inviteUserToHouseholdService;
     private final JoinHouseholdService joinHouseholdService;
+    private final LeaveHouseholdService leaveHouseholdService;
+    private final TransferAdminRightsService transferAdminRightsService;
 
     @PostMapping
     public ResponseEntity<CreateHouseholdResponse> createHousehold(@Valid @RequestBody CreateHouseholdRequest request) {
@@ -107,5 +108,28 @@ public class HouseholdController {
 
         RoommateDTO dto = joinHouseholdService.execute(cmd);
         return ResponseEntity.status(HttpStatus.CREATED).body(new JoinHouseholdResponse(dto));
+    }
+
+    @PatchMapping("/{id}/roommate")
+    public ResponseEntity<TransferAdminRightsResponse> transferAdminRights(@PathVariable long id, @Valid @RequestBody TransferAdminRightsRequest request) {
+        TransferAdminRightsCommand cmd = TransferAdminRightsCommand
+                .builder()
+                .id(id)
+                .email(request.email())
+                .build();
+
+        RoommateDTO dto = transferAdminRightsService.execute(cmd);
+        return ResponseEntity.status(HttpStatus.OK).body(new TransferAdminRightsResponse(dto));
+    }
+
+    @DeleteMapping("{id}/roommate")
+    public ResponseEntity<Void> leaveHousehold(@PathVariable long id) {
+        LeaveHouseholdCommand cmd = LeaveHouseholdCommand
+                .builder()
+                .id(id)
+                .build();
+
+        leaveHouseholdService.execute(cmd);
+        return ResponseEntity.noContent().build();
     }
 }
