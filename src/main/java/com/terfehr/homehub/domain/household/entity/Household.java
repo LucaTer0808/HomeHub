@@ -138,6 +138,7 @@ public class Household {
     /**
      * Removes a specified roommate from the current household.
      * Validates the roommate's association with the household before removal.
+     * If the Roommate was an Admin before leaving, the admin status is transferred to another Rommmate randomly.
      * Throws an exception if the roommate is invalid or not associated with the household.
      *
      * @param roommate the roommate to be removed from the household
@@ -148,6 +149,9 @@ public class Household {
             throw new InvalidRoommateException("Invalid Roommate for this Household");
         }
         this.roommates.remove(roommate);
+        if (roommate.isAdmin()) {
+            promoteRandomUserToAdmin();
+        }
     }
 
     /**
@@ -248,6 +252,43 @@ public class Household {
             throw new InvalidUserException("The given User is invalid! It might be null!");
         }
         return roommates.stream().anyMatch(r -> r.getUser().equals(user));
+    }
+
+    /**
+     * Transfers the admin status from the old admin to the new admin.
+     *
+     * @param newAdmin The Roommate that should have admin rights.
+     */
+    public void transferAdminRights(Roommate newAdmin) {
+        if (!canPromoteRoommate(newAdmin)) {
+            throw new InvalidRoommateException("Invalid Roommate for this Household to promote to admin. Either he already is an admin or is not part of this household.");
+        }
+        Roommate oldAdmin = getCurrentAdmin();
+        oldAdmin.setRole(Role.ROLE_USER.getValue());
+        newAdmin.setRole(Role.ROLE_ADMIN.getValue());
+    }
+
+    /**
+     * Checks if the given Roommate can be promoted to Admin. He has to be part of the Household, be not null and still be a User.
+     *
+     * @param roommate The Roommate to check for promotion.
+     * @return True, if the Roommate can be promoted. False otherwise.
+     */
+    private boolean canPromoteRoommate(Roommate roommate) {
+        return validateRoommate(roommate) && this.roommates.contains(roommate) && roommate.getRole().equals(Role.ROLE_USER);
+    }
+
+    /**
+     * Retrieves the current admin from the Household. There should ALWAYS be exactly one admin! If not, something is wrong!
+     *
+     * @return The current admin
+     * @throws IllegalStateException If there is no administrating roommate! Should NEVER happen!
+     */
+    private Roommate getCurrentAdmin() throws IllegalStateException {
+        return roommates.stream()
+                .filter(Roommate::isAdmin)
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("There is no current administrating roommate! This should NEVER happen!"));
     }
 
     /**

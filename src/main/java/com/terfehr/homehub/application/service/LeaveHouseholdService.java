@@ -89,22 +89,14 @@ public class LeaveHouseholdService {
      * @throws InvalidRoommateException If the given Roommate is not part of the given Household or Invalid.
      */
     private void updateHousehold(Household household, Roommate roommate) throws InvalidInvitationException, InvalidRoommateException {
-        if (household.getRoommates().size() == 1) { // if the user is the last member of the household, he automatically is an admin before deletion
+        if (household.isLastRoommate()) { // if the user is the last member of the household, he automatically is an admin before deletion
             Set<User> updatedUsers = userService.removeInvitationsByHousehold(household);
             userRepository.saveAll(updatedUsers);
             householdRepository.delete(household);
             return;
         }
 
-        if (roommate.isAdmin()) {
-            householdService.leaveHouseholdWithAdminTransfer(roommate, household);
-            updateTasks(roommate);
-            updateTransactions(roommate);
-            householdRepository.save(household);
-            return;
-        }
-
-        householdService.leaveHousehold(roommate);
+        household.removeRoommate(roommate);
         updateTasks(roommate);
         updateTransactions(roommate);
         householdRepository.save(household);
