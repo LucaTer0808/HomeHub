@@ -9,6 +9,7 @@ import com.terfehr.homehub.domain.household.event.payload.DeleteHouseholdEventPa
 import com.terfehr.homehub.domain.household.exception.InvalidRoommateException;
 import com.terfehr.homehub.domain.household.repository.HouseholdRepositoryInterface;
 import com.terfehr.homehub.domain.household.repository.UserRepositoryInterface;
+import com.terfehr.homehub.domain.household.service.HouseholdService;
 import com.terfehr.homehub.domain.household.service.UserService;
 import com.terfehr.homehub.domain.shared.exception.InvalidDomainEventPayloadException;
 import jakarta.transaction.Transactional;
@@ -25,6 +26,7 @@ public class DeleteHouseholdService {
 
     private final ApplicationEventPublisher publisher;
     private final HouseholdRepositoryInterface householdRepository;
+    private final HouseholdService householdService;
     private final UserRepositoryInterface userRepository;
     private final UserService userService;
 
@@ -58,7 +60,7 @@ public class DeleteHouseholdService {
      */
     private void updateUsers(Household household) {
         Set<User> changedUsers = userService.removeRoommatesByHousehold(household);
-        changedUsers.addAll(userService.removeInvitationsByHousehold(household));
+        changedUsers.addAll(householdService.removeInvitationsByHousehold(household));
         userRepository.saveAll(changedUsers);
     }
 }

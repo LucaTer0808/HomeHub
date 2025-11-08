@@ -9,7 +9,6 @@ import com.terfehr.homehub.domain.household.entity.Household;
 import com.terfehr.homehub.domain.household.entity.Invitation;
 import com.terfehr.homehub.domain.household.exception.InvalidPasswordException;
 import com.terfehr.homehub.application.interfaces.AuthUserProviderInterface;
-import com.terfehr.homehub.domain.bookkeeping.service.TransactionService;
 import com.terfehr.homehub.domain.household.entity.Roommate;
 import com.terfehr.homehub.domain.household.entity.User;
 import com.terfehr.homehub.domain.household.repository.HouseholdRepositoryInterface;
@@ -18,13 +17,13 @@ import com.terfehr.homehub.domain.household.service.HouseholdService;
 import com.terfehr.homehub.domain.household.service.UserService;
 import com.terfehr.homehub.domain.scheduling.entity.Task;
 import com.terfehr.homehub.domain.scheduling.repository.TaskRepositoryInterface;
-import com.terfehr.homehub.domain.scheduling.service.TaskService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.AbstractMap;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -39,9 +38,7 @@ public class DeleteUserService {
     private final HouseholdRepositoryInterface householdRepository;
     private final HouseholdService householdService;
     private final TaskRepositoryInterface taskRepository;
-    private final TaskService taskService;
     private final TransactionRepositoryInterface transactionRepository;
-    private final TransactionService transactionService;
     private final UserRepositoryInterface userRepository;
     private final UserService userService;
 
@@ -82,7 +79,7 @@ public class DeleteUserService {
      */
     private void updateTransactions(Set<Roommate> roommates) {
         Set<Transaction> transactions = getAffectedTransactions(roommates);
-        transactionService.removeRoommates(transactions);
+        transactions.forEach(Transaction::removeRoommate);
         transactionRepository.saveAll(transactions);
     }
 
@@ -93,7 +90,7 @@ public class DeleteUserService {
      */
     private void updateTasks(Set<Roommate> roommates) {
         Set<Task> changedTasks = getAffectedTasks(roommates);
-        taskService.removeRoommates(changedTasks);
+        changedTasks.forEach(Task::removeRoommate);
         taskRepository.saveAll(changedTasks);
     }
 
@@ -106,7 +103,12 @@ public class DeleteUserService {
      */
     private void deleteDeletableHouseholds(Set<Roommate> roommates) {
         Set<Household> deletableHouseholds = getHouseholdsWithLastRoommate(roommates);
-        Set<User> affectedUsers = userService.removeInvitationsByHouseholds(deletableHouseholds);
+
+        Set<User> affectedUsers = deletableHouseholds.stream()
+                .map(householdService::removeInvitationsByHousehold)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toSet());
+
         userRepository.saveAll(affectedUsers);
         householdRepository.deleteAll(deletableHouseholds);
     }
@@ -119,12 +121,22 @@ public class DeleteUserService {
      * @param invitations The invitations to get the Households for.
      */
     private void updateHouseholds(Set<Roommate> roommates, Set<Invitation> invitations) {
-        Set<AbstractMap.SimpleEntry<Roommate, Household>>  householdsWhereRoommateIsAdmin = getAdminTransferableHouseholds(roommates);
-        Set<Household> households = householdService.leaveHouseholdsWithAdminTransfer(householdsWhereRoommateIsAdmin);
+        Set<Roommate> householdsWhereRoommateIsAdmin = getRoommatesFromFilledHouseholds(roommates);
+        Set<Household> households = new HashSet<>();
 
-        Set<Roommate> nonAdminRoommates = getNonAdminRoommates(roommates);
-        households.addAll(householdService.leaveHouseholds(nonAdminRoommates));
-        households.addAll(householdService.deleteInvitationsFromHousehold(invitations));
+        households.addAll(
+                householdsWhereRoommateIsAdmin.stream()
+                        .peek(householdService::leaveHousehold)
+                        .map(Roommate::getHousehold)
+                        .collect(Collectors.toSet())
+        );
+
+        households.addAll(
+                invitations.stream()
+                        .peek(householdService::deleteInvitationFromHousehold)
+                        .map(Invitation::getHousehold)
+                        .collect(Collectors.toSet())
+        );
 
         householdRepository.saveAll(households);
     }
@@ -141,7 +153,6 @@ public class DeleteUserService {
                 .collect(Collectors.toSet());
     }
 
-
     /**
      * Gets all tasks associated with the given roommates.
      *
@@ -154,7 +165,6 @@ public class DeleteUserService {
                 .collect(Collectors.toSet());
     }
 
-
     /**
      * Gets all the Households associated with the given roommates that have only one roommate, which makes them deletable.
      *
@@ -164,36 +174,19 @@ public class DeleteUserService {
     private Set<Household> getHouseholdsWithLastRoommate(Set<Roommate> roommates) {
         return roommates.stream()
                 .map(Roommate::getHousehold)
-                .filter(household -> household.getRoommates().size() == 1)
+                .filter(Household::isLastRoommate)
                 .collect(Collectors.toSet());
     }
 
     /**
-     * Gets all the Households associated with the given roommates where the Roommate is the admin of the Household, and there are at least
-     * two Roommates before any deletion operation that makes the Household suitable for an Admin transfer.
+     * Gets all Roommates from the Household where said Household is not the last Roommate.
      *
      * @param roommates The roommates to get the Households for.
-     * @return A Set of Tuples of Roommates where the Roommate is the admin of the Household and the Household.
+     * @return All Roommates from the Households where said Household is not the last Roommate.
      */
-    private Set<AbstractMap.SimpleEntry<Roommate, Household>> getAdminTransferableHouseholds(Set<Roommate> roommates) {
+    private Set<Roommate> getRoommatesFromFilledHouseholds(Set<Roommate> roommates) {
         return roommates.stream()
-                .filter(Roommate::isAdmin)
-                .filter(r -> r.getHousehold().getRoommates().size() > 1)
-                .map(r -> new AbstractMap.SimpleEntry<>(r, r.getHousehold()))
-                .collect(Collectors.toCollection(HashSet::new));
-    }
-
-    /**
-     * Gets all Roommates who are not Admin of the Household.
-     * The Household itself has to have more than Roommate, so the Deletion of The Roommate is possible without any further notice
-     *
-     * @param roommates The roommates to get the Households for.
-     * @return The set of Roommates that can just leave the Household without any further notice
-     */
-    private Set<Roommate> getNonAdminRoommates(Set<Roommate> roommates) {
-        return roommates.stream()
-                .filter(r -> !r.isAdmin())
-                .filter(r -> r.getHousehold().getRoommates().size() > 1)
+                .filter(r -> !r.getHousehold().isLastRoommate())
                 .collect(Collectors.toSet());
     }
 }

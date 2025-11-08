@@ -8,7 +8,6 @@ import com.terfehr.homehub.application.exception.UserNotFoundException;
 import com.terfehr.homehub.application.interfaces.AuthUserProviderInterface;
 import com.terfehr.homehub.domain.bookkeeping.entity.Transaction;
 import com.terfehr.homehub.domain.bookkeeping.repository.TransactionRepositoryInterface;
-import com.terfehr.homehub.domain.bookkeeping.service.TransactionService;
 import com.terfehr.homehub.domain.household.entity.Household;
 import com.terfehr.homehub.domain.household.entity.Roommate;
 import com.terfehr.homehub.domain.household.entity.User;
@@ -21,7 +20,6 @@ import com.terfehr.homehub.domain.household.service.HouseholdService;
 import com.terfehr.homehub.domain.household.service.UserService;
 import com.terfehr.homehub.domain.scheduling.entity.Task;
 import com.terfehr.homehub.domain.scheduling.repository.TaskRepositoryInterface;
-import com.terfehr.homehub.domain.scheduling.service.TaskService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
@@ -39,11 +37,8 @@ public class LeaveHouseholdService {
     private final HouseholdService householdService;
     private final RoommateRepositoryInterface roommateRepository;
     private final TaskRepositoryInterface taskRepository;
-    private final TaskService taskService;
     private final TransactionRepositoryInterface transactionRepository;
-    private final TransactionService transactionService;
     private final UserRepositoryInterface userRepository;
-    private final UserService userService;
 
     /**
      * Executes the LeaveHouseholdCommand by fetching the represented Roommate from the Database and then removing it from the Household.
@@ -90,7 +85,7 @@ public class LeaveHouseholdService {
      */
     private void updateHousehold(Household household, Roommate roommate) throws InvalidInvitationException, InvalidRoommateException {
         if (household.isLastRoommate()) { // if the user is the last member of the household, he automatically is an admin before deletion
-            Set<User> updatedUsers = userService.removeInvitationsByHousehold(household);
+            Set<User> updatedUsers = householdService.removeInvitationsByHousehold(household);
             userRepository.saveAll(updatedUsers);
             householdRepository.delete(household);
             return;
@@ -120,7 +115,7 @@ public class LeaveHouseholdService {
      */
     private void updateTasks(Roommate roommate) {
         Set<Task> tasks = taskRepository.findAllByRoommate(roommate);
-        taskService.removeRoommates(tasks);
+        tasks.forEach(Task::removeRoommate);
         taskRepository.saveAll(tasks);
     }
 
@@ -131,7 +126,7 @@ public class LeaveHouseholdService {
      */
     private void updateTransactions(Roommate roommate) {
         Set<Transaction> transactions = transactionRepository.findAllByRoommate(roommate);
-        transactionService.removeRoommates(transactions);
+        transactions.forEach(Transaction::removeRoommate);
         transactionRepository.saveAll(transactions);
     }
 }

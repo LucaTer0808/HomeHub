@@ -130,45 +130,6 @@ public class UserService {
     }
 
     /**
-     * Removes all invitations associated with the given household from the Invitations collection of the User
-     * represented by the Invitation
-     * @param household The household to remove the invitations from.
-     * @throws InvalidInvitationException If the given household is invalid. Should not occur here.
-     * @return The set of users whose invitations were removed.
-     */
-    public Set<User> removeInvitationsByHousehold(Household household) throws InvalidInvitationException {
-        Set<User> changedUsers = new HashSet<>();
-
-        for (Invitation invitation : household.getInvitations()) {
-            User user = invitation.getUser();
-            user.removeInvitation(invitation);
-            changedUsers.add(user);
-        }
-
-        return changedUsers;
-    }
-
-    /**
-     * Removes all invitations associated with the given households from the Invitations collection of the User represented by the Invitation
-     *
-     * @param households The households to remove the invitations from.
-     * @return The set of users whose invitations were removed.
-     */
-    public Set<User> removeInvitationsByHouseholds(Set<Household> households) {
-        Set<User> changedUsers = new HashSet<>();
-
-        for (Household household : households) {
-            for (Invitation invitation : household.getInvitations()) {
-                User user = invitation.getUser();
-                user.removeInvitation(invitation);
-                changedUsers.add(user);
-            }
-        }
-
-        return changedUsers;
-    }
-
-    /**
      * Removes all roommates associated with the given household from the Roommates collection of the User
      * represented by the Roommate
      *
