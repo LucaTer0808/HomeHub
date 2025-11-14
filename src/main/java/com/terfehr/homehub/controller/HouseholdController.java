@@ -20,6 +20,7 @@ public class HouseholdController {
     private final CreateAccountService createAccountService;
     private final CreateHouseholdService createHouseholdService;
     private final CreateShoppingListService createShoppingListService;
+    private final CreateShoppingSpreeService createShoppingSpreeService;
     private final DeleteAccountService deleteAccountService;
     private final DeleteHouseholdService deleteHouseholdService;
     private final DeleteInvitationService deleteInvitationService;
@@ -30,7 +31,7 @@ public class HouseholdController {
     private final LeaveHouseholdService leaveHouseholdService;
     private final TransferAdminRightsService transferAdminRightsService;
 
-    @PostMapping
+    @PostMapping("/")
     public ResponseEntity<CreateHouseholdResponse> createHousehold(@Valid @RequestBody CreateHouseholdRequest request) {
         CreateHouseholdCommand cmd = CreateHouseholdCommand
                 .builder()
@@ -123,6 +124,24 @@ public class HouseholdController {
 
         deleteShoppingListService.execute(cmd);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/shopping_spree")
+    public ResponseEntity<CreateShoppingSpreeResponse> createShoppingSpree(@PathVariable long id, @Valid @RequestBody CreateShoppingSpreeRequest request) {
+        CreateShoppingSpreeCommand cmd = CreateShoppingSpreeCommand
+                .builder()
+                .householdId(id)
+                .time(request.time())
+                .shoppingListId(request.shoppingListId())
+                .accountId(request.accountId())
+                .amount(request.amount())
+                .description(request.description())
+                .recipient(request.recipient())
+                .roommateId(request.roommateId())
+                .build();
+
+        ShoppingSpreeDTO dto = createShoppingSpreeService.execute(cmd);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new CreateShoppingSpreeResponse(dto));
     }
 
     @PostMapping("/{id}/invitation")

@@ -2,6 +2,9 @@ package com.terfehr.homehub.domain.shopping.entity;
 
 import com.terfehr.homehub.domain.bookkeeping.entity.ShoppingExpense;
 import com.terfehr.homehub.domain.household.entity.Household;
+import com.terfehr.homehub.domain.shared.exception.InvalidDateException;
+import com.terfehr.homehub.domain.shared.exception.InvalidHouseholdException;
+import com.terfehr.homehub.domain.shared.exception.InvalidShoppingExpenseException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,12 +42,17 @@ public class ShoppingSpree {
      *
      * @param date The date of the ShoppingSpree.
      * @param household The creating Household of the ShoppingSpree.
-     * @throws IllegalArgumentException If the given parameters are invalid.
+     * @throws InvalidDateException If the given date is invalid.
+     * @throws InvalidHouseholdException If the given Household is invalid.
      */
-    public ShoppingSpree(LocalDateTime date, Household household) throws IllegalArgumentException{
-        if (!validate(date, household)) {
-            throw new IllegalArgumentException("Invalid ShoppingSpree object");
+    public ShoppingSpree(LocalDateTime date, Household household) throws InvalidDateException, InvalidHouseholdException {
+        if (!validateDate(date)) {
+            throw new InvalidDateException("Invalid timestamp for ShoppingSpree");
         }
+        if (!validateHousehold(household)) {
+            throw new InvalidHouseholdException("Invalid Household for ShoppingSpree");
+        }
+
         this.date = date;
         this.shoppingSpreeItems = new HashSet<>();
         this.shoppingExpense = null;
@@ -55,37 +63,27 @@ public class ShoppingSpree {
      * Sets the ShoppingExpense associated with the ShoppingSpree. If the ShoppingExpense is invalid, an exception is thrown.
      *
      * @param shoppingExpense The ShoppingExpense to set.
-     * @throws IllegalStateException If the ShoppingExpense is invalid.
+     * @throws InvalidShoppingExpenseException If the ShoppingExpense is invalid.
      */
-    public void setShoppingExpense(ShoppingExpense shoppingExpense) throws IllegalStateException{
+    public void setShoppingExpense(ShoppingExpense shoppingExpense) throws InvalidShoppingExpenseException {
         if (!validateShoppingExpense(shoppingExpense)) {
-            throw new IllegalStateException("Invalid ShoppingExpense object");
+            throw new InvalidShoppingExpenseException("Invalid ShoppingExpense object");
         }
         this.shoppingExpense = shoppingExpense;
     }
 
     /**
      * Adds a ShoppingSpreeItem to the ShoppingSpree. If the ShoppingSpreeItem is invalid, an exception is thrown.
+     * It then returns the newly created ShoppingSpreeItem.
      *
      * @param name The name of the ShoppingSpreeItem.
      * @param quantity The quantity of the ShoppingSpreeItem.
      * @throws IllegalArgumentException If the ShoppingSpreeItem is invalid.
      */
-    public void addShoppingSpreeItem(String name, int quantity) throws IllegalArgumentException {
-        this.shoppingSpreeItems.add(new ShoppingSpreeItem(name, quantity, this));
-    }
-
-    /**
-     * Removes the given ShoppingSpreeItem from the ShoppingSpree or throws an exception if the ShoppingSpreeItem is not contained.
-     *
-     * @param shoppingSpreeItem The ShoppingSpreeItem to remove.
-     * @throws IllegalArgumentException If the given ShoppingSpreeItem is not contained in the ShoppingSpree.
-     */
-    public void removeShoppingSpreeItem(ShoppingSpreeItem shoppingSpreeItem) throws IllegalArgumentException {
-        if (!this.shoppingSpreeItems.contains(shoppingSpreeItem)) {
-            throw new IllegalArgumentException("ShoppingSpree does not contain the given shoppingSpreeItem");
-        }
-        this.shoppingSpreeItems.remove(shoppingSpreeItem);
+    public ShoppingSpreeItem addShoppingSpreeItem(String name, int quantity) throws IllegalArgumentException {
+        ShoppingSpreeItem item = new ShoppingSpreeItem(name, quantity, this);
+        this.shoppingSpreeItems.add(item);
+        return item;
     }
 
     /**

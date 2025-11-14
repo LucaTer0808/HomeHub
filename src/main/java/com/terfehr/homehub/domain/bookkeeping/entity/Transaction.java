@@ -2,6 +2,7 @@ package com.terfehr.homehub.domain.bookkeeping.entity;
 
 import com.terfehr.homehub.domain.bookkeeping.value.Money;
 import com.terfehr.homehub.domain.household.entity.Roommate;
+import com.terfehr.homehub.domain.shared.exception.*;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -53,12 +54,35 @@ public abstract class Transaction {
      * @param description A brief description or note detailing the transaction.
      * @param date The date and time of the transaction.
      * @param account The account associated with the transaction.
-     * @throws IllegalArgumentException if any of the provided parameters are invalid.
+     * @throws InvalidAmountException if the amount is negative
+     * @throws InvalidDescriptionException if the description is empty
+     * @throws InvalidDateException if the date is null
+     * @throws InvalidAccountException if the account is null
+     * @throws InvalidRoommateException if the roommate is null
      */
-    public Transaction(long amount, String description, LocalDateTime date, Account account, Roommate roommate) throws IllegalArgumentException {
-        if (!this.validateTransaction(amount, description, date, account, roommate)) {
-            throw new IllegalArgumentException("Invalid Transaction object");
+    public Transaction(long amount, String description, LocalDateTime date, Account account, Roommate roommate) throws
+        InvalidAmountException,
+        InvalidDescriptionException,
+        InvalidDateException,
+        InvalidAccountException,
+        InvalidRoommateException
+    {
+        if (!validateAmount(amount)) {
+            throw new InvalidAmountException("The amount of a Transaction can not be negative!");
         }
+        if (!validateDescription(description)) {
+            throw new InvalidDescriptionException("The description of a Transaction can not be empty!");
+        }
+        if (!validateDate(date)) {
+            throw new InvalidDateException("The date of a Transaction can not be null!");
+        }
+        if (!validateAccount(account)) {
+            throw new InvalidAccountException("The account of a Transaction can not be null!");
+        }
+        if (!validateRoommate(roommate)) {
+            throw new InvalidRoommateException("The roommate of a Transaction can not be null!");
+        }
+
         this.amount = new Money(account.getBalance().getCurrency().getCurrencyCode(), amount); // default to account currency
         this.description = description;
         this.date = date;

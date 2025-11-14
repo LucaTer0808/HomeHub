@@ -5,10 +5,12 @@ import com.terfehr.homehub.domain.bookkeeping.entity.Account;
 import com.terfehr.homehub.domain.scheduling.entity.TaskList;
 import com.terfehr.homehub.domain.shopping.entity.ShoppingList;
 import com.terfehr.homehub.domain.shopping.entity.ShoppingSpree;
+import com.terfehr.homehub.domain.shopping.service.ShoppingSpreeService;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -133,6 +135,21 @@ public class Household {
         ShoppingList list = new ShoppingList(shoppingListName, this);
         this.shoppingLists.add(list);
         return list;
+    }
+
+    /**
+     * Creates a new ShoppingSpree and immediately adds it to the Household's ShoppingSprees collection.
+     * This method alone does not create a valid ShoppingSpree, for further information, see {@link ShoppingSpreeService}.
+     *
+     * @param time The Time when the ShoppingSpree took place.
+     * @return The newly created ShoppingSpree.
+     * @throws InvalidDateException If the provided time is invalid.
+     * @throws InvalidHouseholdException If the calling Household is unsufficient for creating a ShoppingSpree.
+     */
+    public ShoppingSpree createShoppingSpree(LocalDateTime time) throws InvalidDateException, InvalidHouseholdException {
+        ShoppingSpree spree = new ShoppingSpree(time, this);
+        this.shoppingSprees.add(spree);
+        return spree;
     }
 
     /**

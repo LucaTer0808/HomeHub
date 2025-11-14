@@ -1,11 +1,9 @@
 package com.terfehr.homehub.domain.bookkeeping.entity;
 
-import com.terfehr.homehub.domain.shared.exception.InvalidAccountNameException;
-import com.terfehr.homehub.domain.shared.exception.InvalidCurrencyCodeException;
+import com.terfehr.homehub.domain.shared.exception.*;
 import com.terfehr.homehub.domain.bookkeeping.value.Money;
 import com.terfehr.homehub.domain.household.entity.Household;
 import com.terfehr.homehub.domain.household.entity.Roommate;
-import com.terfehr.homehub.domain.shared.exception.InvalidHouseholdException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -132,9 +130,21 @@ public class Account {
      * @param date The timestamp of when this ShoppingExpense was transferred.
      * @param recipient The recipient who received the money.
      * @return The created ShoppingExpense object.
-     * @throws IllegalArgumentException If the parameters are invalid for creating a ShoppingExpense.
+     * @throws InvalidAmountException if the amount is negative.
+     * @throws InvalidDescriptionException if the description is empty.
+     * @throws InvalidDateException if the date is null.
+     * @throws InvalidRecipientException if the recipient is null or empty.
+     * @throws InvalidAccountException if the account is null.
+     * @throws InvalidRoommateException if the roommate is null.
      */
-    public ShoppingExpense addShoppingExpense(long amount, String description, LocalDateTime date, String recipient, Roommate roommate) throws IllegalArgumentException {
+    public ShoppingExpense addShoppingExpense(long amount, String description, LocalDateTime date, String recipient, Roommate roommate) throws
+            InvalidAmountException,
+            InvalidDescriptionException,
+            InvalidDateException,
+            InvalidRecipientException,
+            InvalidAccountException,
+            InvalidRoommateException
+    {
         ShoppingExpense expense = new ShoppingExpense(amount, description, date, recipient, this, roommate);
         this.transactions.add(expense);
         updateBalance(expense);

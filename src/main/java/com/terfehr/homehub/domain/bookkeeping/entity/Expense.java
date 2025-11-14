@@ -2,6 +2,7 @@ package com.terfehr.homehub.domain.bookkeeping.entity;
 
 import com.terfehr.homehub.domain.bookkeeping.value.Money;
 import com.terfehr.homehub.domain.household.entity.Roommate;
+import com.terfehr.homehub.domain.shared.exception.*;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -37,12 +38,24 @@ public class Expense extends Transaction {
      * @param recipient The recipient to whom the expense was paid.
      * @param account The account associated with the expense transaction.
      * @param roommate The roommate associated with the expense transaction.
-     * @throws IllegalArgumentException if the recipient is invalid.
+     * @throws InvalidAmountException if the amount is negative
+     * @throws InvalidDescriptionException if the description is empty
+     * @throws InvalidDateException if the date is null
+     * @throws InvalidAccountException if the account is null
+     * @throws InvalidRoommateException if the roommate is null
+     * @throws InvalidRecipientException if the recipient is null or empty
      */
-    public Expense(long amount, String description, LocalDateTime date, String recipient, Account account, Roommate roommate) throws IllegalArgumentException {
+    public Expense(long amount, String description, LocalDateTime date, String recipient, Account account, Roommate roommate) throws
+            InvalidAmountException,
+            InvalidDescriptionException,
+            InvalidDateException,
+            InvalidAccountException,
+            InvalidRoommateException,
+            InvalidRecipientException
+    {
         super(amount, description, date, account, roommate);
         if (!validate(recipient)) {
-            throw new IllegalArgumentException("Invalid Expense object");
+            throw new InvalidRecipientException("Invalid Expense object");
         }
         this.recipient = recipient;
     }
