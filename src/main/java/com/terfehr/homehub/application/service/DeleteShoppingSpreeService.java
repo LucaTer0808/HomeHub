@@ -4,10 +4,8 @@ import com.terfehr.homehub.application.command.DeleteShoppingSpreeCommand;
 import com.terfehr.homehub.application.event.DeleteShoppingSpreeEvent;
 import com.terfehr.homehub.application.event.payload.DeleteShoppingSpreeEventPayload;
 import com.terfehr.homehub.application.exception.ShoppingSpreeNotFoundException;
-import com.terfehr.homehub.application.exception.HouseholdNotFoundException;
 import com.terfehr.homehub.domain.bookkeeping.entity.Account;
 import com.terfehr.homehub.domain.bookkeeping.entity.ShoppingExpense;
-import com.terfehr.homehub.domain.bookkeeping.repository.ShoppingExpenseRepositoryInterface;
 import com.terfehr.homehub.domain.household.entity.Household;
 import com.terfehr.homehub.domain.household.repository.HouseholdRepositoryInterface;
 import com.terfehr.homehub.domain.shopping.entity.ShoppingSpree;
@@ -16,8 +14,6 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
-
-import java.util.Set;
 
 @Service
 @AllArgsConstructor
