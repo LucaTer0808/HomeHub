@@ -11,11 +11,13 @@ import com.terfehr.homehub.domain.shared.exception.InvalidInvitationException;
 import com.terfehr.homehub.domain.household.repository.HouseholdRepositoryInterface;
 import com.terfehr.homehub.domain.household.repository.InvitationRepositoryInterface;
 import com.terfehr.homehub.domain.household.repository.UserRepositoryInterface;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class DeleteInvitationService {
 
     private final HouseholdRepositoryInterface householdRepository;

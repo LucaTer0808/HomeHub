@@ -7,12 +7,14 @@ import com.terfehr.homehub.domain.household.entity.Household;
 import com.terfehr.homehub.application.event.ChangeHouseholdNameEvent;
 import com.terfehr.homehub.application.event.payload.ChangeHouseholdNameEventPayload;
 import com.terfehr.homehub.domain.household.repository.HouseholdRepositoryInterface;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class ChangeHouseholdNameService {
 
     private final ApplicationEventPublisher publisher;

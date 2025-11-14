@@ -10,12 +10,14 @@ import com.terfehr.homehub.application.event.TransferAdminRightsEvent;
 import com.terfehr.homehub.application.event.payload.TransferAdminRightsEventPayload;
 import com.terfehr.homehub.domain.household.repository.HouseholdRepositoryInterface;
 import com.terfehr.homehub.domain.household.repository.RoommateRepositoryInterface;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class TransferAdminRightsService {
 
     private final ApplicationEventPublisher publisher;

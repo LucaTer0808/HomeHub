@@ -19,6 +19,7 @@ import com.terfehr.homehub.domain.household.repository.UserRepositoryInterface;
 import com.terfehr.homehub.domain.household.service.HouseholdService;
 import com.terfehr.homehub.domain.scheduling.entity.Task;
 import com.terfehr.homehub.domain.scheduling.repository.TaskRepositoryInterface;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
@@ -28,6 +29,7 @@ import java.util.Set;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class LeaveHouseholdService {
 
     private final ApplicationEventPublisher publisher;

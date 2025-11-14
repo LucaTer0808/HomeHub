@@ -11,12 +11,14 @@ import com.terfehr.homehub.application.event.CreateAccountEvent;
 import com.terfehr.homehub.application.event.payload.CreateAccountEventPayload;
 import com.terfehr.homehub.domain.household.repository.HouseholdRepositoryInterface;
 import com.terfehr.homehub.domain.shared.exception.InvalidEventPayloadException;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class CreateAccountService {
 
     private final ApplicationEventPublisher publisher;

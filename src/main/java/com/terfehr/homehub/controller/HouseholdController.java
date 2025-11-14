@@ -23,6 +23,7 @@ public class HouseholdController {
     private final DeleteAccountService deleteAccountService;
     private final DeleteHouseholdService deleteHouseholdService;
     private final DeleteInvitationService deleteInvitationService;
+    private final DeleteShoppingListService deleteShoppingListService;
     private final GetHouseholdService getHouseholdService;
     private final InviteUserToHouseholdService inviteUserToHouseholdService;
     private final JoinHouseholdService joinHouseholdService;
@@ -110,6 +111,18 @@ public class HouseholdController {
 
         ShoppingListDTO dto = createShoppingListService.execute(cmd);
         return ResponseEntity.status(HttpStatus.CREATED).body(new CreateShoppingListResponse(dto));
+    }
+
+    @DeleteMapping("/{householdId}/shopping_list{shoppingListId}")
+    public ResponseEntity<Void> deleteShoppingList(@PathVariable long householdId, @PathVariable long shoppingListId) {
+        DeleteShoppingListCommand cmd = DeleteShoppingListCommand
+                .builder()
+                .householdId(householdId)
+                .shoppingListId(shoppingListId)
+                .build();
+
+        DeleteShoppingListService.execute(cmd);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{id}/invitation")

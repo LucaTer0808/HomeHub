@@ -149,6 +149,19 @@ public class Household {
     }
 
     /**
+     * Deletes the provided ShoppingList from the Household if it can be deleted.
+     *
+     * @param list The ShoppingList to delete.
+     * @throws InvalidShoppingListException If the provided ShoppingList is invalid or not associated with this household.
+     */
+    public void deleteShoppingList(ShoppingList list) throws InvalidShoppingListException {
+        if (!canDeleteShoppingList(list)) {
+            throw new InvalidShoppingListException("Invalid ShoppingList for this Household");
+        }
+        this.shoppingLists.remove(list);
+    }
+
+    /**
      * Invites a User to the household by creating, adding, and returning an Invitation object.
      *
      * @param user the User to invite to the household.
@@ -233,6 +246,16 @@ public class Household {
      */
     private boolean canDeleteAccount(Account account) {
         return validateAccount(account) && this.accounts.contains(account);
+    }
+
+    /**
+     * Determines if the given ShoppingList can be deleted. It has to be valid and be part of this household.
+     *
+     * @param list The ShoppingList to check for deletion.
+     * @return True if the ShoppingList can be deleted, false otherwise.
+     */
+    private boolean canDeleteShoppingList(ShoppingList list) {
+        return validateShoppingList(list) && this.shoppingLists.contains(list);
     }
 
     /**
@@ -353,6 +376,16 @@ public class Household {
      */
     private boolean validateAccount(Account account) {
         return account != null;
+    }
+
+    /**
+     * Validates the given ShoppingList by assuring it is not null.
+     *
+     * @param list The ShoppingList to validate.
+     * @return True, if the ShoppingList is valid. False otherwise.
+     */
+    private boolean validateShoppingList(ShoppingList list) {
+        return list != null;
     }
 
     /**

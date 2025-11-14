@@ -13,12 +13,14 @@ import com.terfehr.homehub.domain.household.repository.HouseholdRepositoryInterf
 import com.terfehr.homehub.domain.household.repository.InvitationRepositoryInterface;
 import com.terfehr.homehub.domain.household.repository.UserRepositoryInterface;
 import com.terfehr.homehub.domain.household.service.HouseholdService;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class JoinHouseholdService {
 
     private final ApplicationEventPublisher publisher;

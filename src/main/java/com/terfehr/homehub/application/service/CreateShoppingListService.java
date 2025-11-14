@@ -9,12 +9,14 @@ import com.terfehr.homehub.domain.household.entity.Household;
 import com.terfehr.homehub.domain.household.repository.HouseholdRepositoryInterface;
 import com.terfehr.homehub.domain.shared.exception.InvalidShoppingListNameException;
 import com.terfehr.homehub.domain.shopping.entity.ShoppingList;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class CreateShoppingListService {
 
     private final ApplicationEventPublisher publisher;

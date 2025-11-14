@@ -11,12 +11,14 @@ import com.terfehr.homehub.domain.household.entity.Household;
 import com.terfehr.homehub.domain.household.repository.HouseholdRepositoryInterface;
 import com.terfehr.homehub.domain.shared.exception.InvalidAccountException;
 import com.terfehr.homehub.domain.shared.exception.InvalidEventPayloadException;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class DeleteAccountService {
 
     private final ApplicationEventPublisher publisher;

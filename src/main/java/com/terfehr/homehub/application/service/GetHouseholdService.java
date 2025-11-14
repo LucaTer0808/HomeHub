@@ -5,11 +5,13 @@ import com.terfehr.homehub.application.dto.HouseholdDTO;
 import com.terfehr.homehub.application.exception.HouseholdNotFoundException;
 import com.terfehr.homehub.domain.household.entity.Household;
 import com.terfehr.homehub.domain.household.repository.HouseholdRepositoryInterface;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class GetHouseholdService {
 
     private final HouseholdRepositoryInterface householdRepository;
