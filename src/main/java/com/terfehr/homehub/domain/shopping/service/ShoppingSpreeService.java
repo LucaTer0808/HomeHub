@@ -74,16 +74,15 @@ public class ShoppingSpreeService {
 
     /**
      * Transports the item names and quantities from the given ShoppingList to the given ShoppingSpree.
+     * All picked items are removed from the ShoppingList to the ShoppingSpree.
      *
      * @param list The ShoppingList to convert.
      * @param spree The ShoppingSpree to convert the items to.
      */
     private void convertItems(ShoppingList list, ShoppingSpree spree) {
-        for (ShoppingListItem item : list.getShoppingListItems()) {
-            if (item.isPicked()) {
-                spree.addShoppingSpreeItem(item.getName(), item.getQuantity());
-                list.removeItem(item);
-            }
+        for (ShoppingListItem item : list.getPickedItems()) {
+            spree.addShoppingSpreeItem(item.getName(), item.getQuantity());
+            list.removeItem(item);
         }
     }
 }

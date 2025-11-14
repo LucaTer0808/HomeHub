@@ -56,8 +56,23 @@ public class ShoppingList {
      * @param quantity The quantity of the ShoppingListItem.
      * @throws IllegalArgumentException If the given parameters are invalid.
      */
-    public void addItem(String name, int quantity) throws IllegalArgumentException {
-        this.shoppingListItems.add(new ShoppingListItem(name, quantity, this));
+    public ShoppingListItem addItem(String name, int quantity) throws IllegalArgumentException {
+        ShoppingListItem item = new ShoppingListItem(name, quantity, this);
+        this.shoppingListItems.add(item);
+        return item;
+    }
+
+    /**
+     * Changes the name of the ShoppingList. If the name is invalid, an exception is thrown.
+     *
+     * @param name The new name for the ShoppingList.
+     * @throws InvalidShoppingListNameException If the given name is invalid.
+     */
+    public void changeName(String name) {
+        if (!validateName(name)) {
+            throw new InvalidShoppingListNameException("Invalid ShoppingList name given");
+        }
+        this.name = name;
     }
 
     /**
@@ -80,23 +95,6 @@ public class ShoppingList {
      */
     public Set<ShoppingListItem> getPickedItems() {
         return shoppingListItems.stream().filter(ShoppingListItem::isPicked).collect(Collectors.toSet());
-    }
-
-    /**
-     * Deletes all Items that are marked as picked.
-     */
-    public void deletePickedItems() {
-        shoppingListItems.removeIf(ShoppingListItem::isPicked);
-    }
-
-    /**
-     * Validates the given parameters by orchestrating to the internal validation methods.
-     *
-     * @param name The name to validate.
-     * @return True, if all parameters are valid. False otherwise.
-     */
-    private boolean validate(String name, Household household) {
-        return validateName(name) && validateHousehold(household);
     }
 
     /**
