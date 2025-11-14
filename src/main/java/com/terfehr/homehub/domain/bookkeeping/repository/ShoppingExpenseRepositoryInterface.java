@@ -7,7 +7,7 @@ import org.springframework.lang.NonNull;
 
 import java.util.Optional;
 
-interface ShoppingExpenseRepositoryInterface extends JpaRepository<ShoppingExpense, Long> {
+public interface ShoppingExpenseRepositoryInterface extends JpaRepository<ShoppingExpense, Long> {
 
     /**
      * Retrieves a ShoppingExpense by its ShoppingSpree.

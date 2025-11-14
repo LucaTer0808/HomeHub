@@ -27,8 +27,7 @@ public class DeleteShoppingListService {
         ShoppingList list = shoppingListRepository.findById(cmd.shoppingListId())
                 .orElseThrow(() -> new ShoppingListNotFoundException("There is no shopping list with ID: " + cmd.shoppingListId()));
 
-        Household household = householdRepository.findById(list.getHousehold().getId())
-                .orElseThrow(() -> new HouseholdNotFoundException("There is no household with ID: " + list.getHousehold().getId()));
+        Household household = list.getHousehold();
 
         household.deleteShoppingList(list);
 

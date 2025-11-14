@@ -1,8 +1,10 @@
 package com.terfehr.homehub.controller;
 
 import com.terfehr.homehub.application.command.CreateShoppingSpreeCommand;
+import com.terfehr.homehub.application.command.DeleteShoppingSpreeCommand;
 import com.terfehr.homehub.application.dto.ShoppingSpreeDTO;
 import com.terfehr.homehub.application.service.CreateShoppingSpreeService;
+import com.terfehr.homehub.application.service.DeleteShoppingSpreeService;
 import com.terfehr.homehub.controller.request.CreateShoppingSpreeRequest;
 import com.terfehr.homehub.controller.response.CreateShoppingSpreeResponse;
 import jakarta.validation.Valid;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 public class ShoppingSpreeController {
 
     private final CreateShoppingSpreeService createShoppingSpreeService;
+    private final DeleteShoppingSpreeService deleteShoppingSpreeService;
 
     @PostMapping("/{householdId}")
     public ResponseEntity<CreateShoppingSpreeResponse> createShoppingSpree(@PathVariable long householdId, @Valid @RequestBody CreateShoppingSpreeRequest request) {
@@ -34,5 +37,16 @@ public class ShoppingSpreeController {
 
         ShoppingSpreeDTO dto = createShoppingSpreeService.execute(cmd);
         return ResponseEntity.status(HttpStatus.CREATED).body(new CreateShoppingSpreeResponse(dto));
+    }
+
+    @DeleteMapping("/{shoppingSpreeId}")
+    public ResponseEntity<Void> deleteShoppingSpree(@PathVariable long shoppingSpreeId) {
+        DeleteShoppingSpreeCommand cmd = DeleteShoppingSpreeCommand
+                .builder()
+                .id(shoppingSpreeId)
+                .build();
+
+        deleteShoppingSpreeService.execute(cmd);
+        return ResponseEntity.noContent().build();
     }
 }

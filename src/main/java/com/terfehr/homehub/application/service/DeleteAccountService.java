@@ -43,8 +43,7 @@ public class DeleteAccountService {
         Account account = accountRepository.findById(cmd.accountId())
                 .orElseThrow(() -> new AccountNotFoundException("There is no Account with the ID: " + cmd.accountId()));
 
-        Household household = householdRepository.findById(account.getHousehold().getId())
-                .orElseThrow(() -> new HouseholdNotFoundException("There is no Household with the ID: " + account.getHousehold().getId()));
+        Household household = account.getHousehold();
 
         household.deleteAccount(account);
         householdRepository.save(household);

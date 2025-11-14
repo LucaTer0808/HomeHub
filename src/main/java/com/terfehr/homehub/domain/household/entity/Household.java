@@ -179,6 +179,19 @@ public class Household {
     }
 
     /**
+     * Deletes the provided ShoppingSpree from the Household if it can be deleted.
+     *
+     * @param spree The ShoppingSpree to delete.
+     * @throws InvalidShoppingSpreeException If the provided ShoppingSpree is invalid or not associated with this household.
+     */
+    public void deleteShoppingSpree(ShoppingSpree spree) throws InvalidShoppingSpreeException {
+        if (!canDeleteShoppingSpree(spree)) {
+            throw new InvalidShoppingSpreeException("Invalid ShoppingSpree for this Household");
+        }
+        this.shoppingSprees.remove(spree);
+    }
+
+    /**
      * Invites a User to the household by creating, adding, and returning an Invitation object.
      *
      * @param user the User to invite to the household.
@@ -273,6 +286,16 @@ public class Household {
      */
     private boolean canDeleteShoppingList(ShoppingList list) {
         return validateShoppingList(list) && this.shoppingLists.contains(list);
+    }
+
+    /**
+     * Determines if the given ShoppingSpree can be deleted. It has to be valid and be part of this household.
+     *
+     * @param spree The ShoppingSpree to check for deletion.
+     * @return True if the ShoppingSpree can be deleted, false otherwise.
+     */
+    private boolean canDeleteShoppingSpree(ShoppingSpree spree) {
+        return validateShoppingSpree(spree) && this.shoppingSprees.contains(spree);
     }
 
     /**
@@ -403,6 +426,16 @@ public class Household {
      */
     private boolean validateShoppingList(ShoppingList list) {
         return list != null;
+    }
+
+    /**
+     * Validates teh given ShoppingSpree by assuring it is not null.
+     *
+     * @param spree The ShoppingSpree to validate.
+     * @return True, if the ShoppingSpree is valid. False otherwise.
+     */
+    private boolean validateShoppingSpree(ShoppingSpree spree) {
+        return spree != null;
     }
 
     /**

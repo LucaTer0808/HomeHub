@@ -48,6 +48,13 @@ public class ShoppingExpense extends Expense {
     }
 
     /**
+     * Removes the ShoppingSpree associated with this ShoppingExpense.
+     */
+    public void removeShoppingSpree() {
+        this.shoppingSpree = null;
+    }
+
+    /**
      * Sets the ShoppingSpree associated with this ShoppingExpense.
      *
      * @param shoppingSpree The ShoppingSpree to set.
