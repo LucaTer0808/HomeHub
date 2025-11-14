@@ -121,7 +121,7 @@ public class HouseholdController {
                 .shoppingListId(shoppingListId)
                 .build();
 
-        DeleteShoppingListService.execute(cmd);
+        deleteShoppingListService.execute(cmd);
         return ResponseEntity.noContent().build();
     }
 
