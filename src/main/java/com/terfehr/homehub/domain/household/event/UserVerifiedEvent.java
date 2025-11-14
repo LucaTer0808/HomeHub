@@ -1,7 +1,7 @@
 package com.terfehr.homehub.domain.household.event;
 
 import com.terfehr.homehub.domain.household.event.payload.UserVerifiedEventPayload;
-import com.terfehr.homehub.domain.shared.exception.InvalidDomainEventPayloadException;
+import com.terfehr.homehub.domain.shared.exception.InvalidEventPayloadException;
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
 
@@ -17,12 +17,12 @@ public class UserVerifiedEvent extends ApplicationEvent {
      *
      * @param source The object publishing the event.
      * @param payload The payload of the event, in this case a UserVerifiedEventPayload.
-     * @throws InvalidDomainEventPayloadException If the given payload is invalid.
+     * @throws InvalidEventPayloadException If the given payload is invalid.
      */
-    public UserVerifiedEvent(Object source, UserVerifiedEventPayload payload) throws InvalidDomainEventPayloadException {
+    public UserVerifiedEvent(Object source, UserVerifiedEventPayload payload) throws InvalidEventPayloadException {
         super(source);
         if (!validatePayload(payload)) {
-            throw new InvalidDomainEventPayloadException("The given UserVerifiedEventPayload is invalid. It most likely is null");
+            throw new InvalidEventPayloadException("The given UserVerifiedEventPayload is invalid. It most likely is null");
         }
         this.payload = payload;
     }

@@ -1,7 +1,7 @@
 package com.terfehr.homehub.domain.household.event;
 
 import com.terfehr.homehub.domain.household.event.payload.DeleteHouseholdEventPayload;
-import com.terfehr.homehub.domain.shared.exception.InvalidDomainEventPayloadException;
+import com.terfehr.homehub.domain.shared.exception.InvalidEventPayloadException;
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
 
@@ -13,7 +13,7 @@ public class DeleteHouseholdEvent extends ApplicationEvent {
     public DeleteHouseholdEvent(Object source, DeleteHouseholdEventPayload payload) {
         super(source);
         if (payload == null) {
-            throw new InvalidDomainEventPayloadException("DeleteHouseholdEventPayload cannot be null");
+            throw new InvalidEventPayloadException("DeleteHouseholdEventPayload cannot be null");
         }
         this.payload = payload;
     }

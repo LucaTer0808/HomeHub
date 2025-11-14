@@ -1,7 +1,7 @@
 package com.terfehr.homehub.domain.household.event;
 
 import com.terfehr.homehub.domain.household.event.payload.ChangePasswordEventPayload;
-import com.terfehr.homehub.domain.shared.exception.InvalidDomainEventPayloadException;
+import com.terfehr.homehub.domain.shared.exception.InvalidEventPayloadException;
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
 
@@ -10,10 +10,10 @@ public class ChangePasswordEvent extends ApplicationEvent {
 
     private final ChangePasswordEventPayload payload;
 
-    public ChangePasswordEvent(Object source, ChangePasswordEventPayload payload) throws InvalidDomainEventPayloadException {
+    public ChangePasswordEvent(Object source, ChangePasswordEventPayload payload) throws InvalidEventPayloadException {
         super(source);
         if (payload == null) {
-            throw new InvalidDomainEventPayloadException("ChangePasswordEventPayload cannot be null");
+            throw new InvalidEventPayloadException("ChangePasswordEventPayload cannot be null");
         }
         this.payload = payload;
     }

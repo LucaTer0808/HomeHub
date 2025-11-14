@@ -10,7 +10,7 @@ import com.terfehr.homehub.domain.household.entity.User;
 import com.terfehr.homehub.domain.household.event.ChangeUsernameEvent;
 import com.terfehr.homehub.domain.household.event.payload.ChangeUsernameEventPayload;
 import com.terfehr.homehub.domain.household.repository.UserRepositoryInterface;
-import com.terfehr.homehub.domain.shared.exception.InvalidDomainEventPayloadException;
+import com.terfehr.homehub.domain.shared.exception.InvalidEventPayloadException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -34,9 +34,9 @@ public class ChangeUsernameService {
      * @param cmd The Command to execute.
      * @return The ChangeUsernameDTO containing the updated User as a DTO and the generated JWT token as well as the date of issuance and expiration.
      * @throws InvalidUsernameException If the username is invalid.
-     * @throws InvalidDomainEventPayloadException If the Event Payload is invalid.
+     * @throws InvalidEventPayloadException If the Event Payload is invalid.
      */
-    public ChangeUsernameDTO execute(ChangeUsernameCommand cmd) throws InvalidUsernameException, InvalidDomainEventPayloadException {
+    public ChangeUsernameDTO execute(ChangeUsernameCommand cmd) throws InvalidUsernameException, InvalidEventPayloadException {
         User user = userProvider.getUser();
 
         user.setUsername(cmd.username());

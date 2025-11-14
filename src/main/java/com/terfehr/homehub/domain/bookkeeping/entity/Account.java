@@ -1,8 +1,11 @@
 package com.terfehr.homehub.domain.bookkeeping.entity;
 
+import com.terfehr.homehub.domain.bookkeeping.exception.InvalidAccountNameException;
+import com.terfehr.homehub.domain.bookkeeping.exception.InvalidCurrencyCodeException;
 import com.terfehr.homehub.domain.bookkeeping.value.Money;
 import com.terfehr.homehub.domain.household.entity.Household;
 import com.terfehr.homehub.domain.household.entity.Roommate;
+import com.terfehr.homehub.domain.shared.exception.InvalidHouseholdException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -59,15 +62,19 @@ public class Account {
      * @param name The name of the account.
      * @param amount The amount of the account.
      * @param currencyCode The currency code of the account.
-     * @param household The household to which te account belongs
-     * @throws IllegalArgumentException If one of the given parameters are invalid
+     * @param household The household to which the account belongs
+     * @throws InvalidAccountNameException If the provided name is invalid.
+     * @throws InvalidCurrencyCodeException If the provided currency code is invalid.
+     * @throws InvalidHouseholdException If the provided household is invalid.
      */
-    public Account(String name, long amount, String currencyCode, Household household) throws IllegalArgumentException {
+    public Account(String name, long amount, String currencyCode, Household household) throws
+            InvalidAccountNameException,
+            InvalidCurrencyCodeException,
+            InvalidHouseholdException {
         if (!validate(name, currencyCode, household)) {
             throw new IllegalArgumentException("Invalid Account object");
         }
-        Currency currency = Currency.getInstance(currencyCode);
-        Money initialBalance = new Money(currency, amount);
+        Money initialBalance = new Money(currencyCode, amount);
         this.name = name;
         this.balance = initialBalance;
         this.transactions = new HashSet<>();
@@ -96,7 +103,7 @@ public class Account {
      *                Must be a valid long value representing the updated financial balance.
      */
     public void setBalance(long balance) {
-        this.balance = new Money(this.balance.getCurrency(), balance);
+        this.balance = new Money(this.balance.getCurrency().getCurrencyCode(), balance);
     }
 
     /**
@@ -180,11 +187,11 @@ public class Account {
     private void updateBalance(Transaction transaction) {
         if (transaction instanceof Income) {
             long newBalance = balance.getAmountInSmallestUnit() + transaction.getAmount().getAmountInSmallestUnit();
-            balance = new Money(balance.getCurrency(), newBalance);
+            balance = new Money(balance.getCurrency().getCurrencyCode(), newBalance);
         }
         else if (transaction instanceof Expense) {
             long newBalance = balance.getAmountInSmallestUnit() - transaction.getAmount().getAmountInSmallestUnit();
-            balance = new Money(balance.getCurrency(), newBalance);
+            balance = new Money(balance.getCurrency().getCurrencyCode(), newBalance);
         }
     }
 
@@ -201,11 +208,11 @@ public class Account {
     private void revertBalance(Transaction transaction) {
         if (transaction instanceof Income) {
             long newBalance = balance.getAmountInSmallestUnit() - transaction.getAmount().getAmountInSmallestUnit();
-            balance = new Money(balance.getCurrency(), newBalance);
+            balance = new Money(balance.getCurrency().getCurrencyCode(), newBalance);
         }
         else if (transaction instanceof Expense) {
             long newBalance = balance.getAmountInSmallestUnit() + transaction.getAmount().getAmountInSmallestUnit();
-            balance = new Money(balance.getCurrency(), newBalance);
+            balance = new Money(balance.getCurrency().getCurrencyCode(), newBalance);
         }
     }
 

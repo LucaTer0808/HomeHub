@@ -6,7 +6,7 @@ import com.terfehr.homehub.application.interfaces.AuthUserProviderInterface;
 import com.terfehr.homehub.domain.household.entity.User;
 import com.terfehr.homehub.domain.household.event.GetUserEvent;
 import com.terfehr.homehub.domain.household.event.payload.GetUserEventPayload;
-import com.terfehr.homehub.domain.shared.exception.InvalidDomainEventPayloadException;
+import com.terfehr.homehub.domain.shared.exception.InvalidEventPayloadException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -25,7 +25,7 @@ public class GetUserService {
      * Executes the GetUserService by fetching the represented User from the Database and returning it as a UserDTO.
      * @return The UserDTO containing the fetched User.
      */
-    public UserDTO execute() throws UserNotFoundException, AuthenticationCredentialsNotFoundException, InvalidDomainEventPayloadException {
+    public UserDTO execute() throws UserNotFoundException, AuthenticationCredentialsNotFoundException, InvalidEventPayloadException {
         User user = userProvider.getUser();
 
         GetUserEventPayload payload = new GetUserEventPayload(user.getId());

@@ -1,5 +1,6 @@
 package com.terfehr.homehub.domain.bookkeeping.value;
 
+import com.terfehr.homehub.domain.bookkeeping.exception.InvalidCurrencyCodeException;
 import jakarta.persistence.Embeddable;
 import lombok.NoArgsConstructor;
 import lombok.Value;
@@ -26,18 +27,19 @@ public class Money {
      * The amount is represented in the smallest unit of the currency (e.g., cents for USD).
      * Throws {@code IllegalArgumentException} if the specified currency is invalid.
      *
-     * @param currency The currency of the money object. Must not be null.
+     * @param currencyCode The currency of the money object. Must not be null.
      * @param amountInSmallestUnit The monetary amount in the smallest currency unit.
      *                              For example, cents for USD or yen for JPY.
      *                              Can be positive, negative, or zero.
-     * @throws IllegalArgumentException If the currency is null or invalid.
+     * @throws InvalidCurrencyCodeException If the currency is null or invalid.
      */
-    public Money(Currency currency, long amountInSmallestUnit) {
-        if (!validate(currency)) {
-            throw new IllegalArgumentException("Invalid Money object");
+    public Money(String currencyCode, long amountInSmallestUnit) throws InvalidCurrencyCodeException {
+        try {
+            this.currency = Currency.getInstance(currencyCode);
+            this.amountInSmallestUnit = amountInSmallestUnit;
+        } catch (NullPointerException | IllegalArgumentException e) {
+            throw new InvalidCurrencyCodeException("The given CurrencyCode " + currencyCode + "does not represent a valid currency" );
         }
-        this.currency = currency;
-        this.amountInSmallestUnit = amountInSmallestUnit;
     }
 
     /**
@@ -69,10 +71,10 @@ public class Money {
     /**
      * Validates the given currency to ensure it is not null.
      *
-     * @param currency the currency to be validated
+     * @param currencyCode the currency to be validated as a String
      * @return {@code true} if the currency is not null, otherwise {@code false}
      */
-    public boolean validate(Currency currency) {
+    public boolean validate(String currencyCode) {
         return currency != null;
     }
 }

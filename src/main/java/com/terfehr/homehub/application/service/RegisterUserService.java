@@ -12,7 +12,7 @@ import com.terfehr.homehub.domain.household.exception.InvalidUserException;
 import com.terfehr.homehub.domain.household.exception.InvalidUsernameException;
 import com.terfehr.homehub.domain.household.repository.UserRepositoryInterface;
 import com.terfehr.homehub.domain.household.service.UserService;
-import com.terfehr.homehub.domain.shared.exception.InvalidDomainEventPayloadException;
+import com.terfehr.homehub.domain.shared.exception.InvalidEventPayloadException;
 import com.terfehr.homehub.domain.shared.exception.InvalidNameException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -41,7 +41,7 @@ public class RegisterUserService {
      * @throws EmailAlreadyExistsException If the email address is already taken.
      * @throws UsernameAlreadyExistsException IF the username is already taken.
      * @throws InvalidUserException If the given user to the UserDTO is invalid.
-     * @throws InvalidDomainEventPayloadException If the event payload is invalid.
+     * @throws InvalidEventPayloadException If the event payload is invalid.
      * @throws InvalidUsernameException If the username is invalid.
      * @throws InvalidEmailException If the email is invalid.
      * @throws InvalidPasswordException If the password is invalid.
@@ -49,7 +49,7 @@ public class RegisterUserService {
      */
     public UserDTO execute(RegisterUserCommand cmd) throws EmailAlreadyExistsException,
             UsernameAlreadyExistsException,
-            InvalidDomainEventPayloadException,
+            InvalidEventPayloadException,
             InvalidUsernameException,
             InvalidEmailException,
             InvalidPasswordException,

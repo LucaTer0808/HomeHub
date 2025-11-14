@@ -59,7 +59,7 @@ public abstract class Transaction {
         if (!this.validateTransaction(amount, description, date, account, roommate)) {
             throw new IllegalArgumentException("Invalid Transaction object");
         }
-        this.amount = new Money(account.getBalance().getCurrency(), amount); // default to account currency
+        this.amount = new Money(account.getBalance().getCurrency().getCurrencyCode(), amount); // default to account currency
         this.description = description;
         this.date = date;
         this.account = account;
@@ -84,7 +84,7 @@ public abstract class Transaction {
         if (!validateAmount(amount)) {
             throw new IllegalArgumentException("Invalid amount");
         }
-        this.amount = new Money(account.getBalance().getCurrency(), amount);
+        this.amount = new Money(account.getBalance().getCurrency().getCurrencyCode(), amount);
     }
 
     /**

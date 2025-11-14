@@ -1,7 +1,7 @@
 package com.terfehr.homehub.domain.household.event;
 
 import com.terfehr.homehub.domain.household.event.payload.ChangeHouseholdNameEventPayload;
-import com.terfehr.homehub.domain.shared.exception.InvalidDomainEventPayloadException;
+import com.terfehr.homehub.domain.shared.exception.InvalidEventPayloadException;
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
 
@@ -13,7 +13,7 @@ public class ChangeHouseholdNameEvent extends ApplicationEvent {
     public ChangeHouseholdNameEvent(Object source, ChangeHouseholdNameEventPayload payload) {
         super(source);
         if (payload == null) {
-            throw new InvalidDomainEventPayloadException("ChangeHouseholdNameEventPayload cannot be null");
+            throw new InvalidEventPayloadException("ChangeHouseholdNameEventPayload cannot be null");
         }
         this.payload = payload;
     }

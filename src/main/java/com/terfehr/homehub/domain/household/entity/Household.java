@@ -1,6 +1,9 @@
 package com.terfehr.homehub.domain.household.entity;
 
-import com.terfehr.homehub.domain.household.exception.InvalidHouseholdException;
+import com.terfehr.homehub.domain.bookkeeping.exception.InvalidAccountNameException;
+import com.terfehr.homehub.domain.bookkeeping.exception.InvalidCurrencyCodeException;
+import com.terfehr.homehub.domain.household.exception.InvalidHouseholdNameException;
+import com.terfehr.homehub.domain.shared.exception.InvalidHouseholdException;
 import com.terfehr.homehub.domain.household.exception.InvalidInvitationException;
 import com.terfehr.homehub.domain.household.exception.InvalidRoommateException;
 import com.terfehr.homehub.domain.household.exception.InvalidUserException;
@@ -13,7 +16,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -62,11 +64,11 @@ public class Household {
      * The provided name must pass validation, otherwise an exception is thrown.
      *
      * @param name the name of the household; must be non-null and not blank
-     * @throws IllegalArgumentException if the provided name fails validation
+     * @throws InvalidHouseholdNameException if the provided name fails validation
      */
-    public Household(String name) throws InvalidNameException {
+    public Household(String name) throws InvalidHouseholdNameException {
         if (!validate(name)) {
-            throw new IllegalArgumentException("Invalid arguments for Household creation");
+            throw new InvalidHouseholdNameException("Invalid arguments for Household creation");
         }
         this.name = name;
         this.roommates = new HashSet<>();
@@ -78,15 +80,37 @@ public class Household {
     }
 
     /**
+     * Adds an Account to the Household by creating it on the fly, adding it to its Accounts collection,
+     * and then returning it.
+     *
+     * @param accountName The desired name of the account.
+     * @param amount The initial amount of the account represented in the smallest currency unit, e.g., Cents.
+     * @param currencyCode The desired CurrencyCode of the account, e.g. "EUR"
+     * @return The newly created and added Account.
+     * @throws InvalidAccountNameException If the provided accountName is invalid.
+     * @throws InvalidCurrencyCodeException If the provided currencyCode is invalid.
+     * @throws InvalidHouseholdException If the calling Household is unsufficient for creating an Account.
+     */
+    public Account addAccount(String accountName, long amount, String currencyCode) throws
+            InvalidAccountNameException,
+            InvalidCurrencyCodeException,
+            InvalidHouseholdException
+    {
+        Account account = new Account(accountName, amount, currencyCode, this);
+        this.accounts.add(account);
+        return account;
+    }
+
+    /**
      * Sets the name of the Household and then returns the Household afterward. If the given name
      * is invalid, an exception is thrown.
      *
      * @param name The name to set.
-     * @throws IllegalArgumentException If the given name is invalid.
+     * @throws InvalidHouseholdNameException If the given name is invalid.
      */
-    public void changeName(String name) throws IllegalArgumentException {
+    public void changeName(String name) throws InvalidHouseholdNameException {
         if (!validateName(name)) {
-            throw new IllegalArgumentException("Invalid arguments for Household name");
+            throw new InvalidHouseholdNameException("Invalid arguments for Household name");
         }
         this.name = name;
     }
@@ -97,15 +121,15 @@ public class Household {
      * @param roommate the roommate to be added to the household.
      * @throws IllegalArgumentException If the given Roommate is invalid.
      */
-    public void addRoommate(Roommate roommate) throws IllegalArgumentException {
+    public void addRoommate(Roommate roommate) throws InvalidRoommateException {
         if (!canAddRoommate(roommate)) {
-            throw new IllegalArgumentException("Invalid Roommate for this Household");
+            throw new InvalidRoommateException("Invalid Roommate for this Household");
         }
         this.roommates.add(roommate);
     }
 
     /**
-     * Invites a User to the household by creating, adding and returning an Invitation object.
+     * Invites a User to the household by creating, adding, and returning an Invitation object.
      *
      * @param user the User to invite to the household.
      * @return The newly created and added Invitation.
@@ -322,26 +346,6 @@ public class Household {
      */
     private boolean validateUser(User user) {
         return user != null;
-    }
-
-    /**
-     * Validates the given TaskList. It has to be not null.
-     *
-     * @param list The TaskList to validate.
-     * @return True, if the TaskList is valid. False otherwise.
-     */
-    private boolean validateTaskList(TaskList list) {
-        return list != null;
-    }
-
-    /**
-     * Validates the given ShoppingList. It has to be not null.
-     *
-     * @param list The desired list to validate.
-     * @return True, if the ShoppingList is valid. False otherwise.
-     */
-    private boolean validateShoppingList(ShoppingList list) {
-        return list != null;
     }
 
     /**

@@ -9,12 +9,12 @@ import com.terfehr.homehub.domain.household.entity.Invitation;
 import com.terfehr.homehub.domain.household.entity.User;
 import com.terfehr.homehub.domain.household.event.InviteUserToHouseholdEvent;
 import com.terfehr.homehub.domain.household.event.payload.InviteUserToHouseholdEventPayload;
-import com.terfehr.homehub.domain.household.exception.InvalidHouseholdException;
+import com.terfehr.homehub.domain.shared.exception.InvalidHouseholdException;
 import com.terfehr.homehub.domain.household.exception.InvalidInvitationException;
 import com.terfehr.homehub.domain.household.exception.InvalidUserException;
 import com.terfehr.homehub.domain.household.repository.HouseholdRepositoryInterface;
 import com.terfehr.homehub.domain.household.repository.UserRepositoryInterface;
-import com.terfehr.homehub.domain.shared.exception.InvalidDomainEventPayloadException;
+import com.terfehr.homehub.domain.shared.exception.InvalidEventPayloadException;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -40,7 +40,7 @@ public class InviteUserToHouseholdService {
      * @throws InvalidHouseholdException If the Household is insufficient for creating an Invitation from it.
      * @throws InvalidUserException If the User is insufficient for creating an Invitation from or for it.
      * @throws InvalidInvitationException If the created Invitation is insufficient for adding it to the Users collection.
-     * @throws InvalidDomainEventPayloadException If the created EventPayload in invalid and can not function as payload for an DomainEvent.
+     * @throws InvalidEventPayloadException If the created EventPayload in invalid and can not function as payload for an DomainEvent.
      */
     public UserInvitationDTO execute(InviteUserToHouseholdCommand cmd) throws
             HouseholdNotFoundException,
@@ -48,7 +48,7 @@ public class InviteUserToHouseholdService {
             InvalidHouseholdException,
             InvalidUserException,
             InvalidInvitationException,
-            InvalidDomainEventPayloadException
+            InvalidEventPayloadException
     {
         Household household = householdRepository.findById(cmd.id())
                 .orElseThrow(() -> new HouseholdNotFoundException("There is no Household with he id: " + cmd.id()));

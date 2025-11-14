@@ -1,6 +1,6 @@
 package com.terfehr.homehub.domain.household.entity;
 
-import com.terfehr.homehub.domain.household.exception.InvalidHouseholdException;
+import com.terfehr.homehub.domain.shared.exception.InvalidHouseholdException;
 import com.terfehr.homehub.domain.household.exception.InvalidUserException;
 import com.terfehr.homehub.domain.household.key.RoommateId;
 import jakarta.persistence.*;

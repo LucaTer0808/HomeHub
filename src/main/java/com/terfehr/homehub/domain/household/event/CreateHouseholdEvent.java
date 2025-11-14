@@ -1,7 +1,7 @@
 package com.terfehr.homehub.domain.household.event;
 
 import com.terfehr.homehub.domain.household.event.payload.CreateHouseholdEventPayload;
-import com.terfehr.homehub.domain.shared.exception.InvalidDomainEventPayloadException;
+import com.terfehr.homehub.domain.shared.exception.InvalidEventPayloadException;
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
 
@@ -10,10 +10,10 @@ public class CreateHouseholdEvent extends ApplicationEvent {
 
     private final CreateHouseholdEventPayload payload;
 
-    public CreateHouseholdEvent(Object source, CreateHouseholdEventPayload payload) throws InvalidDomainEventPayloadException {
+    public CreateHouseholdEvent(Object source, CreateHouseholdEventPayload payload) throws InvalidEventPayloadException {
         super(source);
         if (payload == null) {
-            throw new InvalidDomainEventPayloadException("CreateHouseholdEventPayload cannot be null");
+            throw new InvalidEventPayloadException("CreateHouseholdEventPayload cannot be null");
         }
         this.payload = payload;
     }

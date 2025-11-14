@@ -1,7 +1,7 @@
 package com.terfehr.homehub.domain.household.event;
 
 import com.terfehr.homehub.domain.household.event.payload.UserLoginEventPayload;
-import com.terfehr.homehub.domain.shared.exception.InvalidDomainEventPayloadException;
+import com.terfehr.homehub.domain.shared.exception.InvalidEventPayloadException;
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
 
@@ -21,7 +21,7 @@ public class UserLoginEvent extends ApplicationEvent {
     public UserLoginEvent(Object source, UserLoginEventPayload payload) {
         super(source);
         if (!validatePayload(payload)) {
-            throw new InvalidDomainEventPayloadException("The given UserLoginEventPayload is invalid. It most likely is null");
+            throw new InvalidEventPayloadException("The given UserLoginEventPayload is invalid. It most likely is null");
         }
         this.payload = payload;
     }

@@ -1,7 +1,7 @@
 package com.terfehr.homehub.domain.household.event;
 
 import com.terfehr.homehub.domain.household.event.payload.ForgotPasswordEventPayload;
-import com.terfehr.homehub.domain.shared.exception.InvalidDomainEventPayloadException;
+import com.terfehr.homehub.domain.shared.exception.InvalidEventPayloadException;
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
 
@@ -15,12 +15,12 @@ public class ForgotPasswordEvent extends ApplicationEvent {
      *
      * @param source The source of the event. Usually the calling ApplicationService.
      * @param eventPayload The payload of the event.
-     * @throws InvalidDomainEventPayloadException If the given payload is invalid.
+     * @throws InvalidEventPayloadException If the given payload is invalid.
      */
-    public ForgotPasswordEvent(Object source, ForgotPasswordEventPayload eventPayload) throws InvalidDomainEventPayloadException {
+    public ForgotPasswordEvent(Object source, ForgotPasswordEventPayload eventPayload) throws InvalidEventPayloadException {
         super(source);
         if (eventPayload == null)
-            throw new InvalidDomainEventPayloadException("eventPayload cannot be null");
+            throw new InvalidEventPayloadException("eventPayload cannot be null");
         this.eventPayload = eventPayload;
     }
 }

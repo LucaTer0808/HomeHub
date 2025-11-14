@@ -1,7 +1,7 @@
 package com.terfehr.homehub.domain.household.event;
 
 import com.terfehr.homehub.domain.household.event.payload.VerifyEmailChangeEventPayload;
-import com.terfehr.homehub.domain.shared.exception.InvalidDomainEventPayloadException;
+import com.terfehr.homehub.domain.shared.exception.InvalidEventPayloadException;
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
 
@@ -13,7 +13,7 @@ public class VerifyEmailChangeEvent extends ApplicationEvent {
     public VerifyEmailChangeEvent(Object source, VerifyEmailChangeEventPayload eventPayload) {
         super(source);
         if (eventPayload == null) {
-            throw new InvalidDomainEventPayloadException("Event payload cannot be null");
+            throw new InvalidEventPayloadException("Event payload cannot be null");
         }
         this.eventPayload = eventPayload;
     }

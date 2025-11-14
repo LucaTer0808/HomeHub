@@ -1,6 +1,7 @@
 package com.terfehr.homehub.controller;
 
 import com.terfehr.homehub.application.command.*;
+import com.terfehr.homehub.application.dto.AccountDTO;
 import com.terfehr.homehub.application.dto.HouseholdDTO;
 import com.terfehr.homehub.application.dto.RoommateDTO;
 import com.terfehr.homehub.application.dto.UserInvitationDTO;
@@ -9,7 +10,6 @@ import com.terfehr.homehub.controller.request.*;
 import com.terfehr.homehub.controller.response.*;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class HouseholdController {
 
-    private final ApplicationEventPublisher publisher;
     private final ChangeHouseholdNameService changeHouseholdNameService;
+    private final CreateAccountService createAccountService;
     private final CreateHouseholdService createHouseholdService;
     private final DeleteHouseholdService deleteHouseholdService;
     private final DeleteInvitationService deleteInvitationService;
@@ -73,6 +73,21 @@ public class HouseholdController {
 
         HouseholdDTO dto = changeHouseholdNameService.execute(cmd);
         return ResponseEntity.status(HttpStatus.OK).body(new ChangeHouseholdNameResponse(dto));
+    }
+
+    @PostMapping("{id}/account")
+    public ResponseEntity<CreateAccountResponse> createAccount(@PathVariable long id, @Valid @RequestBody CreateAccountRequest request) {
+        CreateAccountCommand cmd = CreateAccountCommand
+                .builder()
+                .id(id)
+                .name(request.name())
+                .amount(request.amount())
+                .currencyCode(request.currencyCode())
+                .build();
+
+        AccountDTO dto = createAccountService.execute(cmd);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new CreateAccountResponse(dto));
+
     }
 
     @PostMapping("/{id}/invitation")
