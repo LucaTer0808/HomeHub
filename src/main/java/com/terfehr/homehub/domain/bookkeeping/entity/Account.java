@@ -69,14 +69,33 @@ public class Account {
             InvalidAccountNameException,
             InvalidCurrencyCodeException,
             InvalidHouseholdException {
-        if (!validate(name, currencyCode, household)) {
-            throw new IllegalArgumentException("Invalid Account object");
+        if (!validateName(name)) {
+            throw new InvalidAccountNameException("Invalid Account name given");
+        }
+        if (!validateCurrencyCode(currencyCode)) {
+            throw new InvalidCurrencyCodeException("Invalid Currency code given");
+        }
+        if (!validateHousehold(household)) {
+            throw new InvalidHouseholdException("Invalid Household given");
         }
         Money initialBalance = new Money(currencyCode, amount);
         this.name = name;
         this.balance = initialBalance;
         this.transactions = new HashSet<>();
         this.household = household;
+    }
+
+    /**
+     * Changes the name of the account.
+     *
+     * @param name The new name for the account.
+     * @throws InvalidAccountNameException If the provided name is invalid.
+     */
+    public void changeName(String name) throws InvalidAccountNameException {
+        if (!validateName(name)) {
+            throw new InvalidAccountNameException("Invalid Account name given");
+        }
+        this.name = name;
     }
 
     /**

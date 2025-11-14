@@ -1,11 +1,15 @@
 package com.terfehr.homehub.controller;
 
+import com.terfehr.homehub.application.command.ChangeAccountNameCommand;
+import com.terfehr.homehub.application.service.ChangeAccountNameService;
+import com.terfehr.homehub.controller.request.ChangeAccountNameRequest;
 import com.terfehr.homehub.application.command.CreateAccountCommand;
 import com.terfehr.homehub.application.command.DeleteAccountCommand;
 import com.terfehr.homehub.application.dto.AccountDTO;
 import com.terfehr.homehub.application.service.CreateAccountService;
 import com.terfehr.homehub.application.service.DeleteAccountService;
 import com.terfehr.homehub.controller.request.CreateAccountRequest;
+import com.terfehr.homehub.controller.response.ChangeAccountNameResponse;
 import com.terfehr.homehub.controller.response.CreateAccountResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -18,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class AccountController {
 
+    private final ChangeAccountNameService changeAccountNameService;
     private final CreateAccountService createAccountService;
     private final DeleteAccountService deleteAccountService;
 
@@ -33,6 +38,18 @@ public class AccountController {
 
         AccountDTO dto = createAccountService.execute(cmd);
         return ResponseEntity.status(HttpStatus.CREATED).body(new CreateAccountResponse(dto));
+    }
+
+    @PatchMapping("/{accountId}")
+    public ResponseEntity<ChangeAccountNameResponse> changeAccountName(@PathVariable long accountId, @Valid @RequestBody ChangeAccountNameRequest request) {
+        ChangeAccountNameCommand cmd = ChangeAccountNameCommand
+                .builder()
+                .id(accountId)
+                .name(request.name())
+                .build();
+
+        AccountDTO dto = changeAccountNameService.execute(cmd);
+        return ResponseEntity.ok(new ChangeAccountNameResponse(dto));
     }
 
     @DeleteMapping("/{accountId}")
