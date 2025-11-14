@@ -73,28 +73,6 @@ public class Household {
     }
 
     /**
-     * Adds an Account to the Household by creating it on the fly, adding it to its Accounts collection,
-     * and then returning it.
-     *
-     * @param accountName The desired name of the account.
-     * @param amount The initial amount of the account represented in the smallest currency unit, e.g., Cents.
-     * @param currencyCode The desired CurrencyCode of the account, e.g. "EUR"
-     * @return The newly created and added Account.
-     * @throws InvalidAccountNameException If the provided accountName is invalid.
-     * @throws InvalidCurrencyCodeException If the provided currencyCode is invalid.
-     * @throws InvalidHouseholdException If the calling Household is unsufficient for creating an Account.
-     */
-    public Account addAccount(String accountName, long amount, String currencyCode) throws
-            InvalidAccountNameException,
-            InvalidCurrencyCodeException,
-            InvalidHouseholdException
-    {
-        Account account = new Account(accountName, amount, currencyCode, this);
-        this.accounts.add(account);
-        return account;
-    }
-
-    /**
      * Adds a roommate to the current household.
      *
      * @param roommate the roommate to be added to the household.
@@ -119,6 +97,42 @@ public class Household {
             throw new InvalidHouseholdNameException("Invalid arguments for Household name");
         }
         this.name = name;
+    }
+
+    /**
+     * Adds an Account to the Household by creating it on the fly, adding it to its Accounts collection,
+     * and then returning it.
+     *
+     * @param accountName The desired name of the account.
+     * @param amount The initial amount of the account represented in the smallest currency unit, e.g., Cents.
+     * @param currencyCode The desired CurrencyCode of the account, e.g. "EUR"
+     * @return The newly created and added Account.
+     * @throws InvalidAccountNameException If the provided accountName is invalid.
+     * @throws InvalidCurrencyCodeException If the provided currencyCode is invalid.
+     * @throws InvalidHouseholdException If the calling Household is unsufficient for creating an Account.
+     */
+    public Account createAccount(String accountName, long amount, String currencyCode) throws
+            InvalidAccountNameException,
+            InvalidCurrencyCodeException,
+            InvalidHouseholdException
+    {
+        Account account = new Account(accountName, amount, currencyCode, this);
+        this.accounts.add(account);
+        return account;
+    }
+
+    /**
+     * Creates a new ShoppingList an immediately adds it to the Household's ShoppingLists collection.
+     *
+     * @param shoppingListName The name of the ShoppingList to create.
+     * @return The newly created ShoppingList.
+     * @throws InvalidShoppingListNameException If the provided ShoppingListName is invalid.
+     * @throws InvalidHouseholdException If the calling Household is unsufficient for creating a ShoppingList.
+     */
+    public ShoppingList createShoppingList(String shoppingListName) throws InvalidShoppingListNameException, InvalidHouseholdException {
+        ShoppingList list = new ShoppingList(shoppingListName, this);
+        this.shoppingLists.add(list);
+        return list;
     }
 
     /**

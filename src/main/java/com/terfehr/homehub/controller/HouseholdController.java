@@ -1,10 +1,7 @@
 package com.terfehr.homehub.controller;
 
 import com.terfehr.homehub.application.command.*;
-import com.terfehr.homehub.application.dto.AccountDTO;
-import com.terfehr.homehub.application.dto.HouseholdDTO;
-import com.terfehr.homehub.application.dto.RoommateDTO;
-import com.terfehr.homehub.application.dto.UserInvitationDTO;
+import com.terfehr.homehub.application.dto.*;
 import com.terfehr.homehub.application.service.*;
 import com.terfehr.homehub.controller.request.*;
 import com.terfehr.homehub.controller.response.*;
@@ -22,6 +19,7 @@ public class HouseholdController {
     private final ChangeHouseholdNameService changeHouseholdNameService;
     private final CreateAccountService createAccountService;
     private final CreateHouseholdService createHouseholdService;
+    private final CreateShoppingListService createShoppingListService;
     private final DeleteAccountService deleteAccountService;
     private final DeleteHouseholdService deleteHouseholdService;
     private final DeleteInvitationService deleteInvitationService;
@@ -100,6 +98,18 @@ public class HouseholdController {
 
         deleteAccountService.execute(cmd);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/shopping_list")
+    public ResponseEntity<CreateShoppingListResponse> createShoppingList(@PathVariable long id, @Valid @RequestBody CreateShoppingListRequest request) {
+        CreateShoppingListCommand cmd = CreateShoppingListCommand
+                .builder()
+                .id(id)
+                .name(request.name())
+                .build();
+
+        ShoppingListDTO dto = createShoppingListService.execute(cmd);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new CreateShoppingListResponse(dto));
     }
 
     @PostMapping("/{id}/invitation")

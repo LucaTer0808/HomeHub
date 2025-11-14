@@ -2,16 +2,16 @@ package com.terfehr.homehub.controller.request;
 
 import com.terfehr.homehub.infrastructure.jackson.Trim;
 import com.terfehr.homehub.infrastructure.jackson.TrimAndLowerCase;
-import org.springframework.lang.NonNull;
+import jakarta.validation.constraints.NotBlank;
 
 public record CreateAccountRequest(
         @Trim
-        @NonNull
+        @NotBlank(message = "Name cannot be blank!")
         String name,
 
         @TrimAndLowerCase
-        @NonNull
+        @NotBlank(message = "CurrencyCode cannot be blank!")
         String currencyCode,
 
-        long amount) {
-}
+        long amount
+) {}

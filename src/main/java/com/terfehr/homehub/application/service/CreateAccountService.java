@@ -41,7 +41,7 @@ public class CreateAccountService {
         Household household = householdRepository.findById(cmd.id())
                 .orElseThrow(() -> new HouseholdNotFoundException("Household not found for ID: " + cmd.id()));
 
-        Account account = household.addAccount(cmd.name(), cmd.amount(), cmd.currencyCode());
+        Account account = household.createAccount(cmd.name(), cmd.amount(), cmd.currencyCode());
 
         householdRepository.save(household); // due to cascadeType.ALL, the account is saved as well.
 

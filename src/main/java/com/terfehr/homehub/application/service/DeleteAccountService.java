@@ -47,7 +47,7 @@ public class DeleteAccountService {
         household.deleteAccount(account);
         householdRepository.save(household);
 
-        DeleteAccountEventPayload payload = new DeleteAccountEventPayload(account.getId(), account.getName(), account.getBalance().withCurrencyCode());
+        DeleteAccountEventPayload payload = new DeleteAccountEventPayload(household.getId(), account.getId(), account.getName(), account.getBalance().withCurrencyCode());
         DeleteAccountEvent event = new DeleteAccountEvent(this, payload);
         publisher.publishEvent(event);
     }

@@ -1,6 +1,8 @@
 package com.terfehr.homehub.domain.shopping.entity;
 
 import com.terfehr.homehub.domain.household.entity.Household;
+import com.terfehr.homehub.domain.shared.exception.InvalidHouseholdException;
+import com.terfehr.homehub.domain.shared.exception.InvalidShoppingListNameException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,8 +38,11 @@ public class ShoppingList {
      * @throws IllegalArgumentException If the given name is invalid.
      */
     public ShoppingList(String name, Household household) throws IllegalArgumentException{
-        if (!validate(name, household)) {
-            throw new IllegalArgumentException("Invalid ShoppingList object");
+        if (!validateName(name)) {
+            throw new InvalidShoppingListNameException("Invalid ShoppingList name given");
+        }
+        if (!validateHousehold(household)) {
+            throw new InvalidHouseholdException("The given Household is invalid");
         }
         this.name = name;
         this.shoppingListItems = new HashSet<>();
