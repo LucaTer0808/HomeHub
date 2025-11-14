@@ -67,14 +67,4 @@ public class Money {
                 .movePointLeft(currency.getDefaultFractionDigits());
         return String.format("%s %s", currency.getCurrencyCode(), value);
     }
-
-    /**
-     * Validates the given currency to ensure it is not null.
-     *
-     * @param currencyCode the currency to be validated as a String
-     * @return {@code true} if the currency is not null, otherwise {@code false}
-     */
-    public boolean validate(String currencyCode) {
-        return currency != null;
-    }
 }

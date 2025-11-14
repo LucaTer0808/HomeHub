@@ -132,12 +132,20 @@ public class Account {
      * @param date The timestamp of when this Expense was transferred.
      * @param recipient The recipient who received the money.
      * @param roommate The roommate who paid the money.
+     * @return The created Expense object.
      * @throws IllegalArgumentException If the parameters are invalid for creating an Expense.
      */
-    public void addExpense(long amount, String description, LocalDateTime date, String recipient, Roommate roommate) throws IllegalArgumentException {
+    public Expense createExpense(long amount, String description, LocalDateTime date, String recipient, Roommate roommate) throws
+            InvalidAmountException,
+            InvalidDescriptionException,
+            InvalidDateException,
+            InvalidRecipientException,
+            InvalidRoommateException
+    {
         Expense expense = new Expense(amount, description, date, recipient, this, roommate);
         this.transactions.add(expense);
         updateBalance(expense);
+        return expense;
     }
 
     /**

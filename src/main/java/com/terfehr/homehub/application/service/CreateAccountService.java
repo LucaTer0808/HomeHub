@@ -51,6 +51,6 @@ public class CreateAccountService {
         CreateAccountEvent event = new CreateAccountEvent(this, payload);
         publisher.publishEvent(event);
 
-        return new AccountDTO(account.getId(), account.getName(), account.getBalance().withSymbol());
+        return new AccountDTO(account.getId(), account.getName(), account.getBalance().getAmountInSmallestUnit(), account.getBalance().withSymbol());
     }
 }

@@ -8,7 +8,6 @@ import com.terfehr.homehub.application.exception.AccountNotFoundException;
 import com.terfehr.homehub.domain.bookkeeping.entity.Account;
 import com.terfehr.homehub.domain.bookkeeping.repository.AccountRepositoryInterface;
 import com.terfehr.homehub.domain.shared.exception.InvalidAccountNameException;
-import com.terfehr.homehub.domain.shared.exception.InvalidCurrencyCodeException;
 import com.terfehr.homehub.domain.shared.exception.InvalidEventPayloadException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -49,6 +48,6 @@ public class ChangeAccountNameService {
         ChangeAccountNameEvent event = new ChangeAccountNameEvent(this, payload);
         publisher.publishEvent(event);
 
-        return new AccountDTO(account.getId(), account.getName(), account.getBalance().withSymbol());
+        return new AccountDTO(account.getId(), account.getName(), account.getBalance().getAmountInSmallestUnit(), account.getBalance().withSymbol());
     }
 }
