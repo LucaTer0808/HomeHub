@@ -4,16 +4,14 @@ import com.terfehr.homehub.application.command.ForgotPasswordCommand;
 import com.terfehr.homehub.application.dto.ForgotPasswordDTO;
 import com.terfehr.homehub.application.exception.UserNotFoundException;
 import com.terfehr.homehub.domain.household.entity.User;
-import com.terfehr.homehub.domain.household.event.ForgotPasswordEvent;
-import com.terfehr.homehub.domain.household.event.payload.ForgotPasswordEventPayload;
+import com.terfehr.homehub.application.event.ForgotPasswordEvent;
+import com.terfehr.homehub.application.event.payload.ForgotPasswordEventPayload;
 import com.terfehr.homehub.domain.household.repository.UserRepositoryInterface;
 import com.terfehr.homehub.domain.household.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
 
 @Service
 @AllArgsConstructor
