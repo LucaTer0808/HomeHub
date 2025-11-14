@@ -6,7 +6,7 @@ import com.terfehr.homehub.application.exception.UserNotFoundException;
 import com.terfehr.homehub.domain.household.entity.User;
 import com.terfehr.homehub.application.event.UserVerifiedEvent;
 import com.terfehr.homehub.application.event.payload.UserVerifiedEventPayload;
-import com.terfehr.homehub.domain.household.exception.InvalidVerificationCodeException;
+import com.terfehr.homehub.domain.shared.exception.InvalidVerificationCodeException;
 import com.terfehr.homehub.domain.household.repository.UserRepositoryInterface;
 import com.terfehr.homehub.domain.shared.exception.InvalidEventPayloadException;
 import jakarta.transaction.Transactional;

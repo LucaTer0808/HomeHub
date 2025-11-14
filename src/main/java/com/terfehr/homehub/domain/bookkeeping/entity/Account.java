@@ -1,7 +1,7 @@
 package com.terfehr.homehub.domain.bookkeeping.entity;
 
-import com.terfehr.homehub.domain.bookkeeping.exception.InvalidAccountNameException;
-import com.terfehr.homehub.domain.bookkeeping.exception.InvalidCurrencyCodeException;
+import com.terfehr.homehub.domain.shared.exception.InvalidAccountNameException;
+import com.terfehr.homehub.domain.shared.exception.InvalidCurrencyCodeException;
 import com.terfehr.homehub.domain.bookkeeping.value.Money;
 import com.terfehr.homehub.domain.household.entity.Household;
 import com.terfehr.homehub.domain.household.entity.Roommate;

@@ -1,4 +1,4 @@
-package com.terfehr.homehub.domain.household.exception;
+package com.terfehr.homehub.domain.shared.exception;
 
 public class InvalidHouseholdNameException extends RuntimeException {
     public InvalidHouseholdNameException(String message) {

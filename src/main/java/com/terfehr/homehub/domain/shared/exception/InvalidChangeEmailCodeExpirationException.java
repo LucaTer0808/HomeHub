@@ -1,4 +1,4 @@
-package com.terfehr.homehub.domain.household.exception;
+package com.terfehr.homehub.domain.shared.exception;
 
 public class InvalidChangeEmailCodeExpirationException extends RuntimeException {
     public InvalidChangeEmailCodeExpirationException(String message) {

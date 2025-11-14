@@ -1,14 +1,9 @@
 package com.terfehr.homehub.domain.household.service;
 
 import com.terfehr.homehub.domain.household.entity.Household;
-import com.terfehr.homehub.domain.household.entity.Invitation;
 import com.terfehr.homehub.domain.household.entity.Roommate;
-import com.terfehr.homehub.domain.shared.exception.InvalidNameException;
-import com.terfehr.homehub.domain.household.exception.InvalidPasswordException;
-import com.terfehr.homehub.domain.household.exception.InvalidUsernameException;
-import com.terfehr.homehub.domain.household.exception.InvalidVerificationCodeExpirationException;
+import com.terfehr.homehub.domain.shared.exception.*;
 import com.terfehr.homehub.domain.household.entity.User;
-import com.terfehr.homehub.domain.household.exception.*;
 import com.terfehr.homehub.domain.household.repository.UserRepositoryInterface;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;

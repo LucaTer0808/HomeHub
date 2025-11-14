@@ -6,7 +6,7 @@ import com.terfehr.homehub.domain.household.entity.Household;
 import com.terfehr.homehub.domain.household.entity.User;
 import com.terfehr.homehub.application.event.DeleteHouseholdEvent;
 import com.terfehr.homehub.application.event.payload.DeleteHouseholdEventPayload;
-import com.terfehr.homehub.domain.household.exception.InvalidRoommateException;
+import com.terfehr.homehub.domain.shared.exception.InvalidRoommateException;
 import com.terfehr.homehub.domain.household.repository.HouseholdRepositoryInterface;
 import com.terfehr.homehub.domain.household.repository.UserRepositoryInterface;
 import com.terfehr.homehub.domain.household.service.HouseholdService;

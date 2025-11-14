@@ -1,4 +1,4 @@
-package com.terfehr.homehub.domain.household.exception;
+package com.terfehr.homehub.domain.shared.exception;
 
 public class InvalidInvitationException extends RuntimeException {
     public InvalidInvitationException(String message) {

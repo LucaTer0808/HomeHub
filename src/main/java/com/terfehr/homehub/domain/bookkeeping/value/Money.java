@@ -1,6 +1,6 @@
 package com.terfehr.homehub.domain.bookkeeping.value;
 
-import com.terfehr.homehub.domain.bookkeeping.exception.InvalidCurrencyCodeException;
+import com.terfehr.homehub.domain.shared.exception.InvalidCurrencyCodeException;
 import jakarta.persistence.Embeddable;
 import lombok.NoArgsConstructor;
 import lombok.Value;

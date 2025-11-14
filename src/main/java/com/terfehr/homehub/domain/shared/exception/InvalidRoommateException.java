@@ -1,4 +1,4 @@
-package com.terfehr.homehub.domain.household.exception;
+package com.terfehr.homehub.domain.shared.exception;
 
 public class InvalidRoommateException extends RuntimeException {
     public InvalidRoommateException(String message) {

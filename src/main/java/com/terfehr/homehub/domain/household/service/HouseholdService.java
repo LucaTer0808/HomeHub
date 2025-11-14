@@ -1,14 +1,12 @@
 package com.terfehr.homehub.domain.household.service;
 
 import com.terfehr.homehub.domain.household.entity.*;
-import com.terfehr.homehub.domain.household.exception.InvalidInvitationException;
+import com.terfehr.homehub.domain.shared.exception.InvalidInvitationException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.AbstractMap;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor

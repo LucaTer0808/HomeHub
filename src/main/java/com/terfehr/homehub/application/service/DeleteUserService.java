@@ -7,7 +7,7 @@ import com.terfehr.homehub.domain.bookkeeping.entity.Transaction;
 import com.terfehr.homehub.domain.bookkeeping.repository.TransactionRepositoryInterface;
 import com.terfehr.homehub.domain.household.entity.Household;
 import com.terfehr.homehub.domain.household.entity.Invitation;
-import com.terfehr.homehub.domain.household.exception.InvalidPasswordException;
+import com.terfehr.homehub.domain.shared.exception.InvalidPasswordException;
 import com.terfehr.homehub.application.interfaces.AuthUserProviderInterface;
 import com.terfehr.homehub.domain.household.entity.Roommate;
 import com.terfehr.homehub.domain.household.entity.User;
@@ -22,7 +22,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
-import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;

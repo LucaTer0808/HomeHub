@@ -10,7 +10,7 @@ import com.terfehr.homehub.application.event.ChangeEmailEvent;
 import com.terfehr.homehub.application.event.VerifyEmailChangeEvent;
 import com.terfehr.homehub.application.event.payload.ChangeEmailEventPayload;
 import com.terfehr.homehub.application.event.payload.VerifyEmailChangeEventPayload;
-import com.terfehr.homehub.domain.household.exception.InvalidChangeEmailCodeException;
+import com.terfehr.homehub.domain.shared.exception.InvalidChangeEmailCodeException;
 import com.terfehr.homehub.domain.household.repository.UserRepositoryInterface;
 import com.terfehr.homehub.domain.household.service.UserService;
 import com.terfehr.homehub.domain.shared.exception.InvalidEventPayloadException;

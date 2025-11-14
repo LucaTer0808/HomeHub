@@ -7,7 +7,7 @@ import com.terfehr.homehub.application.exception.UserNotFoundException;
 import com.terfehr.homehub.domain.household.entity.Household;
 import com.terfehr.homehub.domain.household.entity.Invitation;
 import com.terfehr.homehub.domain.household.entity.User;
-import com.terfehr.homehub.domain.household.exception.InvalidInvitationException;
+import com.terfehr.homehub.domain.shared.exception.InvalidInvitationException;
 import com.terfehr.homehub.domain.household.repository.HouseholdRepositoryInterface;
 import com.terfehr.homehub.domain.household.repository.InvitationRepositoryInterface;
 import com.terfehr.homehub.domain.household.repository.UserRepositoryInterface;

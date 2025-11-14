@@ -1,13 +1,6 @@
 package com.terfehr.homehub.domain.household.entity;
 
-import com.terfehr.homehub.domain.bookkeeping.exception.InvalidAccountNameException;
-import com.terfehr.homehub.domain.bookkeeping.exception.InvalidCurrencyCodeException;
-import com.terfehr.homehub.domain.household.exception.InvalidHouseholdNameException;
-import com.terfehr.homehub.domain.shared.exception.InvalidHouseholdException;
-import com.terfehr.homehub.domain.household.exception.InvalidInvitationException;
-import com.terfehr.homehub.domain.household.exception.InvalidRoommateException;
-import com.terfehr.homehub.domain.household.exception.InvalidUserException;
-import com.terfehr.homehub.domain.shared.exception.InvalidNameException;
+import com.terfehr.homehub.domain.shared.exception.*;
 import com.terfehr.homehub.domain.bookkeeping.entity.Account;
 import com.terfehr.homehub.domain.scheduling.entity.TaskList;
 import com.terfehr.homehub.domain.shopping.entity.ShoppingList;
@@ -102,6 +95,19 @@ public class Household {
     }
 
     /**
+     * Adds a roommate to the current household.
+     *
+     * @param roommate the roommate to be added to the household.
+     * @throws IllegalArgumentException If the given Roommate is invalid.
+     */
+    public void addRoommate(Roommate roommate) throws InvalidRoommateException {
+        if (!canAddRoommate(roommate)) {
+            throw new InvalidRoommateException("Invalid Roommate for this Household");
+        }
+        this.roommates.add(roommate);
+    }
+
+    /**
      * Sets the name of the Household and then returns the Household afterward. If the given name
      * is invalid, an exception is thrown.
      *
@@ -116,16 +122,16 @@ public class Household {
     }
 
     /**
-     * Adds a roommate to the current household.
+     * Deletes the provided Account from the Household if it can be deleted.
      *
-     * @param roommate the roommate to be added to the household.
-     * @throws IllegalArgumentException If the given Roommate is invalid.
+     * @param account The Account to delete.
+     * @throws InvalidAccountException If the provided Account is invalid or not associated with this household.
      */
-    public void addRoommate(Roommate roommate) throws InvalidRoommateException {
-        if (!canAddRoommate(roommate)) {
-            throw new InvalidRoommateException("Invalid Roommate for this Household");
+    public void deleteAccount(Account account) throws InvalidAccountException {
+        if (!canDeleteAccount(account)) {
+            throw new InvalidAccountException("Invalid Account for this Household");
         }
-        this.roommates.add(roommate);
+        this.accounts.remove(account);
     }
 
     /**
@@ -195,16 +201,6 @@ public class Household {
     }
 
     /**
-     * Validates the provided name by delegating to the validateName method.
-     *
-     * @param name the name to validate; must be non-null and not blank
-     * @return true if the name is valid; false otherwise
-     */
-    private boolean validate(String name) {
-        return validateName(name);
-    }
-
-    /**
      * Determines whether a specified roommate can be added to the household.
      * A roommate can be added if it is valid and does not already exist in the household.
      *
@@ -216,6 +212,16 @@ public class Household {
     }
 
     /**
+     * Determines if the given Account can be deleted. It has to be valid and be part of this household.
+     *
+     * @param account The Account to check for deletion.
+     * @return True if the account can be deleted, false otherwise.
+     */
+    private boolean canDeleteAccount(Account account) {
+        return validateAccount(account) && this.accounts.contains(account);
+    }
+
+    /**
      * Checks if the User can be invited. This is the case if the User
      * is neither part of the Household via a Roommate already nor has been Invited and is references by an existing Invitation.
      *
@@ -224,6 +230,16 @@ public class Household {
      */
     private boolean canInvite(User user) {
         return validateUser(user) && !isInvited(user) && !isPartOf(user);
+    }
+
+    /**
+     * Checks if the given Roommate can be promoted to Admin. He has to be part of the Household, be not null and still be a User.
+     *
+     * @param roommate The Roommate to check for promotion.
+     * @return True, if the Roommate can be promoted. False otherwise.
+     */
+    private boolean canPromoteRoommate(Roommate roommate) {
+        return validateRoommate(roommate) && this.roommates.contains(roommate) && roommate.getRole().equals(Role.ROLE_USER);
     }
 
     /**
@@ -245,6 +261,19 @@ public class Household {
      */
     private boolean canRemoveRoommate(Roommate roommate) {
         return validateRoommate(roommate) && this.roommates.contains(roommate) && this.roommates.size() > 1;
+    }
+
+    /**
+     * Retrieves the current admin from the Household. There should ALWAYS be exactly one admin! If not, something is wrong!
+     *
+     * @return The current admin
+     * @throws IllegalStateException If there is no administrating roommate! Should NEVER happen!
+     */
+    private Roommate getCurrentAdmin() throws IllegalStateException {
+        return roommates.stream()
+                .filter(Roommate::isAdmin)
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("There is no current administrating roommate! This should NEVER happen!"));
     }
 
     /**
@@ -293,26 +322,23 @@ public class Household {
     }
 
     /**
-     * Checks if the given Roommate can be promoted to Admin. He has to be part of the Household, be not null and still be a User.
+     * Validates the provided name by delegating to the validateName method.
      *
-     * @param roommate The Roommate to check for promotion.
-     * @return True, if the Roommate can be promoted. False otherwise.
+     * @param name the name to validate; must be non-null and not blank
+     * @return true if the name is valid; false otherwise
      */
-    private boolean canPromoteRoommate(Roommate roommate) {
-        return validateRoommate(roommate) && this.roommates.contains(roommate) && roommate.getRole().equals(Role.ROLE_USER);
+    private boolean validate(String name) {
+        return validateName(name);
     }
 
     /**
-     * Retrieves the current admin from the Household. There should ALWAYS be exactly one admin! If not, something is wrong!
+     * Validates an Account by assuring it is not null.
      *
-     * @return The current admin
-     * @throws IllegalStateException If there is no administrating roommate! Should NEVER happen!
+     * @param account The Account to validate.
+     * @return True, if the Account is valid. False otherwise.
      */
-    private Roommate getCurrentAdmin() throws IllegalStateException {
-        return roommates.stream()
-                .filter(Roommate::isAdmin)
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("There is no current administrating roommate! This should NEVER happen!"));
+    private boolean validateAccount(Account account) {
+        return account != null;
     }
 
     /**

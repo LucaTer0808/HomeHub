@@ -1,7 +1,7 @@
 package com.terfehr.homehub.domain.household.entity;
 
 import com.terfehr.homehub.domain.shared.exception.InvalidHouseholdException;
-import com.terfehr.homehub.domain.household.exception.InvalidUserException;
+import com.terfehr.homehub.domain.shared.exception.InvalidUserException;
 import com.terfehr.homehub.domain.household.key.InvitationId;
 import jakarta.persistence.*;
 import lombok.Getter;

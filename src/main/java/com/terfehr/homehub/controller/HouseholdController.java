@@ -22,6 +22,7 @@ public class HouseholdController {
     private final ChangeHouseholdNameService changeHouseholdNameService;
     private final CreateAccountService createAccountService;
     private final CreateHouseholdService createHouseholdService;
+    private final DeleteAccountService deleteAccountService;
     private final DeleteHouseholdService deleteHouseholdService;
     private final DeleteInvitationService deleteInvitationService;
     private final GetHouseholdService getHouseholdService;
@@ -75,7 +76,7 @@ public class HouseholdController {
         return ResponseEntity.status(HttpStatus.OK).body(new ChangeHouseholdNameResponse(dto));
     }
 
-    @PostMapping("{id}/account")
+    @PostMapping("/{id}/account")
     public ResponseEntity<CreateAccountResponse> createAccount(@PathVariable long id, @Valid @RequestBody CreateAccountRequest request) {
         CreateAccountCommand cmd = CreateAccountCommand
                 .builder()
@@ -87,7 +88,18 @@ public class HouseholdController {
 
         AccountDTO dto = createAccountService.execute(cmd);
         return ResponseEntity.status(HttpStatus.CREATED).body(new CreateAccountResponse(dto));
+    }
 
+    @DeleteMapping("/{householdId}/account/{accountId}")
+    public ResponseEntity<Void> deleteAccount(@PathVariable long householdId, @PathVariable long accountId) {
+        DeleteAccountCommand cmd = DeleteAccountCommand
+                .builder()
+                .householdId(householdId)
+                .accountId(accountId)
+                .build();
+
+        deleteAccountService.execute(cmd);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{id}/invitation")
