@@ -12,19 +12,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/household")
+@RequestMapping("/households")
 @AllArgsConstructor
 public class HouseholdController {
 
     private final ChangeHouseholdNameService changeHouseholdNameService;
-    private final CreateAccountService createAccountService;
     private final CreateHouseholdService createHouseholdService;
-    private final CreateShoppingListService createShoppingListService;
-    private final CreateShoppingSpreeService createShoppingSpreeService;
-    private final DeleteAccountService deleteAccountService;
     private final DeleteHouseholdService deleteHouseholdService;
     private final DeleteInvitationService deleteInvitationService;
-    private final DeleteShoppingListService deleteShoppingListService;
     private final GetHouseholdService getHouseholdService;
     private final InviteUserToHouseholdService inviteUserToHouseholdService;
     private final JoinHouseholdService joinHouseholdService;
@@ -74,74 +69,6 @@ public class HouseholdController {
 
         HouseholdDTO dto = changeHouseholdNameService.execute(cmd);
         return ResponseEntity.status(HttpStatus.OK).body(new ChangeHouseholdNameResponse(dto));
-    }
-
-    @PostMapping("/{id}/account")
-    public ResponseEntity<CreateAccountResponse> createAccount(@PathVariable long id, @Valid @RequestBody CreateAccountRequest request) {
-        CreateAccountCommand cmd = CreateAccountCommand
-                .builder()
-                .id(id)
-                .name(request.name())
-                .amount(request.amount())
-                .currencyCode(request.currencyCode())
-                .build();
-
-        AccountDTO dto = createAccountService.execute(cmd);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new CreateAccountResponse(dto));
-    }
-
-    @DeleteMapping("/{householdId}/account/{accountId}")
-    public ResponseEntity<Void> deleteAccount(@PathVariable long householdId, @PathVariable long accountId) {
-        DeleteAccountCommand cmd = DeleteAccountCommand
-                .builder()
-                .householdId(householdId)
-                .accountId(accountId)
-                .build();
-
-        deleteAccountService.execute(cmd);
-        return ResponseEntity.noContent().build();
-    }
-
-    @PostMapping("/{id}/shopping_list")
-    public ResponseEntity<CreateShoppingListResponse> createShoppingList(@PathVariable long id, @Valid @RequestBody CreateShoppingListRequest request) {
-        CreateShoppingListCommand cmd = CreateShoppingListCommand
-                .builder()
-                .id(id)
-                .name(request.name())
-                .build();
-
-        ShoppingListDTO dto = createShoppingListService.execute(cmd);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new CreateShoppingListResponse(dto));
-    }
-
-    @DeleteMapping("/{householdId}/shopping_list{shoppingListId}")
-    public ResponseEntity<Void> deleteShoppingList(@PathVariable long householdId, @PathVariable long shoppingListId) {
-        DeleteShoppingListCommand cmd = DeleteShoppingListCommand
-                .builder()
-                .householdId(householdId)
-                .shoppingListId(shoppingListId)
-                .build();
-
-        deleteShoppingListService.execute(cmd);
-        return ResponseEntity.noContent().build();
-    }
-
-    @PostMapping("/{id}/shopping_spree")
-    public ResponseEntity<CreateShoppingSpreeResponse> createShoppingSpree(@PathVariable long id, @Valid @RequestBody CreateShoppingSpreeRequest request) {
-        CreateShoppingSpreeCommand cmd = CreateShoppingSpreeCommand
-                .builder()
-                .householdId(id)
-                .time(request.time())
-                .shoppingListId(request.shoppingListId())
-                .accountId(request.accountId())
-                .amount(request.amount())
-                .description(request.description())
-                .recipient(request.recipient())
-                .roommateId(request.roommateId())
-                .build();
-
-        ShoppingSpreeDTO dto = createShoppingSpreeService.execute(cmd);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new CreateShoppingSpreeResponse(dto));
     }
 
     @PostMapping("/{id}/invitation")

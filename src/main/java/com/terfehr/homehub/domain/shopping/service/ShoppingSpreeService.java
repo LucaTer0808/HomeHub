@@ -33,7 +33,6 @@ public class ShoppingSpreeService {
      * @throws InvalidRoommateException If the given Roommate does not belong to the given Household.
      * @throws InvalidDateException If the given time is invalid.
      * @throws InvalidHouseholdException If the given Household is invalid.
-     * @throws IllegalArgumentException If the given ShoppingSpreeTransaction is invalid.
      * @throws InvalidShoppingExpenseException If the created ShoppingExpense is invalid. Should not happen.
      * @throws InvalidShoppingSpreeException If the created ShoppingSpree is invalid. Should not happen.
      * @throws InvalidDescriptionException If the given description is invalid.

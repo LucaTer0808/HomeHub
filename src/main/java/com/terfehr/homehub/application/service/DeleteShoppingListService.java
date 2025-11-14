@@ -24,11 +24,11 @@ public class DeleteShoppingListService {
     private final ShoppingListRepositoryInterface shoppingListRepository;
 
     public void execute(DeleteShoppingListCommand cmd) {
-        Household household = householdRepository.findById(cmd.householdId())
-                .orElseThrow(() -> new HouseholdNotFoundException("There is no household with ID: " + cmd.householdId()));
-
         ShoppingList list = shoppingListRepository.findById(cmd.shoppingListId())
                 .orElseThrow(() -> new ShoppingListNotFoundException("There is no shopping list with ID: " + cmd.shoppingListId()));
+
+        Household household = householdRepository.findById(list.getHousehold().getId())
+                .orElseThrow(() -> new HouseholdNotFoundException("There is no household with ID: " + list.getHousehold().getId()));
 
         household.deleteShoppingList(list);
 

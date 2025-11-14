@@ -40,11 +40,11 @@ public class DeleteAccountService {
             InvalidAccountException,
             InvalidEventPayloadException
     {
-        Household household = householdRepository.findById(cmd.householdId())
-                .orElseThrow(() -> new HouseholdNotFoundException("There is no Household with the ID: " + cmd.householdId()));
-
         Account account = accountRepository.findById(cmd.accountId())
                 .orElseThrow(() -> new AccountNotFoundException("There is no Account with the ID: " + cmd.accountId()));
+
+        Household household = householdRepository.findById(account.getHousehold().getId())
+                .orElseThrow(() -> new HouseholdNotFoundException("There is no Household with the ID: " + account.getHousehold().getId()));
 
         household.deleteAccount(account);
         householdRepository.save(household);
