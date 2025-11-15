@@ -1,5 +1,6 @@
 package com.terfehr.homehub.domain.shopping.repository;
 
+import com.terfehr.homehub.domain.bookkeeping.entity.ShoppingExpense;
 import com.terfehr.homehub.domain.shopping.entity.ShoppingSpree;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.lang.NonNull;
@@ -16,4 +17,12 @@ public interface ShoppingSpreeRepositoryInterface extends JpaRepository<Shopping
      */
     @NonNull
     Optional<ShoppingSpree> findById(@NonNull Long id);
+
+    /**
+     * Retrieves a ShoppingSpree by its associated ShoppingExpense.
+     *
+     * @param shoppingExpense The ShoppingExpense to search for.
+     * @return An Optional containing either the ShoppingSpree or null if it does not exist.
+     */
+    Optional<ShoppingSpree> findByShoppingExpense(@NonNull ShoppingExpense shoppingExpense);
 }

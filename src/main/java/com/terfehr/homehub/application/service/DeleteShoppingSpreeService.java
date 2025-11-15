@@ -6,6 +6,7 @@ import com.terfehr.homehub.application.event.payload.DeleteShoppingSpreeEventPay
 import com.terfehr.homehub.application.exception.ShoppingSpreeNotFoundException;
 import com.terfehr.homehub.domain.bookkeeping.entity.Account;
 import com.terfehr.homehub.domain.bookkeeping.entity.ShoppingExpense;
+import com.terfehr.homehub.domain.bookkeeping.repository.ShoppingExpenseRepositoryInterface;
 import com.terfehr.homehub.domain.household.entity.Household;
 import com.terfehr.homehub.domain.household.repository.HouseholdRepositoryInterface;
 import com.terfehr.homehub.domain.shopping.entity.ShoppingSpree;
@@ -22,6 +23,7 @@ public class DeleteShoppingSpreeService {
 
     private final ApplicationEventPublisher publisher;
     private final HouseholdRepositoryInterface householdRepository;
+    private final ShoppingExpenseRepositoryInterface shoppingExpenseRepository;
     private final ShoppingSpreeRepositoryInterface shoppingSpreeRepository;
 
     public void execute(DeleteShoppingSpreeCommand cmd) {
@@ -32,10 +34,12 @@ public class DeleteShoppingSpreeService {
 
         ShoppingExpense affectedExpense = spree.getShoppingExpense();
 
-        Account account = affectedExpense.getAccount();
+        if (affectedExpense != null) {
+            affectedExpense.removeShoppingSpree();
+            shoppingExpenseRepository.save(affectedExpense);
+        }
 
         household.deleteShoppingSpree(spree);
-        account.removeTransaction(affectedExpense);
 
         householdRepository.save(household);
 

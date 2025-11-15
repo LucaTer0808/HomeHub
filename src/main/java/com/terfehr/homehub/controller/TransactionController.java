@@ -2,10 +2,12 @@ package com.terfehr.homehub.controller;
 
 import com.terfehr.homehub.application.command.CreateExpenseCommand;
 import com.terfehr.homehub.application.command.CreateIncomeCommand;
+import com.terfehr.homehub.application.command.DeleteTransactionCommand;
 import com.terfehr.homehub.application.dto.ExpenseDTO;
 import com.terfehr.homehub.application.dto.IncomeDTO;
 import com.terfehr.homehub.application.service.CreateExpenseService;
 import com.terfehr.homehub.application.service.CreateIncomeService;
+import com.terfehr.homehub.application.service.DeleteTransactionService;
 import com.terfehr.homehub.controller.request.CreateExpenseRequest;
 import com.terfehr.homehub.controller.request.CreateIncomeRequest;
 import com.terfehr.homehub.controller.response.CreateExpenseResponse;
@@ -26,6 +28,7 @@ public class TransactionController {
 
     private final CreateExpenseService createExpenseService;
     private final CreateIncomeService createIncomeService;
+    private final DeleteTransactionService deleteTransactionService;
 
     @PostMapping("/{accountId}/expense")
     public ResponseEntity<CreateExpenseResponse> createExpense(@PathVariable long accountId, @Valid @RequestBody CreateExpenseRequest request) {
@@ -55,5 +58,16 @@ public class TransactionController {
 
         IncomeDTO dto = createIncomeService.execute(cmd);
         return ResponseEntity.ok(new CreateIncomeResponse(dto));
+    }
+
+    @DeleteMapping("/{transactionId}")
+    public ResponseEntity<Void> deleteTransaction(@PathVariable long transactionId) {
+        DeleteTransactionCommand cmd = DeleteTransactionCommand
+                .builder()
+                .transactionId(transactionId)
+                .build();
+
+        deleteTransactionService.execute(cmd);
+        return ResponseEntity.noContent().build();
     }
 }

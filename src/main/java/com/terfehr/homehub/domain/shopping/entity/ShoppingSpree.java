@@ -60,19 +60,6 @@ public class ShoppingSpree {
     }
 
     /**
-     * Sets the ShoppingExpense associated with the ShoppingSpree. If the ShoppingExpense is invalid, an exception is thrown.
-     *
-     * @param shoppingExpense The ShoppingExpense to set.
-     * @throws InvalidShoppingExpenseException If the ShoppingExpense is invalid.
-     */
-    public void setShoppingExpense(ShoppingExpense shoppingExpense) throws InvalidShoppingExpenseException {
-        if (!validateShoppingExpense(shoppingExpense)) {
-            throw new InvalidShoppingExpenseException("Invalid ShoppingExpense object");
-        }
-        this.shoppingExpense = shoppingExpense;
-    }
-
-    /**
      * Adds a ShoppingSpreeItem to the ShoppingSpree. If the ShoppingSpreeItem is invalid, an exception is thrown.
      * It then returns the newly created ShoppingSpreeItem.
      *
@@ -87,16 +74,24 @@ public class ShoppingSpree {
     }
 
     /**
-     * Validates the given parameters by calling and combining the return value
-     *
-     * @param date The date of the ShoppingSpree.
-     * @param household The creating Household of the ShoppingSpree.
-     * @return True, if all parameters are valid. False otherwise.
+     * Removes the ShoppingExpense associated with the ShoppingSpree.
      */
-    private boolean validate(LocalDateTime date ,Household household) {
-        return validateDate(date) && validateHousehold(household);
+    public void removeShoppingExpense() {
+        this.shoppingExpense = null;
     }
 
+    /**
+     * Sets the ShoppingExpense associated with the ShoppingSpree. If the ShoppingExpense is invalid, an exception is thrown.
+     *
+     * @param shoppingExpense The ShoppingExpense to set.
+     * @throws InvalidShoppingExpenseException If the ShoppingExpense is invalid.
+     */
+    public void setShoppingExpense(ShoppingExpense shoppingExpense) throws InvalidShoppingExpenseException {
+        if (!validateShoppingExpense(shoppingExpense)) {
+            throw new InvalidShoppingExpenseException("Invalid ShoppingExpense object");
+        }
+        this.shoppingExpense = shoppingExpense;
+    }
 
     /**
      * Validates the given date to ensure it is non-null.

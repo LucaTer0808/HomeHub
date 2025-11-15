@@ -214,7 +214,7 @@ public class Account {
      * @throws IllegalArgumentException If the provided transaction is invalid or not
      *                                  associated with the account.
      */
-    public void removeTransaction(Transaction transaction) throws IllegalArgumentException {
+    public void deleteTransaction(Transaction transaction) throws IllegalArgumentException {
         if (!validateTransaction(transaction) || !transactions.contains(transaction)) {
             throw new IllegalArgumentException("Invalid or not contained Transaction object");
         }
