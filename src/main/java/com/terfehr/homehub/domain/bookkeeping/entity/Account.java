@@ -180,19 +180,28 @@ public class Account {
 
     /**
      * Adds an Income to the Account by constructing an Income object by the given parameters and updating the account balance afterward.
-     * If the parameters are invalid for creating an Income, an exception is thrown.
+     * If the parameters are invalid for creating an Income, an exception is thrown. It then returns the newly created Income object.
      *
      * @param amount The amount of the Income in the smallest unit.
      * @param description A brief description of what the Income is about.
      * @param date The timestamp of when this Income was transferred.
      * @param source The source who sent the money.
      * @param roommate The roommate who paid the money.
-     * @throws IllegalArgumentException If the parameters are invalid for creating an Income.
+     * @throws InvalidAmountException If the amount is negative.
+     * @throws InvalidDescriptionException If the description is empty.
+     * @throws InvalidDateException If the date is null.
+     * @throws InvalidSourceException If the source is null or empty.
      */
-    public void addIncome(long amount, String description, LocalDateTime date, String source, Roommate roommate) throws IllegalArgumentException {
+    public Income createIncome(long amount, String description, LocalDateTime date, String source, Roommate roommate) throws
+            InvalidAmountException,
+            InvalidDescriptionException,
+            InvalidDateException,
+            InvalidSourceException
+    {
         Income income = new Income(amount, description, date, source, this, roommate);
         this.transactions.add(income);
         updateBalance(income);
+        return income;
     }
 
     /**

@@ -2,6 +2,7 @@ package com.terfehr.homehub.domain.bookkeeping.entity;
 
 import com.terfehr.homehub.domain.bookkeeping.value.Money;
 import com.terfehr.homehub.domain.household.entity.Roommate;
+import com.terfehr.homehub.domain.shared.exception.*;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -32,34 +33,18 @@ public class Income extends Transaction {
      * @param roommate The roommate associated with the source transaction.
      * @throws IllegalArgumentException if the source is invalid.
      */
-    public Income(long amount, String description, LocalDateTime date, String source, Account account, Roommate roommate) throws IllegalArgumentException {
+    public Income(long amount, String description, LocalDateTime date, String source, Account account, Roommate roommate) throws
+            InvalidAmountException,
+            InvalidDescriptionException,
+            InvalidDateException,
+            InvalidAccountException,
+            InvalidRoommateException
+    {
         super(amount, description, date, account, roommate);
-        if (!validate(source)) {
-            throw new IllegalArgumentException("Invalid Income object");
-        }
-        this.source = source;
-    }
-
-    /**
-     * Sets the source of the income. It's where the money was received from.
-     * @param source The source from which the income was received.
-     */
-    public void setSource(String source) throws IllegalArgumentException {
         if (!validateSource(source)) {
-            throw new IllegalArgumentException("Invalid source");
+            throw new InvalidSourceException("Invalid Income object");
         }
         this.source = source;
-    }
-
-    /**
-     * Validates the state of the Income object. This method ensures that both the validation
-     * criteria defined in the superclass Transaction and the specific validation for the
-     * Income entity (i.e., the validity of the source) are satisfied.
-     *
-     * @return true if the Income object is valid, false otherwise.
-     */
-    private boolean validate(String source) {
-        return validateSource(source);
     }
 
     /**

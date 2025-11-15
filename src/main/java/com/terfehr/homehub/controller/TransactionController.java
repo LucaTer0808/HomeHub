@@ -1,10 +1,15 @@
 package com.terfehr.homehub.controller;
 
 import com.terfehr.homehub.application.command.CreateExpenseCommand;
+import com.terfehr.homehub.application.command.CreateIncomeCommand;
 import com.terfehr.homehub.application.dto.ExpenseDTO;
+import com.terfehr.homehub.application.dto.IncomeDTO;
 import com.terfehr.homehub.application.service.CreateExpenseService;
+import com.terfehr.homehub.application.service.CreateIncomeService;
 import com.terfehr.homehub.controller.request.CreateExpenseRequest;
+import com.terfehr.homehub.controller.request.CreateIncomeRequest;
 import com.terfehr.homehub.controller.response.CreateExpenseResponse;
+import com.terfehr.homehub.controller.response.CreateIncomeResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 public class TransactionController {
 
     private final CreateExpenseService createExpenseService;
+    private final CreateIncomeService createIncomeService;
 
     @PostMapping("/{accountId}/expense")
     public ResponseEntity<CreateExpenseResponse> createExpense(@PathVariable long accountId, @Valid @RequestBody CreateExpenseRequest request) {
@@ -34,5 +40,20 @@ public class TransactionController {
 
         ExpenseDTO dto = createExpenseService.execute(cmd);
         return ResponseEntity.status(HttpStatus.CREATED).body(new CreateExpenseResponse(dto));
+    }
+
+    @PostMapping("/{accountId}/income")
+    public ResponseEntity<CreateIncomeResponse> createIncome(@PathVariable long accountId, @Valid @RequestBody CreateIncomeRequest request) {
+        CreateIncomeCommand cmd = CreateIncomeCommand
+                .builder()
+                .accountId(accountId)
+                .amount(request.amount())
+                .description(request.description())
+                .date(request.date())
+                .source(request.source())
+                .build();
+
+        IncomeDTO dto = createIncomeService.execute(cmd);
+        return ResponseEntity.ok(new CreateIncomeResponse(dto));
     }
 }
